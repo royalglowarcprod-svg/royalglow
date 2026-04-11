@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+body {
+  background: #EBE9E1;
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+:root {
+  --cream: #ffffff;
+  --ink: #1a1a18;
+  --accent: #c8824a;
+  --muted: #7a7468;
+  --gap: 10px;
+  --radius: 14px;
+  --side-pad: 40px;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "DM Sans", "Helvetica Neue", sans-serif;
+  --cards: 4;
+  --card-w: calc((100vw - var(--side-pad) * 2 - (var(--cards) - 1) * var(--gap)) / var(--cards));
+}
+
+@media (max-width: 1199px) { :root { --cards: 3; } }
+@media (max-width: 860px)  { :root { --cards: 2; } }
+@media (max-width: 520px)  {
+  :root {
+    --cards: 1;
+    --side-pad: 20px;
+  }
+}
