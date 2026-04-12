@@ -13,7 +13,8 @@ type CarouselItem = {
 export default function HeroCarousel() {
   const [items, setItems] = useState<CarouselItem[]>([]);
   const [current, setCurrent] = useState(0);
-  const [animating, setAnimating] = useState(false);
+  const [sliding, setSliding] = useState<"left" | "right" | null>(null);
+  const [hovered, setHovered] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pausedRef = useRef(false);
   const router = useRouter();
@@ -24,43 +25,48 @@ export default function HeroCarousel() {
       .then(d => setItems(d.results || []));
   }, []);
 
-  const goTo = useCallback((index: number) => {
-    setAnimating(true);
+  const goTo = useCallback((nextIdx: number, direction: "left" | "right") => {
+    if (sliding) return;
+    setSliding(direction);
     setTimeout(() => {
-      setCurrent(index);
-      setAnimating(false);
-    }, 400);
-  }, []);
+      setCurrent(nextIdx);
+      setSliding(null);
+    }, 420);
+  }, [sliding]);
 
   const next = useCallback(() => {
     setCurrent(c => {
-      const nextIdx = (c + 1) % items.length;
-      setAnimating(true);
-      setTimeout(() => setAnimating(false), 400);
-      return nextIdx;
+      const n = (c + 1) % items.length;
+      if (!sliding) { setSliding("left"); setTimeout(() => { setCurrent(n); setSliding(null); }, 420); }
+      return c;
     });
-  }, [items.length]);
+  }, [items.length, sliding]);
 
   const prev = useCallback(() => {
     setCurrent(c => {
-      const prevIdx = (c - 1 + items.length) % items.length;
-      setAnimating(true);
-      setTimeout(() => setAnimating(false), 400);
-      return prevIdx;
+      const p = (c - 1 + items.length) % items.length;
+      if (!sliding) { setSliding("right"); setTimeout(() => { setCurrent(p); setSliding(null); }, 420); }
+      return c;
     });
-  }, [items.length]);
+  }, [items.length, sliding]);
+
+  const nextIdx = (current + 1) % items.length;
+  const prevIdx = (current - 1 + items.length) % items.length;
 
   useEffect(() => {
     if (items.length === 0) return;
     const schedule = () => {
       timerRef.current = setTimeout(() => {
-        if (!pausedRef.current) next();
+        if (!pausedRef.current) {
+          const n = (current + 1) % items.length;
+          goTo(n, "left");
+        }
         schedule();
       }, 4000);
     };
     schedule();
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [items.length, next]);
+  }, [items.length, current, goTo]);
 
   const handleClick = (item: CarouselItem) => {
     if (item.link_type === "product") router.push(`/products/${item.link_value}`);
@@ -72,71 +78,95 @@ export default function HeroCarousel() {
   const onPointerUp = (e: React.PointerEvent) => {
     if (dragStart.current === null) return;
     const diff = dragStart.current - e.clientX;
-    if (Math.abs(diff) > 50) diff > 0 ? next() : prev();
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goTo(nextIdx, "left");
+      else goTo(prevIdx, "right");
+    }
     dragStart.current = null;
   };
 
   if (items.length === 0) return null;
-
-  const item = items[current];
 
   return (
     <>
       <style>{css}</style>
       <div className="hc-outer">
         <div
-          className="hc-wrap"
-          onMouseEnter={() => { pausedRef.current = true; }}
-          onMouseLeave={() => { pausedRef.current = false; }}
+          className="hc-scene"
+          onMouseEnter={() => { pausedRef.current = true; setHovered(true); }}
+          onMouseLeave={() => { pausedRef.current = false; setHovered(false); }}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
         >
-          {/* Single slide — only render current */}
-          <div className={`hc-slide ${animating ? "hc-slide--exit" : "hc-slide--active"}`}>
-            <button
-              className="hc-slide-btn"
-              onClick={() => handleClick(item)}
-              aria-label={`Go to ${item.link_type} ${item.link_value}`}
-            >
-              <img
-                src={item.image_url}
-                alt=""
-                className="hc-img"
-                draggable={false}
-              />
-            </button>
+          {/* Previous card — peeking left */}
+          {items.length > 1 && (
+            <div className="hc-side hc-side--left">
+              <div className="hc-side-card">
+                <img src={items[prevIdx].image_url} alt="" className="hc-img" draggable={false} />
+                <div className="hc-side-blur" />
+              </div>
+            </div>
+          )}
+
+          {/* Main card */}
+          <div className={`hc-main ${sliding ? `hc-main--slide-${sliding}` : ""}`}>
+            <div className="hc-card">
+              <button
+                className="hc-card-btn"
+                onClick={() => handleClick(items[current])}
+                aria-label={`Go to ${items[current].link_type} ${items[current].link_value}`}
+              >
+                <img src={items[current].image_url} alt="" className="hc-img" draggable={false} />
+              </button>
+            </div>
           </div>
 
-          {/* Arrows */}
+          {/* Next card — peeking right */}
+          {items.length > 1 && (
+            <div className="hc-side hc-side--right">
+              <div className="hc-side-card">
+                <img src={items[nextIdx].image_url} alt="" className="hc-img" draggable={false} />
+                <div className="hc-side-blur" />
+              </div>
+            </div>
+          )}
+
+          {/* Arrows — only visible on hover */}
           {items.length > 1 && (
             <>
-              <button className="hc-arrow hc-arrow--left" onClick={prev} aria-label="Previous">
+              <button
+                className={`hc-arrow hc-arrow--left ${hovered ? "hc-arrow--visible" : ""}`}
+                onClick={prev} aria-label="Previous"
+              >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="15 18 9 12 15 6"/>
                 </svg>
               </button>
-              <button className="hc-arrow hc-arrow--right" onClick={next} aria-label="Next">
+              <button
+                className={`hc-arrow hc-arrow--right ${hovered ? "hc-arrow--visible" : ""}`}
+                onClick={next} aria-label="Next"
+              >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="9 18 15 12 9 6"/>
                 </svg>
               </button>
             </>
           )}
-
-          {/* Dots */}
-          {items.length > 1 && (
-            <div className="hc-dots">
-              {items.map((_, i) => (
-                <button
-                  key={i}
-                  className={`hc-dot ${i === current ? "hc-dot--active" : ""}`}
-                  onClick={() => goTo(i)}
-                  aria-label={`Go to slide ${i + 1}`}
-                />
-              ))}
-            </div>
-          )}
         </div>
+
+        {/* Dots — OUTSIDE the image */}
+        {items.length > 1 && (
+          <div className="hc-dots">
+            {items.map((_, i) => (
+              <button
+                key={i}
+                className={`hc-dot ${i === current ? "hc-dot--active" : ""}`}
+                onClick={() => goTo(i, i > current ? "left" : "right")}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </>
   );
@@ -145,36 +175,85 @@ export default function HeroCarousel() {
 const css = `
   .hc-outer {
     width: 100%;
-    padding: 20px 24px;
+    padding: 24px 0 16px;
     background: #f5f5f5;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    overflow: hidden;
   }
 
-  .hc-wrap {
+  /* Scene holds all 3 cards side by side */
+  .hc-scene {
     position: relative;
     width: 100%;
-    max-width: 900px;
-    border: 2px solid #111;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 5px 5px 0 #111;
-    background: #111;
-    cursor: pointer;
+    max-width: 1400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     user-select: none;
     touch-action: pan-y;
   }
 
-  .hc-slide {
-    width: 100%;
-    aspect-ratio: 16/7;
-    transition: opacity 0.4s ease;
+  /* Side peeking cards */
+  .hc-side {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 12%;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .hc-side--left  { left: 0; border-radius: 0 14px 14px 0; }
+  .hc-side--right { right: 0; border-radius: 14px 0 0 14px; }
+
+  .hc-side-card {
+    position: relative;
+    width: 100%; height: 100%;
+    border: 2px solid #111;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .hc-side--left  .hc-side-card { border-radius: 0 14px 14px 0; border-left: none; }
+  .hc-side--right .hc-side-card { border-radius: 14px 0 0 14px; border-right: none; }
+
+  .hc-side-blur {
+    position: absolute;
+    inset: 0;
+    background: rgba(245,245,245,0.55);
+    backdrop-filter: blur(3px);
   }
 
-  .hc-slide--active { opacity: 1; }
-  .hc-slide--exit   { opacity: 0; }
+  /* Main card */
+  .hc-main {
+    position: relative;
+    z-index: 2;
+    width: 74%;
+    border: 2.5px solid #111;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 6px 6px 0 #111;
+    transition: transform 0.42s cubic-bezier(0.4,0,0.2,1);
+  }
 
-  .hc-slide-btn {
+  .hc-main--slide-left  { animation: slideLeft  0.42s cubic-bezier(0.4,0,0.2,1); }
+  .hc-main--slide-right { animation: slideRight 0.42s cubic-bezier(0.4,0,0.2,1); }
+
+  @keyframes slideLeft {
+    from { transform: translateX(0);    opacity: 1; }
+    to   { transform: translateX(-8%);  opacity: 0.7; }
+  }
+  @keyframes slideRight {
+    from { transform: translateX(0);   opacity: 1; }
+    to   { transform: translateX(8%);  opacity: 0.7; }
+  }
+
+  .hc-card {
+    width: 100%;
+    aspect-ratio: 16/7;
+  }
+
+  .hc-card-btn {
     width: 100%; height: 100%;
     border: none; padding: 0; margin: 0;
     background: none; cursor: pointer;
@@ -194,47 +273,68 @@ const css = `
     position: absolute;
     top: 50%; transform: translateY(-50%);
     z-index: 10;
-    width: 38px; height: 38px;
+    width: 42px; height: 42px;
     border-radius: 50%;
     background: #fff;
     border: 2px solid #111;
     box-shadow: 2px 2px 0 #111;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; color: #111;
-    transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    opacity: 0;
+    transition: opacity 0.2s, background 0.15s, transform 0.15s, box-shadow 0.15s;
+    pointer-events: none;
+  }
+  .hc-arrow--visible {
+    opacity: 1;
+    pointer-events: auto;
   }
   .hc-arrow:hover {
     background: #FFE14D;
     transform: translateY(calc(-50% - 2px));
     box-shadow: 2px 4px 0 #111;
   }
-  .hc-arrow--left  { left: 12px; }
-  .hc-arrow--right { right: 12px; }
+  .hc-arrow--left  { left: 11%; }
+  .hc-arrow--right { right: 11%; }
 
-  /* Dots */
+  /* Dots — below the cards */
   .hc-dots {
-    position: absolute;
-    bottom: 12px; left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    display: flex; gap: 6px; align-items: center;
+    display: flex;
+    gap: 7px;
+    align-items: center;
+    justify-content: center;
   }
   .hc-dot {
     width: 8px; height: 8px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.5);
-    border: none; padding: 0; cursor: pointer;
-    transition: background 0.2s, width 0.2s;
+    background: #bbb;
+    border: 1.5px solid #111;
+    padding: 0; cursor: pointer;
+    transition: background 0.2s, width 0.25s, border-radius 0.25s;
   }
   .hc-dot--active {
-    background: #FFE14D;
-    width: 22px;
+    background: #111;
+    width: 24px;
     border-radius: 4px;
   }
 
-  @media (max-width: 600px) {
-    .hc-outer { padding: 14px 12px; }
-    .hc-slide { aspect-ratio: 4/3; }
-    .hc-arrow { width: 32px; height: 32px; }
+  /* Responsive */
+  @media (min-width: 1200px) {
+    .hc-card { aspect-ratio: 21/7; }
+  }
+
+  @media (max-width: 768px) {
+    .hc-side { width: 8%; }
+    .hc-main { width: 82%; }
+    .hc-arrow--left  { left: 7%; }
+    .hc-arrow--right { right: 7%; }
+    .hc-card { aspect-ratio: 4/3; }
+  }
+
+  @media (max-width: 480px) {
+    .hc-side { display: none; }
+    .hc-main { width: 92%; border-radius: 12px; }
+    .hc-card { aspect-ratio: 3/2; }
+    .hc-arrow--left  { left: 4px; }
+    .hc-arrow--right { right: 4px; }
   }
 `;
