@@ -15,11 +15,10 @@ const SIDE_RATIO = 0.12;
 const GAP = 10;
 
 export default function InfiniteCarousel() {
-  const [items, setItems] = useState<CarouselItem[]>([]);
+  const [items, setItems]     = useState<CarouselItem[]>([]);
   const [current, setCurrent] = useState(0);
-  const [sceneW, setSceneW] = useState(0);
+  const [sceneW, setSceneW]   = useState(0);
   const [hovered, setHovered] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   const slidingRef = useRef(false);
   const pausedRef  = useRef(false);
@@ -32,9 +31,6 @@ export default function InfiniteCarousel() {
 
   useEffect(() => { currentRef.current = current; }, [current]);
 
-  // Mark as mounted (client-only)
-  useEffect(() => { setMounted(true); }, []);
-
   // Fetch items
   useEffect(() => {
     fetch("/api/carousel")
@@ -42,9 +38,8 @@ export default function InfiniteCarousel() {
       .then((d) => setItems(d.results || []));
   }, []);
 
-  // Read width only after mounted on client
+  // Measure width — sceneRef div is ALWAYS in the DOM so this always fires correctly
   useEffect(() => {
-    if (!mounted) return;
     const el = sceneRef.current;
     if (!el) return;
 
@@ -53,19 +48,19 @@ export default function InfiniteCarousel() {
       if (w > 0) setSceneW(w);
     };
 
-    measure(); // immediate read
-
-    const ro = new ResizeObserver(() => measure());
+    measure(); // immediate read on mount
+    const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [mounted]);
+  }, []); // empty deps — runs once, el is always mounted
 
   const TOTAL = items.length;
   const sv    = sceneW * SIDE_RATIO;
   const cw    = sceneW > 0 ? sceneW - 2 * (sv + GAP) : 0;
   const ch    = cw > 0 ? Math.round(cw / (16 / 6.2)) : 0;
   const tIdx  = current + 1;
-  const getX  = useCallback(
+
+  const getX = useCallback(
     (ti: number) => -(ti * (cw + GAP)) + sv + GAP,
     [cw, sv]
   );
@@ -119,7 +114,7 @@ export default function InfiniteCarousel() {
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [TOTAL, next]);
 
-  // Sync track position on current or cw change
+  // Sync track position whenever current or cw changes
   useEffect(() => {
     if (!trackRef.current || cw === 0) return;
     trackRef.current.style.transform = `translateX(${getX(tIdx)}px)`;
@@ -133,13 +128,21 @@ export default function InfiniteCarousel() {
   const extendedItems =
     TOTAL > 0 ? [items[TOTAL - 1], ...items, items[0]] : [];
 
-  // Don't render until mounted and we have a width
-  if (!mounted || items.length === 0) return null;
+  const ready = sceneW > 0 && TOTAL > 0 && cw > 0;
 
   return (
     <>
       <style>{css}</style>
       <div className="hc-outer">
+
+        {/*
+          KEY FIX: sceneRef div renders unconditionally.
+          Previously we returned null when items were empty,
+          which meant sceneRef was never mounted, so ResizeObserver
+          never fired, so sceneW stayed 0 forever.
+          Now the div is always there — width is measured immediately,
+          and slides appear as soon as items load from the API.
+        */}
         <div
           ref={sceneRef}
           className="hc-scene"
@@ -153,7 +156,7 @@ export default function InfiniteCarousel() {
             dragStart.current = null;
           }}
         >
-          {cw > 0 && (
+          {ready && (
             <div
               ref={trackRef}
               className="hc-track"
@@ -196,7 +199,7 @@ export default function InfiniteCarousel() {
             </div>
           )}
 
-          {TOTAL > 1 && (
+          {ready && TOTAL > 1 && (
             <>
               <button
                 className={`hc-arrow hc-arrow--left ${hovered ? "hc-arrow--visible" : ""}`}
@@ -258,6 +261,7 @@ const css = `
     overflow: hidden;
     user-select: none;
     touch-action: pan-y;
+    min-height: 2px;
   }
   .hc-track {
     display: flex;
