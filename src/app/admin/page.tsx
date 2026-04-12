@@ -20,37 +20,42 @@ type EditProductState = {
 };
 
 const SOCIAL_PLATFORMS = [
-  { key: "instagram", label: "Instagram", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>` },
-  { key: "facebook", label: "Facebook", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>` },
-  { key: "tiktok", label: "TikTok", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.26 8.26 0 0 0 4.83 1.55V6.79a4.85 4.85 0 0 1-1.06-.1z"/></svg>` },
-  { key: "twitter", label: "X / Twitter", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>` },
-  { key: "youtube", label: "YouTube", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.97C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>` },
-  { key: "whatsapp", label: "WhatsApp", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>` },
+  { key: "instagram", label: "Instagram", color: "#E1306C", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>` },
+  { key: "facebook", label: "Facebook", color: "#1877F2", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>` },
+  { key: "tiktok", label: "TikTok", color: "#111", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.26 8.26 0 0 0 4.83 1.55V6.79a4.85 4.85 0 0 1-1.06-.1z"/></svg>` },
+  { key: "twitter", label: "X / Twitter", color: "#111", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>` },
+  { key: "youtube", label: "YouTube", color: "#FF0000", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.97C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>` },
+  { key: "whatsapp", label: "WhatsApp", color: "#25D366", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>` },
 ] as const;
 
 type SocialKey = typeof SOCIAL_PLATFORMS[number]["key"];
-
 type SocialSettings = Record<SocialKey, { url: string; visible: boolean }>;
 
-const STATUS_META: Record<string, { color: string; bg: string; border: string }> = {
-  pending:   { color: "#e8a838", bg: "rgba(232,168,56,0.12)",  border: "rgba(232,168,56,0.3)"  },
-  confirmed: { color: "#60a5fa", bg: "rgba(96,165,250,0.12)",  border: "rgba(96,165,250,0.3)"  },
-  shipped:   { color: "#a78bfa", bg: "rgba(167,139,250,0.12)", border: "rgba(167,139,250,0.3)" },
-  delivered: { color: "#7c9e87", bg: "rgba(124,158,135,0.15)", border: "rgba(124,158,135,0.35)"},
-  cancelled: { color: "#f87171", bg: "rgba(248,113,113,0.12)", border: "rgba(248,113,113,0.3)" },
+const STATUS_META: Record<string, { color: string; bg: string; border: string; label: string }> = {
+  pending:   { color: "#b45309", bg: "#FEF3C7", border: "#FCD34D", label: "⏳ Pending"   },
+  confirmed: { color: "#1d4ed8", bg: "#DBEAFE", border: "#93C5FD", label: "✅ Confirmed" },
+  shipped:   { color: "#6d28d9", bg: "#EDE9FE", border: "#C4B5FD", label: "🚚 Shipped"   },
+  delivered: { color: "#065f46", bg: "#D1FAE5", border: "#6EE7B7", label: "📦 Delivered" },
+  cancelled: { color: "#991b1b", bg: "#FEE2E2", border: "#FCA5A5", label: "❌ Cancelled" },
 };
 
 const TABS = ["categories", "products", "banners", "orders", "carousel", "settings"] as const;
 type Tab = typeof TABS[number];
 
+const TAB_COLORS: Record<Tab, string> = {
+  categories: "#FF3E5E",
+  products:   "#00D084",
+  banners:    "#FFE14D",
+  orders:     "#7C3AED",
+  carousel:   "#FF8C00",
+  settings:   "#0EA5E9",
+};
+
 const defaultSocials = (): SocialSettings =>
-  Object.fromEntries(
-    SOCIAL_PLATFORMS.map(p => [p.key, { url: "", visible: false }])
-  ) as SocialSettings;
+  Object.fromEntries(SOCIAL_PLATFORMS.map(p => [p.key, { url: "", visible: false }])) as SocialSettings;
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState<Tab>("categories");
-
   const [toasts, setToasts] = useState<Toast[]>([]);
   const toastIdRef = useRef(0);
   const toast = useCallback((type: Toast["type"], message: string) => {
@@ -61,11 +66,9 @@ export default function Admin() {
 
   const [confirm, setConfirm] = useState<ConfirmState>({ open: false, message: "", onConfirm: () => {} });
   const askConfirm = (message: string, onConfirm: () => void) => setConfirm({ open: true, message, onConfirm });
-
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStep, setUploadStep] = useState("");
 
-  /* ── Categories ── */
   const [categoryName, setCategoryName] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
   const [categoryImage, setCategoryImage] = useState<File | null>(null);
@@ -73,7 +76,6 @@ export default function Admin() {
   const [categoryUploading, setCategoryUploading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
 
-  /* ── Products ── */
   const [productName, setProductName] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productDescription, setProductDescription] = useState("");
@@ -88,7 +90,6 @@ export default function Admin() {
     category_id: "", newImages: [], newImagePreviews: [], saving: false,
   });
 
-  /* ── Banners ── */
   const [bannerHeading, setBannerHeading] = useState("");
   const [bannerButtonText, setBannerButtonText] = useState("");
   const [bannerSortOrder, setBannerSortOrder] = useState("0");
@@ -98,12 +99,10 @@ export default function Admin() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [bannerUploading, setBannerUploading] = useState(false);
 
-  /* ── Orders ── */
   const [orders, setOrders] = useState<Order[]>([]);
   const [expandedOrder, setExpandedOrder] = useState<number | null>(null);
   const [orderFilter, setOrderFilter] = useState("all");
 
-  /* ── Carousel ── */
   const [carouselItems, setCarouselItems] = useState<CarouselItem[]>([]);
   const [carouselImage, setCarouselImage] = useState<File | null>(null);
   const [carouselPreview, setCarouselPreview] = useState("");
@@ -112,60 +111,43 @@ export default function Admin() {
   const [carouselSortOrder, setCarouselSortOrder] = useState("0");
   const [carouselUploading, setCarouselUploading] = useState(false);
 
-  /* ── Settings: WhatsApp ── */
   const [whatsappNumber, setWhatsappNumber] = useState("");
   const [whatsappSaving, setWhatsappSaving] = useState(false);
-
-  /* ── Settings: Admin Emails ── */
   const [adminEmails, setAdminEmails] = useState<string[]>([]);
   const [newAdminEmail, setNewAdminEmail] = useState("");
   const [adminEmailsSaving, setAdminEmailsSaving] = useState(false);
-
-  /* ── Settings: Social Media ── */
   const [socials, setSocials] = useState<SocialSettings>(defaultSocials());
   const [socialsSaving, setSocialsSaving] = useState(false);
-
-  /* ── Settings: Footer Message ── */
   const [footerMessage, setFooterMessage] = useState("");
   const [footerMessageSaving, setFooterMessageSaving] = useState(false);
 
-  /* ── Fetchers ── */
   const fetchCategories = useCallback(async () => {
-    const data = await fetchJSON<ApiResponse<Category>>("/api/categories");
-    setCategories(data.results || []);
+    const d = await fetchJSON<ApiResponse<Category>>("/api/categories");
+    setCategories(d.results || []);
   }, []);
-
   const fetchProducts = useCallback(async () => {
     const url = selectedCategory === "all" ? "/api/products" : `/api/products?category_id=${selectedCategory}`;
-    const data = await fetchJSON<ApiResponse<Product>>(url);
-    setProducts(data.results || []);
+    const d = await fetchJSON<ApiResponse<Product>>(url);
+    setProducts(d.results || []);
   }, [selectedCategory]);
-
   const fetchBanners = useCallback(async () => {
-    const data = await fetchJSON<ApiResponse<Banner>>("/api/banners");
-    setBanners(data.results || []);
+    const d = await fetchJSON<ApiResponse<Banner>>("/api/banners");
+    setBanners(d.results || []);
   }, []);
-
   const fetchOrders = useCallback(async () => {
-    const data = await fetchJSON<ApiResponse<Order>>("/api/orders?admin=true", { credentials: "include" });
-    setOrders(data.results || []);
+    const d = await fetchJSON<ApiResponse<Order>>("/api/orders?admin=true", { credentials: "include" });
+    setOrders(d.results || []);
   }, []);
-
   const fetchCarousel = useCallback(async () => {
-    const data = await fetchJSON<{ results: CarouselItem[] }>("/api/carousel");
-    setCarouselItems(data.results || []);
+    const d = await fetchJSON<{ results: CarouselItem[] }>("/api/carousel");
+    setCarouselItems(d.results || []);
   }, []);
-
   const fetchSettings = useCallback(async () => {
-    const data = await fetchJSON<{ settings: Record<string, string> }>("/api/settings");
-    if (data.settings?.whatsapp) setWhatsappNumber(data.settings.whatsapp);
-    if (data.settings?.admin_emails) {
-      try { setAdminEmails(JSON.parse(data.settings.admin_emails)); } catch { /* ignore */ }
-    }
-    if (data.settings?.socials) {
-      try { setSocials({ ...defaultSocials(), ...JSON.parse(data.settings.socials) }); } catch { /* ignore */ }
-    }
-    if (data.settings?.footer_message) setFooterMessage(data.settings.footer_message);
+    const d = await fetchJSON<{ settings: Record<string, string> }>("/api/settings");
+    if (d.settings?.whatsapp) setWhatsappNumber(d.settings.whatsapp);
+    if (d.settings?.admin_emails) { try { setAdminEmails(JSON.parse(d.settings.admin_emails)); } catch {} }
+    if (d.settings?.socials) { try { setSocials({ ...defaultSocials(), ...JSON.parse(d.settings.socials) }); } catch {} }
+    if (d.settings?.footer_message) setFooterMessage(d.settings.footer_message);
   }, []);
 
   useEffect(() => { fetchCategories(); }, [fetchCategories]);
@@ -175,269 +157,167 @@ export default function Admin() {
   useEffect(() => { fetchCarousel(); }, [fetchCarousel]);
   useEffect(() => { fetchSettings(); }, [fetchSettings]);
 
-  /* ── Upload with XHR ── */
-  const uploadImageWithProgress = (file: File, onProgress: (pct: number) => void): Promise<string> => {
-    return new Promise((resolve, reject) => {
+  const uploadImageWithProgress = (file: File, onProgress: (pct: number) => void): Promise<string> =>
+    new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      const formData = new FormData();
-      formData.append("file", file);
-      xhr.upload.addEventListener("progress", e => {
-        if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
-      });
+      const fd = new FormData();
+      fd.append("file", file);
+      xhr.upload.addEventListener("progress", e => { if (e.lengthComputable) onProgress(Math.round(e.loaded / e.total * 100)); });
       xhr.addEventListener("load", () => {
-        try {
-          const data = JSON.parse(xhr.responseText);
-          if (data.success) resolve(data.url);
-          else reject(new Error(data.error || "Upload failed"));
-        } catch { reject(new Error("Invalid response")); }
+        try { const d = JSON.parse(xhr.responseText); if (d.success) resolve(d.url); else reject(new Error(d.error)); }
+        catch { reject(new Error("Invalid response")); }
       });
       xhr.addEventListener("error", () => reject(new Error("Network error")));
       xhr.open("POST", "/api/upload/bannerUpload");
-      xhr.send(formData);
+      xhr.send(fd);
     });
-  };
 
-  /* ── Category Actions ── */
   const addCategory = async () => {
-    if (!categoryName.trim() || !categorySlug.trim()) { toast("error", "Please fill both Name and Slug fields."); return; }
+    if (!categoryName.trim() || !categorySlug.trim()) { toast("error", "Fill both name and slug."); return; }
     setCategoryUploading(true);
     try {
       let image_url: string | undefined;
-      if (categoryImage) {
-        setUploadStep("Uploading category image…"); setUploadProgress(0);
-        image_url = await uploadImageWithProgress(categoryImage, pct => setUploadProgress(pct));
-        setUploadProgress(100);
-      }
-      const res = await fetch("/api/categories", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: categoryName.trim(), slug: categorySlug.trim(), image_url }),
-      });
-      if (res.ok) {
-        setCategoryName(""); setCategorySlug(""); setCategoryImage(null); setCategoryImagePreview("");
-        fetchCategories(); toast("success", `Category "${categoryName.trim()}" added.`);
-      } else { toast("error", "Failed to add category."); }
+      if (categoryImage) { setUploadStep("Uploading image…"); image_url = await uploadImageWithProgress(categoryImage, pct => setUploadProgress(pct)); }
+      const res = await fetch("/api/categories", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: categoryName.trim(), slug: categorySlug.trim(), image_url }) });
+      if (res.ok) { setCategoryName(""); setCategorySlug(""); setCategoryImage(null); setCategoryImagePreview(""); fetchCategories(); toast("success", `"${categoryName.trim()}" added!`); }
+      else toast("error", "Failed to add category.");
     } catch { toast("error", "Upload failed."); }
     finally { setCategoryUploading(false); setUploadProgress(0); setUploadStep(""); }
   };
 
-  const deleteCategory = (id: number, name: string) => {
-    askConfirm(`Delete category "${name}"? This cannot be undone.`, async () => {
-      const res = await fetch("/api/categories", {
-        method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }),
-      });
-      if (res.ok) { fetchCategories(); toast("success", `Category "${name}" deleted.`); }
-      else toast("error", "Failed to delete category.");
-    });
-  };
+  const deleteCategory = (id: number, name: string) => askConfirm(`Delete "${name}"?`, async () => {
+    const res = await fetch("/api/categories", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+    if (res.ok) { fetchCategories(); toast("success", `"${name}" deleted.`); } else toast("error", "Failed.");
+  });
 
-  /* ── Product Actions ── */
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     setProductImages(prev => [...prev, ...files]);
     setImagePreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f))]);
   };
-  const removeImage = (index: number) => {
-    setProductImages(prev => prev.filter((_, i) => i !== index));
-    setImagePreviews(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const openEditModal = (product: Product) => {
-    setEditModal({ open: true, product, name: product.name, price: String(product.price), description: product.description || "", category_id: String(product.category_id), newImages: [], newImagePreviews: [], saving: false });
-  };
+  const removeImage = (i: number) => { setProductImages(prev => prev.filter((_, j) => j !== i)); setImagePreviews(prev => prev.filter((_, j) => j !== i)); };
+  const openEditModal = (p: Product) => setEditModal({ open: true, product: p, name: p.name, price: String(p.price), description: p.description || "", category_id: String(p.category_id), newImages: [], newImagePreviews: [], saving: false });
   const closeEditModal = () => setEditModal(prev => ({ ...prev, open: false, newImages: [], newImagePreviews: [] }));
 
-  const handleEditImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setEditModal(prev => ({ ...prev, newImages: [...prev.newImages, ...files], newImagePreviews: [...prev.newImagePreviews, ...files.map(f => URL.createObjectURL(f))] }));
-  };
-
   const saveProductEdit = async () => {
-    if (!editModal.product) return;
-    if (!editModal.name.trim() || !editModal.price || !editModal.category_id) { toast("error", "Please fill all required fields."); return; }
+    if (!editModal.product || !editModal.name.trim() || !editModal.price || !editModal.category_id) { toast("error", "Fill all required fields."); return; }
     setEditModal(prev => ({ ...prev, saving: true }));
     try {
       let image_url = editModal.product.image_url;
-      if (editModal.newImages.length > 0) {
-        setUploadStep("Uploading new image…"); setUploadProgress(0);
-        image_url = await uploadImageWithProgress(editModal.newImages[0], pct => setUploadProgress(pct));
-        setUploadProgress(100);
-      }
-      const res = await fetch("/api/products", {
-        method: "PATCH", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: editModal.product.id, name: editModal.name.trim(), price: parseFloat(editModal.price), description: editModal.description.trim(), category_id: parseInt(editModal.category_id), image_url }),
-      });
-      if (res.ok) { fetchProducts(); toast("success", `"${editModal.name.trim()}" updated.`); closeEditModal(); }
-      else toast("error", "Failed to update product.");
-    } catch { toast("error", "Update failed."); }
+      if (editModal.newImages.length > 0) { setUploadStep("Uploading…"); image_url = await uploadImageWithProgress(editModal.newImages[0], pct => setUploadProgress(pct)); }
+      const res = await fetch("/api/products", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: editModal.product.id, name: editModal.name.trim(), price: parseFloat(editModal.price), description: editModal.description.trim(), category_id: parseInt(editModal.category_id), image_url }) });
+      if (res.ok) { fetchProducts(); toast("success", "Updated!"); closeEditModal(); } else toast("error", "Failed.");
+    } catch { toast("error", "Error."); }
     finally { setEditModal(prev => ({ ...prev, saving: false })); setUploadProgress(0); setUploadStep(""); }
   };
 
   const addProduct = async () => {
-    if (!productName.trim() || !productPrice || !productCategory) { toast("error", "Please fill all required fields."); return; }
-    setUploading(true); setUploadProgress(0);
+    if (!productName.trim() || !productPrice || !productCategory) { toast("error", "Fill all required fields."); return; }
+    setUploading(true);
     try {
-      const image_urls: string[] = [];
-      const total = productImages.length;
-      for (let i = 0; i < total; i++) {
-        setUploadStep(total > 1 ? `Uploading image ${i + 1} of ${total}…` : "Uploading image…");
-        const url = await uploadImageWithProgress(productImages[i], pct => {
-          setUploadProgress(Math.round(((i * 100) + pct) / Math.max(total, 1)));
-        });
-        image_urls.push(url);
+      const urls: string[] = [];
+      for (let i = 0; i < productImages.length; i++) {
+        setUploadStep(`Uploading ${i + 1}/${productImages.length}…`);
+        urls.push(await uploadImageWithProgress(productImages[i], pct => setUploadProgress(Math.round((i * 100 + pct) / productImages.length))));
       }
-      setUploadStep("Saving product…"); setUploadProgress(100);
-      const res = await fetch("/api/products", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: productName.trim(), price: parseFloat(productPrice), description: productDescription.trim(), category_id: parseInt(productCategory), image_urls }),
-      });
-      if (res.ok) {
-        setProductName(""); setProductPrice(""); setProductDescription(""); setProductCategory(""); setProductImages([]); setImagePreviews([]);
-        fetchProducts(); toast("success", `"${productName.trim()}" added.`);
-      } else toast("error", "Failed to save product.");
+      const res = await fetch("/api/products", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: productName.trim(), price: parseFloat(productPrice), description: productDescription.trim(), category_id: parseInt(productCategory), image_urls: urls }) });
+      if (res.ok) { setProductName(""); setProductPrice(""); setProductDescription(""); setProductCategory(""); setProductImages([]); setImagePreviews([]); fetchProducts(); toast("success", `"${productName.trim()}" added!`); }
+      else toast("error", "Failed.");
     } catch { toast("error", "Upload failed."); }
     finally { setUploading(false); setUploadProgress(0); setUploadStep(""); }
   };
 
-  const deleteProduct = (id: number, name: string) => {
-    askConfirm(`Delete "${name}"? This cannot be undone.`, async () => {
-      const res = await fetch("/api/products", {
-        method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }),
-      });
-      if (res.ok) { fetchProducts(); toast("success", "Product deleted."); }
-      else toast("error", "Failed to delete product.");
-    });
-  };
+  const deleteProduct = (id: number, name: string) => askConfirm(`Delete "${name}"?`, async () => {
+    const res = await fetch("/api/products", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+    if (res.ok) { fetchProducts(); toast("success", "Deleted!"); } else toast("error", "Failed.");
+  });
 
-  const copyProductLink = (id: number, name: string) => {
-    navigator.clipboard.writeText(`${window.location.origin}/products/${id}`)
-      .then(() => toast("success", `Link for "${name}" copied.`))
-      .catch(() => toast("error", "Failed to copy link."));
-  };
+  const copyProductLink = (id: number, name: string) => navigator.clipboard.writeText(`${window.location.origin}/products/${id}`).then(() => toast("success", `Link copied!`)).catch(() => toast("error", "Copy failed."));
 
-  /* ── Banner Actions ── */
   const addBanner = async () => {
-    if (!bannerHeading.trim() || !bannerButtonText.trim() || !bannerImage) { toast("error", "Please fill all fields and select an image."); return; }
-    setBannerUploading(true); setUploadProgress(0); setUploadStep("Uploading banner image…");
+    if (!bannerHeading.trim() || !bannerButtonText.trim() || !bannerImage) { toast("error", "Fill all fields."); return; }
+    setBannerUploading(true); setUploadStep("Uploading…");
     try {
       const image_url = await uploadImageWithProgress(bannerImage, pct => setUploadProgress(pct));
-      setUploadStep("Saving banner…"); setUploadProgress(100);
-      const res = await fetch("/api/banners", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image_url, heading: bannerHeading.trim(), button_text: bannerButtonText.trim(), sort_order: parseInt(bannerSortOrder) || 0, link_to: bannerLinkTo.trim() || null }),
-      });
-      if (res.ok) {
-        setBannerHeading(""); setBannerButtonText(""); setBannerSortOrder("0"); setBannerLinkTo(""); setBannerImage(null); setBannerPreview("");
-        fetchBanners(); toast("success", "Banner added.");
-      } else toast("error", "Failed to save banner.");
-    } catch { toast("error", "Banner upload failed."); }
+      const res = await fetch("/api/banners", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image_url, heading: bannerHeading.trim(), button_text: bannerButtonText.trim(), sort_order: parseInt(bannerSortOrder) || 0, link_to: bannerLinkTo.trim() || null }) });
+      if (res.ok) { setBannerHeading(""); setBannerButtonText(""); setBannerSortOrder("0"); setBannerLinkTo(""); setBannerImage(null); setBannerPreview(""); fetchBanners(); toast("success", "Banner added!"); }
+      else toast("error", "Failed.");
+    } catch { toast("error", "Upload failed."); }
     finally { setBannerUploading(false); setUploadProgress(0); setUploadStep(""); }
   };
 
-  const deleteBanner = (id: number, heading: string) => {
-    askConfirm(`Delete banner "${heading}"?`, async () => {
-      const res = await fetch("/api/banners", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
-      if (res.ok) { fetchBanners(); toast("success", "Banner deleted."); }
-      else toast("error", "Failed to delete banner.");
-    });
-  };
+  const deleteBanner = (id: number, heading: string) => askConfirm(`Delete "${heading}"?`, async () => {
+    const res = await fetch("/api/banners", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+    if (res.ok) { fetchBanners(); toast("success", "Deleted!"); } else toast("error", "Failed.");
+  });
 
-  /* ── Order Actions ── */
   const updateOrderStatus = async (orderId: number, status: string) => {
-    const res = await fetch("/api/orders", {
-      method: "PATCH", headers: { "Content-Type": "application/json" },
-      credentials: "include", body: JSON.stringify({ id: orderId, status }),
-    });
-    if (res.ok) { fetchOrders(); toast("success", `Order #${String(orderId).padStart(6, "0")} marked as ${status}.`); }
-    else toast("error", "Failed to update order status.");
+    const res = await fetch("/api/orders", { method: "PATCH", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ id: orderId, status }) });
+    if (res.ok) { fetchOrders(); toast("success", `Order marked ${status}.`); } else toast("error", "Failed.");
   };
 
-  const deleteOrder = (id: number) => {
-    askConfirm(`Delete order #${String(id).padStart(6, "0")}? This cannot be undone.`, async () => {
-      const res = await fetch("/api/orders", {
-        method: "DELETE", headers: { "Content-Type": "application/json" },
-        credentials: "include", body: JSON.stringify({ id }),
-      });
-      if (res.ok) { fetchOrders(); toast("success", `Order #${String(id).padStart(6, "0")} deleted.`); }
-      else toast("error", "Failed to delete order.");
-    });
-  };
+  const deleteOrder = (id: number) => askConfirm(`Delete order #${String(id).padStart(6, "0")}?`, async () => {
+    const res = await fetch("/api/orders", { method: "DELETE", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ id }) });
+    if (res.ok) { fetchOrders(); toast("success", "Order deleted."); } else toast("error", "Failed.");
+  });
 
-  /* ── Carousel Actions ── */
   const addCarouselItem = async () => {
-    if (!carouselImage || !carouselLinkValue.trim()) { toast("error", "Please select an image and set a link value."); return; }
-    setCarouselUploading(true); setUploadStep("Uploading carousel image…"); setUploadProgress(0);
+    if (!carouselImage || !carouselLinkValue.trim()) { toast("error", "Select image and link."); return; }
+    setCarouselUploading(true); setUploadStep("Uploading…");
     try {
       const image_url = await uploadImageWithProgress(carouselImage, pct => setUploadProgress(pct));
-      setUploadProgress(100); setUploadStep("Saving…");
-      const res = await fetch("/api/carousel", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image_url, link_type: carouselLinkType, link_value: carouselLinkValue.trim(), sort_order: parseInt(carouselSortOrder) || 0 }),
-      });
-      if (res.ok) {
-        setCarouselImage(null); setCarouselPreview(""); setCarouselLinkValue(""); setCarouselSortOrder("0");
-        fetchCarousel(); toast("success", "Carousel item added.");
-      } else toast("error", "Failed to add carousel item.");
+      const res = await fetch("/api/carousel", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image_url, link_type: carouselLinkType, link_value: carouselLinkValue.trim(), sort_order: parseInt(carouselSortOrder) || 0 }) });
+      if (res.ok) { setCarouselImage(null); setCarouselPreview(""); setCarouselLinkValue(""); setCarouselSortOrder("0"); fetchCarousel(); toast("success", "Added!"); }
+      else toast("error", "Failed.");
     } catch { toast("error", "Upload failed."); }
     finally { setCarouselUploading(false); setUploadProgress(0); setUploadStep(""); }
   };
 
-  const deleteCarouselItem = (id: number) => {
-    askConfirm("Delete this carousel image?", async () => {
-      const res = await fetch("/api/carousel", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
-      if (res.ok) { fetchCarousel(); toast("success", "Carousel item deleted."); }
-      else toast("error", "Failed to delete.");
-    });
-  };
+  const deleteCarouselItem = (id: number) => askConfirm("Delete this carousel image?", async () => {
+    const res = await fetch("/api/carousel", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+    if (res.ok) { fetchCarousel(); toast("success", "Deleted!"); } else toast("error", "Failed.");
+  });
 
-  /* ── Settings: WhatsApp ── */
   const saveWhatsapp = async () => {
-    if (!whatsappNumber.trim()) { toast("error", "Enter a phone number."); return; }
+    if (!whatsappNumber.trim()) { toast("error", "Enter a number."); return; }
     setWhatsappSaving(true);
     const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "whatsapp", value: whatsappNumber.trim() }) });
     setWhatsappSaving(false);
-    if (res.ok) toast("success", "WhatsApp number saved.");
-    else toast("error", "Failed to save.");
+    if (res.ok) toast("success", "Saved!"); else toast("error", "Failed.");
   };
 
-  /* ── Settings: Admin Emails ── */
   const addAdminEmail = async () => {
     const email = newAdminEmail.trim().toLowerCase();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast("error", "Enter a valid email address."); return; }
-    if (adminEmails.includes(email)) { toast("error", "This email is already an admin."); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast("error", "Invalid email."); return; }
+    if (adminEmails.includes(email)) { toast("error", "Already an admin."); return; }
     const updated = [...adminEmails, email];
     setAdminEmailsSaving(true);
     const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "admin_emails", value: JSON.stringify(updated) }) });
     setAdminEmailsSaving(false);
-    if (res.ok) { setAdminEmails(updated); setNewAdminEmail(""); toast("success", `${email} added as admin.`); }
-    else toast("error", "Failed to save admin emails.");
+    if (res.ok) { setAdminEmails(updated); setNewAdminEmail(""); toast("success", `${email} added!`); } else toast("error", "Failed.");
   };
 
   const removeAdminEmail = (email: string) => {
-    if (adminEmails.length <= 1) { toast("error", "You must keep at least one admin email."); return; }
-    askConfirm(`Remove ${email} from admins?`, async () => {
+    if (adminEmails.length <= 1) { toast("error", "Keep at least one admin."); return; }
+    askConfirm(`Remove ${email}?`, async () => {
       const updated = adminEmails.filter(e => e !== email);
       const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "admin_emails", value: JSON.stringify(updated) }) });
-      if (res.ok) { setAdminEmails(updated); toast("success", `${email} removed.`); }
-      else toast("error", "Failed to update admin emails.");
+      if (res.ok) { setAdminEmails(updated); toast("success", "Removed."); } else toast("error", "Failed.");
     });
   };
 
-  /* ── Settings: Socials ── */
   const saveSocials = async () => {
     setSocialsSaving(true);
     const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "socials", value: JSON.stringify(socials) }) });
     setSocialsSaving(false);
-    if (res.ok) toast("success", "Social links saved.");
-    else toast("error", "Failed to save social links.");
+    if (res.ok) toast("success", "Saved!"); else toast("error", "Failed.");
   };
 
-  /* ── Settings: Footer Message ── */
   const saveFooterMessage = async () => {
     setFooterMessageSaving(true);
     const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "footer_message", value: footerMessage }) });
     setFooterMessageSaving(false);
-    if (res.ok) toast("success", "Footer message saved.");
-    else toast("error", "Failed to save footer message.");
+    if (res.ok) toast("success", "Saved!"); else toast("error", "Failed.");
   };
 
   const isUploading = uploading || bannerUploading || editModal.saving || categoryUploading || carouselUploading;
@@ -447,212 +327,173 @@ export default function Admin() {
       <Navbar />
       <style>{css}</style>
 
-      {/* ── Toasts ── */}
-      <div className="toast-stack">
+      {/* Toasts */}
+      <div className="f-toasts">
         {toasts.map(t => (
-          <div key={t.id} className={`toast toast--${t.type}`}>
-            <span className="toast__icon">
-              {t.type === "success" && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
-              {t.type === "error"   && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>}
-              {t.type === "info"    && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>}
-            </span>
-            <span className="toast__msg">{t.message}</span>
-            <button className="toast__close" onClick={() => setToasts(prev => prev.filter(x => x.id !== t.id))}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
+          <div key={t.id} className={`f-toast f-toast--${t.type}`}>
+            <span className="f-toast__dot"/>
+            <span className="f-toast__msg">{t.message}</span>
+            <button className="f-toast__x" onClick={() => setToasts(p => p.filter(x => x.id !== t.id))}>×</button>
           </div>
         ))}
       </div>
 
-      {/* ── Confirm Dialog ── */}
+      {/* Confirm */}
       {confirm.open && (
-        <div className="confirm-overlay" onClick={() => setConfirm(c => ({ ...c, open: false }))}>
-          <div className="confirm-box" onClick={e => e.stopPropagation()}>
-            <div className="confirm-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            </div>
-            <p className="confirm-msg">{confirm.message}</p>
-            <div className="confirm-btns">
-              <button className="adm-btn adm-btn--ghost" onClick={() => setConfirm(c => ({ ...c, open: false }))}>Cancel</button>
-              <button className="adm-btn adm-btn--danger" onClick={() => { confirm.onConfirm(); setConfirm(c => ({ ...c, open: false })); }}>Delete</button>
+        <div className="f-overlay" onClick={() => setConfirm(c => ({ ...c, open: false }))}>
+          <div className="f-dialog" onClick={e => e.stopPropagation()}>
+            <div className="f-dialog__icon">⚠</div>
+            <p className="f-dialog__msg">{confirm.message}</p>
+            <div className="f-dialog__btns">
+              <button className="f-btn f-btn--ghost" onClick={() => setConfirm(c => ({ ...c, open: false }))}>Cancel</button>
+              <button className="f-btn f-btn--red" onClick={() => { confirm.onConfirm(); setConfirm(c => ({ ...c, open: false })); }}>Delete</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── Edit Product Modal ── */}
+      {/* Edit Modal */}
       {editModal.open && (
-        <div className="edit-overlay" onClick={closeEditModal}>
-          <div className="edit-modal" onClick={e => e.stopPropagation()}>
-            <div className="edit-modal__header">
-              <div className="edit-modal__header-left">
-                <div className="edit-modal__icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <div className="f-overlay" onClick={closeEditModal}>
+          <div className="f-modal" onClick={e => e.stopPropagation()}>
+            <div className="f-modal__head">
+              <span className="f-modal__title">✏️ Edit Product <span style={{ color: "#aaa", fontWeight: 400 }}>#{editModal.product?.id}</span></span>
+              <button className="f-modal__close" onClick={closeEditModal}>×</button>
+            </div>
+            <div className="f-modal__body">
+              <div className="f-img-row">
+                <div className="f-img-preview">
+                  {editModal.newImagePreviews.length > 0
+                    ? <img src={editModal.newImagePreviews[0]} alt=""/>
+                    : editModal.product?.image_url
+                      ? <img src={editModal.product.image_url} alt=""/>
+                      : <span>No image</span>}
                 </div>
                 <div>
-                  <h2 className="edit-modal__title">Edit Product</h2>
-                  <p className="edit-modal__subtitle">ID #{editModal.product?.id}</p>
-                </div>
-              </div>
-              <button className="edit-modal__close" onClick={closeEditModal}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-            <div className="edit-modal__body">
-              <div className="edit-modal__img-section">
-                <div className="edit-modal__current-img-wrap">
-                  {editModal.newImagePreviews.length > 0
-                    ? <img src={editModal.newImagePreviews[0]} className="edit-modal__current-img" alt=""/>
-                    : editModal.product?.image_url
-                      ? <img src={editModal.product.image_url} className="edit-modal__current-img" alt=""/>
-                      : <div className="edit-modal__no-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>}
-                  {editModal.newImagePreviews.length > 0 && (
-                    <button className="edit-modal__img-clear" onClick={() => setEditModal(prev => ({ ...prev, newImages: [], newImagePreviews: [] }))}>
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
-                  )}
-                </div>
-                <div className="edit-modal__img-actions">
-                  <p className="edit-modal__img-label">{editModal.newImagePreviews.length > 0 ? "New image selected" : "Current image"}</p>
-                  <label className="adm-file-label" style={{ fontSize: "0.75rem", padding: "7px 14px" }}>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    Replace Image
-                    <input type="file" accept="image/*" onChange={handleEditImageSelect} style={{ display: "none" }}/>
+                  <label className="f-file-btn">
+                    📷 Replace Image
+                    <input type="file" accept="image/*" onChange={e => { const files = Array.from(e.target.files || []); setEditModal(prev => ({ ...prev, newImages: files, newImagePreviews: files.map(f => URL.createObjectURL(f)) })); }} style={{ display: "none" }}/>
                   </label>
-                  <p className="edit-modal__img-hint">Replaces the cover image</p>
+                  {editModal.newImagePreviews.length > 0 && <button className="f-clear-btn" onClick={() => setEditModal(prev => ({ ...prev, newImages: [], newImagePreviews: [] }))}>Clear</button>}
                 </div>
               </div>
-              <div className="adm-stack">
-                <div className="adm-row">
-                  <div className="adm-field">
-                    <label className="adm-label">Product Name</label>
-                    <input className="adm-input" placeholder="Product name" value={editModal.name} onChange={e => setEditModal(prev => ({ ...prev, name: e.target.value }))}/>
-                  </div>
-                  <div className="adm-field">
-                    <label className="adm-label">Price (RS)</label>
-                    <input className="adm-input" type="number" placeholder="0.00" value={editModal.price} onChange={e => setEditModal(prev => ({ ...prev, price: e.target.value }))}/>
-                  </div>
-                </div>
-                <div className="adm-field">
-                  <label className="adm-label">Description</label>
-                  <textarea className="adm-input adm-textarea" placeholder="Product description…" value={editModal.description} onChange={e => setEditModal(prev => ({ ...prev, description: e.target.value }))}/>
-                </div>
-                <div className="adm-field">
-                  <label className="adm-label">Category</label>
-                  <select className="adm-input adm-select" value={editModal.category_id} onChange={e => setEditModal(prev => ({ ...prev, category_id: e.target.value }))}>
-                    <option value="">Select category</option>
-                    {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
-                  </select>
-                </div>
-                {editModal.saving && uploadStep && (
-                  <div className="adm-progress-wrap">
-                    <div className="adm-progress-header"><span className="adm-progress-step">{uploadStep}</span><span className="adm-progress-pct">{uploadProgress}%</span></div>
-                    <div className="adm-progress-track"><div className="adm-progress-fill" style={{ width: `${uploadProgress}%` }}/></div>
-                  </div>
-                )}
+              <div className="f-grid-2">
+                <div className="f-field"><label className="f-label">Name</label><input className="f-input" value={editModal.name} onChange={e => setEditModal(p => ({ ...p, name: e.target.value }))}/></div>
+                <div className="f-field"><label className="f-label">Price (RS)</label><input className="f-input" type="number" value={editModal.price} onChange={e => setEditModal(p => ({ ...p, price: e.target.value }))}/></div>
               </div>
+              <div className="f-field"><label className="f-label">Description</label><textarea className="f-input f-textarea" value={editModal.description} onChange={e => setEditModal(p => ({ ...p, description: e.target.value }))}/></div>
+              <div className="f-field">
+                <label className="f-label">Category</label>
+                <select className="f-input f-select" value={editModal.category_id} onChange={e => setEditModal(p => ({ ...p, category_id: e.target.value }))}>
+                  <option value="">Select</option>
+                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+              </div>
+              {editModal.saving && <div className="f-prog"><div className="f-prog__bar" style={{ width: `${uploadProgress}%` }}/></div>}
             </div>
-            <div className="edit-modal__footer">
-              <button className="adm-btn adm-btn--ghost" onClick={closeEditModal} disabled={editModal.saving}>Cancel</button>
-              <button className="adm-btn adm-btn--primary" onClick={saveProductEdit} disabled={editModal.saving}>
-                {editModal.saving
-                  ? <><span className="adm-spinner"/>{uploadStep || "Saving…"}</>
-                  : <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>Save Changes</>}
+            <div className="f-modal__foot">
+              <button className="f-btn f-btn--ghost" onClick={closeEditModal} disabled={editModal.saving}>Cancel</button>
+              <button className="f-btn f-btn--green" onClick={saveProductEdit} disabled={editModal.saving}>
+                {editModal.saving ? "Saving…" : "✓ Save Changes"}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── Global Upload Bar ── */}
+      {/* Upload bar */}
       {isUploading && !editModal.open && (
-        <div className="upload-bar-wrap">
-          <div className="upload-bar-inner">
-            <div className="upload-bar-header"><span className="upload-bar-step">{uploadStep}</span><span className="upload-bar-pct">{uploadProgress}%</span></div>
-            <div className="upload-bar-track"><div className="upload-bar-fill" style={{ width: `${uploadProgress}%` }}/></div>
-          </div>
+        <div className="f-upload-bar">
+          <span>{uploadStep || "Uploading…"}</span>
+          <div className="f-upload-bar__track"><div className="f-upload-bar__fill" style={{ width: `${uploadProgress}%` }}/></div>
+          <span>{uploadProgress}%</span>
         </div>
       )}
 
-      <div className="adm-page">
-        {/* ── Header ── */}
-        <div className="adm-header">
+      <div className="f-page">
+
+        {/* Header */}
+        <div className="f-header">
           <div>
-            <span className="adm-chip">Admin Panel</span>
-            <h1 className="adm-title">Dashboard</h1>
+            <div className="f-badge">Admin Panel</div>
+            <h1 className="f-title">Dashboard</h1>
           </div>
-          <div className="adm-stats">
-            <div className="adm-stat"><span className="adm-stat__num">{categories.length}</span><span className="adm-stat__label">Categories</span></div>
-            <div className="adm-stat"><span className="adm-stat__num">{products.length}</span><span className="adm-stat__label">Products</span></div>
-            <div className="adm-stat"><span className="adm-stat__num">{orders.length}</span><span className="adm-stat__label">Orders</span></div>
-            <div className="adm-stat"><span className="adm-stat__num">{carouselItems.length}</span><span className="adm-stat__label">Carousel</span></div>
+          <div className="f-stats">
+            {[
+              { n: categories.length, l: "Categories", c: "#FF3E5E" },
+              { n: products.length,   l: "Products",   c: "#00D084" },
+              { n: orders.length,     l: "Orders",     c: "#7C3AED" },
+              { n: carouselItems.length, l: "Carousel", c: "#FF8C00" },
+            ].map(s => (
+              <div key={s.l} className="f-stat" style={{ borderColor: s.c }}>
+                <span className="f-stat__n" style={{ color: s.c }}>{s.n}</span>
+                <span className="f-stat__l">{s.l}</span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* ── Tabs ── */}
-        <div className="adm-tabs">
+        {/* Tabs */}
+        <div className="f-tabs">
           {TABS.map(tab => (
-            <button key={tab} className={`adm-tab ${activeTab === tab ? "adm-tab--active" : ""}`} onClick={() => setActiveTab(tab)}>
-              {tab === "categories" && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>}
-              {tab === "products"   && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>}
-              {tab === "banners"    && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>}
-              {tab === "orders"     && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>}
-              {tab === "carousel"   && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M17 2l5 5-5 5"/><path d="M7 2L2 7l5 5"/></svg>}
-              {tab === "settings"   && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>}
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            <button
+              key={tab}
+              className={`f-tab ${activeTab === tab ? "f-tab--active" : ""}`}
+              style={activeTab === tab ? { background: TAB_COLORS[tab], color: tab === "banners" ? "#111" : "#fff", borderColor: TAB_COLORS[tab], boxShadow: `3px 3px 0 #111` } : {}}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab === "categories" && "🗂"}
+              {tab === "products"   && "📦"}
+              {tab === "banners"    && "🖼"}
+              {tab === "orders"     && "🧾"}
+              {tab === "carousel"   && "🎠"}
+              {tab === "settings"   && "⚙️"}
+              {" "}{tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
           ))}
         </div>
 
-        {/* ══ CATEGORIES TAB ══ */}
+        {/* ══ CATEGORIES ══ */}
         {activeTab === "categories" && (
-          <div className="adm-section">
-            <div className="adm-card">
-              <h2 className="adm-card__title">Add Category</h2>
-              <div className="adm-stack">
-                <div className="adm-row">
-                  <div className="adm-field"><label className="adm-label">Name</label><input className="adm-input" placeholder="e.g. Electronics" value={categoryName} onChange={e => setCategoryName(e.target.value)} onKeyDown={e => e.key === "Enter" && addCategory()}/></div>
-                  <div className="adm-field"><label className="adm-label">Slug</label><input className="adm-input" placeholder="e.g. electronics" value={categorySlug} onChange={e => setCategorySlug(e.target.value)} onKeyDown={e => e.key === "Enter" && addCategory()}/></div>
+          <div className="f-section">
+            <div className="f-card" style={{ borderTopColor: "#FF3E5E" }}>
+              <h2 className="f-card-title">🗂 Add Category</h2>
+              <div className="f-stack">
+                <div className="f-grid-2">
+                  <div className="f-field"><label className="f-label">Name</label><input className="f-input" placeholder="e.g. Lipsticks" value={categoryName} onChange={e => setCategoryName(e.target.value)} onKeyDown={e => e.key === "Enter" && addCategory()}/></div>
+                  <div className="f-field"><label className="f-label">Slug</label><input className="f-input" placeholder="e.g. lipsticks" value={categorySlug} onChange={e => setCategorySlug(e.target.value)} onKeyDown={e => e.key === "Enter" && addCategory()}/></div>
                 </div>
-                <div className="adm-field">
-                  <label className="adm-label">Category Image <span className="adm-label__hint"> — shown in homepage circles</span></label>
-                  <label className="adm-file-label">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    Choose Image
-                    <input type="file" accept="image/*" style={{ display: "none" }} onChange={e => { const f = e.target.files?.[0] || null; setCategoryImage(f); setCategoryImagePreview(f ? URL.createObjectURL(f) : ""); }}/>
-                  </label>
+                <div className="f-field">
+                  <label className="f-label">Circle Image <span className="f-hint-text">shown on homepage</span></label>
+                  <label className="f-file-btn">📷 Choose Image<input type="file" accept="image/*" style={{ display: "none" }} onChange={e => { const f = e.target.files?.[0] || null; setCategoryImage(f); setCategoryImagePreview(f ? URL.createObjectURL(f) : ""); }}/></label>
                   {categoryImagePreview && (
                     <div style={{ position: "relative", display: "inline-block", marginTop: 10 }}>
-                      <img src={categoryImagePreview} style={{ width: 68, height: 68, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(255,255,255,0.1)", display: "block" }} alt=""/>
-                      <button onClick={() => { setCategoryImage(null); setCategoryImagePreview(""); }} style={{ position: "absolute", top: -6, right: -6, width: 20, height: 20, background: "var(--danger)", color: "#fff", border: "none", borderRadius: "50%", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>×</button>
+                      <img src={categoryImagePreview} style={{ width: 64, height: 64, borderRadius: "50%", objectFit: "cover", border: "3px solid #111", boxShadow: "3px 3px 0 #FF3E5E", display: "block" }} alt=""/>
+                      <button onClick={() => { setCategoryImage(null); setCategoryImagePreview(""); }} style={{ position: "absolute", top: -8, right: -8, width: 22, height: 22, background: "#FF3E5E", color: "#fff", border: "2px solid #111", borderRadius: "50%", cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
                     </div>
                   )}
                 </div>
-                {categoryUploading && (
-                  <div className="adm-progress-wrap">
-                    <div className="adm-progress-header"><span className="adm-progress-step">{uploadStep}</span><span className="adm-progress-pct">{uploadProgress}%</span></div>
-                    <div className="adm-progress-track"><div className="adm-progress-fill" style={{ width: `${uploadProgress}%` }}/></div>
-                  </div>
-                )}
-                <button className="adm-btn adm-btn--primary" onClick={addCategory} disabled={categoryUploading} style={{ alignSelf: "flex-start" }}>
-                  {categoryUploading ? <><span className="adm-spinner"/>{uploadStep || "Uploading…"}</> : "Add Category"}
+                {categoryUploading && <div className="f-prog"><div className="f-prog__bar" style={{ width: `${uploadProgress}%`, background: "#FF3E5E" }}/></div>}
+                <button className="f-btn f-btn--red" onClick={addCategory} disabled={categoryUploading} style={{ alignSelf: "flex-start" }}>
+                  {categoryUploading ? "Uploading…" : "+ Add Category"}
                 </button>
               </div>
             </div>
-            <div className="adm-card">
-              <h2 className="adm-card__title">All Categories <span className="adm-card__count">{categories.length}</span></h2>
-              {categories.length === 0 ? <p className="adm-empty">No categories yet.</p> : (
-                <div className="adm-table-wrap">
-                  <table className="adm-table">
-                    <thead><tr><th>Image</th><th>ID</th><th>Name</th><th>Slug</th><th></th></tr></thead>
+
+            <div className="f-card" style={{ borderTopColor: "#FF3E5E" }}>
+              <h2 className="f-card-title">All Categories <span className="f-count">{categories.length}</span></h2>
+              {categories.length === 0 ? <p className="f-empty">No categories yet.</p> : (
+                <div className="f-table-wrap">
+                  <table className="f-table">
+                    <thead><tr><th>IMG</th><th>ID</th><th>Name</th><th>Slug</th><th></th></tr></thead>
                     <tbody>
                       {categories.map(cat => (
                         <tr key={cat.id}>
-                          <td>{cat.image_url ? <img src={cat.image_url} style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", border: "1px solid var(--border)" }} alt=""/> : <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--surface2)", border: "1px dashed var(--border-hi)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-3)", fontSize: 10 }}>—</div>}</td>
-                          <td><span className="adm-id">#{cat.id}</span></td>
-                          <td>{cat.name}</td>
-                          <td><code className="adm-slug">{cat.slug}</code></td>
-                          <td><button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => deleteCategory(cat.id, cat.name)}>Delete</button></td>
+                          <td>{cat.image_url ? <img src={cat.image_url} style={{ width: 38, height: 38, borderRadius: "50%", objectFit: "cover", border: "2px solid #111" }} alt=""/> : <div style={{ width: 38, height: 38, borderRadius: "50%", background: "#FFE14D", border: "2px solid #111", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>?</div>}</td>
+                          <td><code className="f-code">#{cat.id}</code></td>
+                          <td><strong>{cat.name}</strong></td>
+                          <td><code className="f-code">{cat.slug}</code></td>
+                          <td><button className="f-btn f-btn--red f-btn--sm" onClick={() => deleteCategory(cat.id, cat.name)}>Delete</button></td>
                         </tr>
                       ))}
                     </tbody>
@@ -663,91 +504,76 @@ export default function Admin() {
           </div>
         )}
 
-        {/* ══ PRODUCTS TAB ══ */}
+        {/* ══ PRODUCTS ══ */}
         {activeTab === "products" && (
-          <div className="adm-section">
-            <div className="adm-card">
-              <h2 className="adm-card__title">Add Product</h2>
-              <div className="adm-stack">
-                <div className="adm-row">
-                  <div className="adm-field"><label className="adm-label">Product Name</label><input className="adm-input" placeholder="Product name" value={productName} onChange={e => setProductName(e.target.value)}/></div>
-                  <div className="adm-field"><label className="adm-label">Price (RS)</label><input className="adm-input" type="number" placeholder="0.00" value={productPrice} onChange={e => setProductPrice(e.target.value)}/></div>
+          <div className="f-section">
+            <div className="f-card" style={{ borderTopColor: "#00D084" }}>
+              <h2 className="f-card-title">📦 Add Product</h2>
+              <div className="f-stack">
+                <div className="f-grid-2">
+                  <div className="f-field"><label className="f-label">Name</label><input className="f-input" placeholder="Product name" value={productName} onChange={e => setProductName(e.target.value)}/></div>
+                  <div className="f-field"><label className="f-label">Price (RS)</label><input className="f-input" type="number" placeholder="0.00" value={productPrice} onChange={e => setProductPrice(e.target.value)}/></div>
                 </div>
-                <div className="adm-field"><label className="adm-label">Description</label><textarea className="adm-input adm-textarea" placeholder="Product description..." value={productDescription} onChange={e => setProductDescription(e.target.value)}/></div>
-                <div className="adm-field">
-                  <label className="adm-label">Category</label>
-                  <select className="adm-input adm-select" value={productCategory} onChange={e => setProductCategory(e.target.value)}>
+                <div className="f-field"><label className="f-label">Description</label><textarea className="f-input f-textarea" placeholder="Describe the product…" value={productDescription} onChange={e => setProductDescription(e.target.value)}/></div>
+                <div className="f-field">
+                  <label className="f-label">Category</label>
+                  <select className="f-input f-select" value={productCategory} onChange={e => setProductCategory(e.target.value)}>
                     <option value="">Select category</option>
-                    {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+                    {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
-                <div className="adm-field">
-                  <label className="adm-label">Images</label>
-                  <label className="adm-file-label">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    Choose Images
-                    <input type="file" accept="image/*" multiple onChange={handleImageSelect} style={{ display: "none" }}/>
-                  </label>
+                <div className="f-field">
+                  <label className="f-label">Images</label>
+                  <label className="f-file-btn">🖼 Choose Images<input type="file" accept="image/*" multiple onChange={handleImageSelect} style={{ display: "none" }}/></label>
                   {imagePreviews.length > 0 && (
-                    <div className="adm-previews">
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 10 }}>
                       {imagePreviews.map((src, i) => (
-                        <div key={i} className="adm-preview">
-                          <img src={src} alt=""/>
-                          {i === 0 && <span className="adm-preview__badge">Cover</span>}
-                          <button className="adm-preview__remove" onClick={() => removeImage(i)}>×</button>
+                        <div key={i} style={{ position: "relative" }}>
+                          <img src={src} style={{ width: 72, height: 72, objectFit: "cover", borderRadius: 8, border: "2.5px solid #111", boxShadow: i === 0 ? "3px 3px 0 #00D084" : "2px 2px 0 #111" }} alt=""/>
+                          {i === 0 && <span style={{ position: "absolute", bottom: -8, left: "50%", transform: "translateX(-50%)", background: "#00D084", color: "#111", fontSize: "0.6rem", fontWeight: 700, padding: "1px 6px", borderRadius: 100, border: "1.5px solid #111", whiteSpace: "nowrap" }}>Cover</span>}
+                          <button onClick={() => removeImage(i)} style={{ position: "absolute", top: -8, right: -8, width: 20, height: 20, background: "#FF3E5E", color: "#fff", border: "2px solid #111", borderRadius: "50%", cursor: "pointer", fontSize: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
-                {uploading && (
-                  <div className="adm-progress-wrap">
-                    <div className="adm-progress-header"><span className="adm-progress-step">{uploadStep}</span><span className="adm-progress-pct">{uploadProgress}%</span></div>
-                    <div className="adm-progress-track"><div className="adm-progress-fill" style={{ width: `${uploadProgress}%` }}/></div>
-                  </div>
-                )}
-                <button className="adm-btn adm-btn--primary" onClick={addProduct} disabled={uploading} style={{ alignSelf: "flex-start" }}>
-                  {uploading ? <><span className="adm-spinner"/>{uploadStep || "Uploading…"}</> : "Add Product"}
+                {uploading && <div className="f-prog"><div className="f-prog__bar" style={{ width: `${uploadProgress}%`, background: "#00D084" }}/></div>}
+                <button className="f-btn f-btn--green" onClick={addProduct} disabled={uploading} style={{ alignSelf: "flex-start" }}>
+                  {uploading ? uploadStep || "Uploading…" : "+ Add Product"}
                 </button>
               </div>
             </div>
-            <div className="adm-card">
-              <div className="adm-card__titlerow">
-                <h2 className="adm-card__title">Products <span className="adm-card__count">{products.length}</span></h2>
-                <select className="adm-input adm-select" style={{ width: "auto" }} value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
+
+            <div className="f-card" style={{ borderTopColor: "#00D084" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 20 }}>
+                <h2 className="f-card-title" style={{ marginBottom: 0 }}>Products <span className="f-count">{products.length}</span></h2>
+                <select className="f-input f-select" style={{ width: "auto" }} value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
                   <option value="all">All Categories</option>
-                  {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
-              {products.length === 0 ? <p className="adm-empty">No products found.</p> : (
-                <div className="adm-table-wrap">
-                  <table className="adm-table">
-                    <thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Category</th><th>Link</th><th></th></tr></thead>
+              {products.length === 0 ? <p className="f-empty">No products found.</p> : (
+                <div className="f-table-wrap">
+                  <table className="f-table">
+                    <thead><tr><th>IMG</th><th>Name</th><th>Price</th><th>Category</th><th>Link</th><th></th></tr></thead>
                     <tbody>
                       {products.map(p => (
                         <tr key={p.id}>
-                          <td>{p.image_url ? <img src={p.image_url} className="adm-thumb" alt=""/> : <span className="adm-no-img">—</span>}</td>
-                          <td>{p.name}</td>
-                          <td className="adm-price">RS {p.price}</td>
-                          <td><span className="adm-cat-badge">{categories.find(c => c.id === p.category_id)?.name || "—"}</span></td>
+                          <td>{p.image_url ? <img src={p.image_url} style={{ width: 48, height: 36, objectFit: "cover", borderRadius: 6, border: "2px solid #111" }} alt=""/> : <span>—</span>}</td>
+                          <td><strong style={{ fontSize: "0.84rem" }}>{p.name}</strong></td>
+                          <td><span style={{ fontWeight: 700, color: "#00D084" }}>RS {p.price}</span></td>
+                          <td><span className="f-badge-sm">{categories.find(c => c.id === p.category_id)?.name || "—"}</span></td>
                           <td>
-                            <div className="adm-link-cell">
-                              <code className="adm-product-link">/products/{p.id}</code>
-                              <button className="adm-link-copy-btn" onClick={() => copyProductLink(p.id, p.name)} title="Copy link">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                              </button>
-                              <a className="adm-link-open-btn" href={`/products/${p.id}`} target="_blank" rel="noopener noreferrer" title="Open">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                              </a>
+                            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                              <code className="f-code" style={{ fontSize: "0.7rem" }}>/products/{p.id}</code>
+                              <button className="f-icon-btn" onClick={() => copyProductLink(p.id, p.name)} title="Copy">📋</button>
+                              <a className="f-icon-btn" href={`/products/${p.id}`} target="_blank" rel="noopener noreferrer" title="Open">↗</a>
                             </div>
                           </td>
                           <td>
-                            <div className="adm-action-btns">
-                              <button className="adm-btn adm-btn--edit adm-btn--sm" onClick={() => openEditModal(p)}>
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                                Edit
-                              </button>
-                              <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => deleteProduct(p.id, p.name)}>Delete</button>
+                            <div style={{ display: "flex", gap: 4 }}>
+                              <button className="f-btn f-btn--blue f-btn--sm" onClick={() => openEditModal(p)}>Edit</button>
+                              <button className="f-btn f-btn--red f-btn--sm" onClick={() => deleteProduct(p.id, p.name)}>Delete</button>
                             </div>
                           </td>
                         </tr>
@@ -760,63 +586,55 @@ export default function Admin() {
           </div>
         )}
 
-        {/* ══ BANNERS TAB ══ */}
+        {/* ══ BANNERS ══ */}
         {activeTab === "banners" && (
-          <div className="adm-section">
-            <div className="adm-card">
-              <h2 className="adm-card__title">Add Banner</h2>
-              <p className="adm-hint">Max 4 banners. Sort Order (0–3) controls carousel position.</p>
-              <div className="adm-stack">
-                <div className="adm-row">
-                  <div className="adm-field"><label className="adm-label">Heading</label><input className="adm-input" placeholder="Banner headline" value={bannerHeading} onChange={e => setBannerHeading(e.target.value)}/></div>
-                  <div className="adm-field"><label className="adm-label">Button Text</label><input className="adm-input" placeholder="e.g. Shop Now" value={bannerButtonText} onChange={e => setBannerButtonText(e.target.value)}/></div>
+          <div className="f-section">
+            <div className="f-card" style={{ borderTopColor: "#FFE14D" }}>
+              <h2 className="f-card-title">🖼 Add Banner</h2>
+              <p className="f-hint">Max 4 banners. Sort order 0–3 controls position.</p>
+              <div className="f-stack">
+                <div className="f-grid-2">
+                  <div className="f-field"><label className="f-label">Heading</label><input className="f-input" placeholder="Banner headline" value={bannerHeading} onChange={e => setBannerHeading(e.target.value)}/></div>
+                  <div className="f-field"><label className="f-label">Button Text</label><input className="f-input" placeholder="e.g. Shop Now" value={bannerButtonText} onChange={e => setBannerButtonText(e.target.value)}/></div>
                 </div>
-                <div className="adm-row">
-                  <div className="adm-field"><label className="adm-label">Sort Order</label><input className="adm-input" type="number" placeholder="0 = first" value={bannerSortOrder} onChange={e => setBannerSortOrder(e.target.value)}/></div>
-                  <div className="adm-field">
-                    <label className="adm-label">Link To Category <span className="adm-label__hint"> — button scrolls to section</span></label>
-                    <select className="adm-input adm-select" value={bannerLinkTo} onChange={e => setBannerLinkTo(e.target.value)}>
-                      <option value="">No link (decorative)</option>
-                      {categories.map(cat => <option key={cat.id} value={cat.slug}>{cat.name} ({cat.slug})</option>)}
+                <div className="f-grid-2">
+                  <div className="f-field"><label className="f-label">Sort Order</label><input className="f-input" type="number" value={bannerSortOrder} onChange={e => setBannerSortOrder(e.target.value)}/></div>
+                  <div className="f-field">
+                    <label className="f-label">Link To Category</label>
+                    <select className="f-input f-select" value={bannerLinkTo} onChange={e => setBannerLinkTo(e.target.value)}>
+                      <option value="">No link</option>
+                      {categories.map(c => <option key={c.id} value={c.slug}>{c.name}</option>)}
                     </select>
                   </div>
                 </div>
-                <div className="adm-field">
-                  <label className="adm-label">Banner Image</label>
-                  <label className="adm-file-label">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    Choose Image
-                    <input type="file" accept="image/*" onChange={e => { const f = e.target.files?.[0] || null; setBannerImage(f); setBannerPreview(f ? URL.createObjectURL(f) : ""); }} style={{ display: "none" }}/>
-                  </label>
-                  {bannerPreview && <img src={bannerPreview} className="adm-banner-preview" alt=""/>}
+                <div className="f-field">
+                  <label className="f-label">Banner Image</label>
+                  <label className="f-file-btn">🖼 Choose Image<input type="file" accept="image/*" onChange={e => { const f = e.target.files?.[0] || null; setBannerImage(f); setBannerPreview(f ? URL.createObjectURL(f) : ""); }} style={{ display: "none" }}/></label>
+                  {bannerPreview && <img src={bannerPreview} style={{ marginTop: 10, width: 200, height: 110, objectFit: "cover", borderRadius: 10, border: "2.5px solid #111", boxShadow: "3px 3px 0 #FFE14D", display: "block" }} alt=""/>}
                 </div>
-                {bannerUploading && (
-                  <div className="adm-progress-wrap">
-                    <div className="adm-progress-header"><span className="adm-progress-step">{uploadStep}</span><span className="adm-progress-pct">{uploadProgress}%</span></div>
-                    <div className="adm-progress-track"><div className="adm-progress-fill" style={{ width: `${uploadProgress}%` }}/></div>
-                  </div>
-                )}
-                <button className="adm-btn adm-btn--primary" onClick={addBanner} disabled={bannerUploading} style={{ alignSelf: "flex-start" }}>
-                  {bannerUploading ? <><span className="adm-spinner"/>{uploadStep || "Uploading…"}</> : "Add Banner"}
+                {bannerUploading && <div className="f-prog"><div className="f-prog__bar" style={{ width: `${uploadProgress}%`, background: "#FFE14D" }}/></div>}
+                <button className="f-btn f-btn--yellow" onClick={addBanner} disabled={bannerUploading} style={{ alignSelf: "flex-start" }}>
+                  {bannerUploading ? "Uploading…" : "+ Add Banner"}
                 </button>
               </div>
             </div>
-            <div className="adm-card">
-              <h2 className="adm-card__title">Existing Banners <span className="adm-card__count">{banners.length}/4</span></h2>
-              {banners.length === 0 ? <p className="adm-empty">No banners yet.</p> : (
-                <div className="adm-banner-list">
+
+            <div className="f-card" style={{ borderTopColor: "#FFE14D" }}>
+              <h2 className="f-card-title">Existing Banners <span className="f-count">{banners.length}/4</span></h2>
+              {banners.length === 0 ? <p className="f-empty">No banners yet.</p> : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {banners.map(b => (
-                    <div key={b.id} className="adm-banner-row">
-                      <img src={b.image_url} className="adm-banner-thumb" alt=""/>
-                      <div className="adm-banner-info">
-                        <span className="adm-banner-heading">{b.heading}</span>
-                        <div className="adm-banner-meta">
-                          <span>Button: <b>{b.button_text}</b></span>
+                    <div key={b.id} className="f-item-row">
+                      <img src={b.image_url} style={{ width: 100, height: 62, objectFit: "cover", borderRadius: 8, border: "2px solid #111", flexShrink: 0 }} alt=""/>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 700, color: "#111", marginBottom: 4 }}>{b.heading}</div>
+                        <div style={{ fontSize: "0.75rem", color: "#666", display: "flex", gap: 10, flexWrap: "wrap" }}>
+                          <span>Btn: <b>{b.button_text}</b></span>
                           <span>Order: <b>{b.sort_order}</b></span>
-                          {b.link_to ? <span className="adm-link-badge">→ <code>{b.link_to}</code></span> : <span className="adm-link-badge adm-link-badge--none">No link</span>}
+                          {b.link_to && <span className="f-badge-sm" style={{ background: "#E0F2FE", borderColor: "#0EA5E9", color: "#0369A1" }}>→ {b.link_to}</span>}
                         </div>
                       </div>
-                      <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => deleteBanner(b.id, b.heading)}>Delete</button>
+                      <button className="f-btn f-btn--red f-btn--sm" onClick={() => deleteBanner(b.id, b.heading)}>Delete</button>
                     </div>
                   ))}
                 </div>
@@ -825,79 +643,86 @@ export default function Admin() {
           </div>
         )}
 
-        {/* ══ ORDERS TAB ══ */}
+        {/* ══ ORDERS ══ */}
         {activeTab === "orders" && (
-          <div className="adm-section">
-            <div className="adm-card">
-              <div className="adm-card__titlerow">
-                <h2 className="adm-card__title">All Orders <span className="adm-card__count">{orders.length}</span></h2>
+          <div className="f-section">
+            <div className="f-card" style={{ borderTopColor: "#7C3AED" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 20 }}>
+                <h2 className="f-card-title" style={{ marginBottom: 0 }}>🧾 Orders <span className="f-count">{orders.length}</span></h2>
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                   {["all", "pending", "confirmed", "shipped", "delivered", "cancelled"].map(f => {
-                    const sm = STATUS_META[f] || { color: "var(--text-2)", bg: "transparent", border: "var(--border-hi)" };
-                    const isActive = orderFilter === f;
+                    const sm = STATUS_META[f];
+                    const active = orderFilter === f;
                     return (
-                      <button key={f} onClick={() => setOrderFilter(f)} style={{ padding: "5px 14px", borderRadius: 100, border: `1px solid ${isActive ? sm.border : "var(--border)"}`, background: isActive ? sm.bg : "transparent", color: isActive ? (f === "all" ? "var(--text)" : sm.color) : "var(--text-3)", fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", fontWeight: 600, cursor: "pointer", letterSpacing: "0.08em", textTransform: "capitalize", transition: "all 0.15s" }}>
-                        {f === "all" ? "All" : f}
-                        {f !== "all" && <span style={{ marginLeft: 5, opacity: 0.7 }}>{orders.filter(o => o.status === f).length}</span>}
+                      <button key={f} onClick={() => setOrderFilter(f)} style={{
+                        padding: "5px 12px", borderRadius: 100, cursor: "pointer", fontSize: "0.72rem", fontWeight: 700,
+                        border: `2px solid ${active ? (f === "all" ? "#111" : sm.border) : "#ddd"}`,
+                        background: active ? (f === "all" ? "#111" : sm.bg) : "#fff",
+                        color: active ? (f === "all" ? "#fff" : sm.color) : "#888",
+                        boxShadow: active ? `2px 2px 0 ${f === "all" ? "#111" : sm.border}` : "none",
+                        transition: "all 0.15s",
+                      }}>
+                        {f === "all" ? "All" : sm.label}
+                        {f !== "all" && <span style={{ marginLeft: 4, opacity: 0.7 }}>({orders.filter(o => o.status === f).length})</span>}
                       </button>
                     );
                   })}
                 </div>
               </div>
+
               {(() => {
                 const filtered = orderFilter === "all" ? orders : orders.filter(o => o.status === orderFilter);
-                return filtered.length === 0 ? <p className="adm-empty">No {orderFilter === "all" ? "" : orderFilter} orders.</p> : (
-                  <div className="adm-orders">
+                return filtered.length === 0 ? <p className="f-empty">No orders found.</p> : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     {filtered.map(order => {
                       const sm = STATUS_META[order.status] || STATUS_META.pending;
                       const open = expandedOrder === order.id;
                       return (
-                        <div key={order.id} className={`adm-order ${open ? "adm-order--open" : ""}`}>
-                          <button className="adm-order__head" onClick={() => setExpandedOrder(open ? null : order.id)}>
-                            <div className="adm-order__id"><span className="adm-order__num">#{String(order.id).padStart(6, "0")}</span><span className="adm-order__date">{new Date(order.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span></div>
-                            <span className="adm-order__user">{order.user_name} · {order.user_email}</span>
-                            <div className="adm-order__right">
-                              <span className="adm-status-pill" style={{ color: sm.color, background: sm.bg, border: `1px solid ${sm.border}` }}>{order.status}</span>
-                              <span className="adm-order__total">RS {order.total.toFixed(2)}</span>
-                              <span className={`adm-chevron ${open ? "adm-chevron--open" : ""}`}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+                        <div key={order.id} style={{ border: `2px solid ${open ? sm.border : "#ddd"}`, borderRadius: 12, overflow: "hidden", background: "#fff", boxShadow: open ? `3px 3px 0 ${sm.border}` : "none", transition: "all 0.2s" }}>
+                          <button style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "14px 18px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", flexWrap: "wrap" }}
+                            onClick={() => setExpandedOrder(open ? null : order.id)}>
+                            <div>
+                              <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "#111" }}>#{String(order.id).padStart(6, "0")}</div>
+                              <div style={{ fontSize: "0.7rem", color: "#888" }}>{new Date(order.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
+                            </div>
+                            <span style={{ flex: 1, fontSize: "0.78rem", color: "#666" }}>{order.user_name} · {order.user_email}</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: "auto" }}>
+                              <span style={{ padding: "3px 10px", borderRadius: 100, fontSize: "0.68rem", fontWeight: 700, background: sm.bg, color: sm.color, border: `1.5px solid ${sm.border}` }}>{sm.label}</span>
+                              <span style={{ fontWeight: 700, color: "#7C3AED" }}>RS {order.total.toFixed(2)}</span>
+                              <span style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s", display: "inline-block" }}>▾</span>
                             </div>
                           </button>
-                          <div className={`adm-order__body ${open ? "adm-order__body--open" : ""}`}>
-                            <div className="adm-order__body-inner">
-                              <div className="adm-order__cols">
+
+                          {open && (
+                            <div style={{ padding: "16px 18px", borderTop: `2px solid ${sm.border}`, background: sm.bg }}>
+                              <div className="f-grid-2">
                                 <div>
-                                  <div className="adm-section-label">Items</div>
+                                  <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#888", marginBottom: 10 }}>Items</div>
                                   {order.items.map(item => (
-                                    <div key={item.id} className="adm-order__item">
-                                      <div className="adm-item-dot"/>
-                                      <span className="adm-order__item-name">{item.product_name}</span>
-                                      <span className="adm-order__item-qty">×{item.quantity}</span>
-                                      <span className="adm-order__item-price">RS {(item.price * item.quantity).toFixed(2)}</span>
+                                    <div key={item.id} style={{ display: "flex", gap: 8, padding: "6px 0", borderBottom: "1px solid rgba(0,0,0,0.06)", fontSize: "0.82rem" }}>
+                                      <span style={{ width: 8, height: 8, borderRadius: "50%", background: sm.color, flexShrink: 0, marginTop: 5 }}/>
+                                      <span style={{ flex: 1, fontWeight: 500 }}>{item.product_name}</span>
+                                      <span style={{ color: "#888" }}>×{item.quantity}</span>
+                                      <span style={{ fontWeight: 700, color: sm.color }}>RS {(item.price * item.quantity).toFixed(2)}</span>
                                     </div>
                                   ))}
                                 </div>
                                 <div>
-                                  <div className="adm-section-label">Delivery</div>
-                                  <div className="adm-delivery-row"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>{order.address}, {order.city}</div>
-                                  <div className="adm-delivery-row"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.64a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/></svg>{order.phone}</div>
-                                  <div className="adm-section-label" style={{ marginTop: 20 }}>Update Status</div>
-                                  <select className="adm-status-select" value={order.status} onChange={e => updateOrderStatus(order.id, e.target.value)} style={{ borderColor: sm.border, color: sm.color }}>
+                                  <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#888", marginBottom: 10 }}>Delivery</div>
+                                  <div style={{ fontSize: "0.82rem", color: "#444", marginBottom: 6 }}>📍 {order.address}, {order.city}</div>
+                                  <div style={{ fontSize: "0.82rem", color: "#444", marginBottom: 16 }}>📞 {order.phone}</div>
+                                  <select className="f-input f-select" value={order.status} onChange={e => updateOrderStatus(order.id, e.target.value)} style={{ marginBottom: 10, borderColor: sm.border, color: sm.color, fontWeight: 700 }}>
                                     <option value="pending">⏳ Pending</option>
                                     <option value="confirmed">✅ Confirmed</option>
                                     <option value="shipped">🚚 Shipped</option>
                                     <option value="delivered">📦 Delivered</option>
                                     <option value="cancelled">❌ Cancelled</option>
                                   </select>
-                                  <div style={{ marginTop: 14 }}>
-                                    <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => deleteOrder(order.id)}>
-                                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-                                      Delete Order
-                                    </button>
-                                  </div>
+                                  <button className="f-btn f-btn--red f-btn--sm" onClick={() => deleteOrder(order.id)}>🗑 Delete Order</button>
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          )}
                         </div>
                       );
                     })}
@@ -908,64 +733,56 @@ export default function Admin() {
           </div>
         )}
 
-        {/* ══ CAROUSEL TAB ══ */}
+        {/* ══ CAROUSEL ══ */}
         {activeTab === "carousel" && (
-          <div className="adm-section">
-            <div className="adm-card">
-              <h2 className="adm-card__title">Add Carousel Image</h2>
-              <p className="adm-hint">Images scroll infinitely on the homepage. Each one links to a product or category page on click.</p>
-              <div className="adm-stack">
-                <div className="adm-field">
-                  <label className="adm-label">Image</label>
-                  <label className="adm-file-label">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    Choose Image
-                    <input type="file" accept="image/*" style={{ display: "none" }} onChange={e => { const f = e.target.files?.[0] || null; setCarouselImage(f); setCarouselPreview(f ? URL.createObjectURL(f) : ""); }}/>
-                  </label>
-                  {carouselPreview && <img src={carouselPreview} style={{ marginTop: 10, width: 220, height: 140, objectFit: "cover", borderRadius: 10, border: "1px solid var(--border)" }} alt=""/>}
+          <div className="f-section">
+            <div className="f-card" style={{ borderTopColor: "#FF8C00" }}>
+              <h2 className="f-card-title">🎠 Add Carousel Image</h2>
+              <p className="f-hint">Images scroll infinitely on the homepage and link to a product or category on click.</p>
+              <div className="f-stack">
+                <div className="f-field">
+                  <label className="f-label">Image</label>
+                  <label className="f-file-btn">🖼 Choose Image<input type="file" accept="image/*" style={{ display: "none" }} onChange={e => { const f = e.target.files?.[0] || null; setCarouselImage(f); setCarouselPreview(f ? URL.createObjectURL(f) : ""); }}/></label>
+                  {carouselPreview && <img src={carouselPreview} style={{ marginTop: 10, width: 200, height: 120, objectFit: "cover", borderRadius: 10, border: "2.5px solid #111", boxShadow: "3px 3px 0 #FF8C00", display: "block" }} alt=""/>}
                 </div>
-                <div className="adm-row">
-                  <div className="adm-field">
-                    <label className="adm-label">Link Type</label>
-                    <select className="adm-input adm-select" value={carouselLinkType} onChange={e => setCarouselLinkType(e.target.value as "product" | "category")}>
-                      <option value="product">Product (by ID)</option>
-                      <option value="category">Category (by slug)</option>
+                <div className="f-grid-2">
+                  <div className="f-field">
+                    <label className="f-label">Link Type</label>
+                    <select className="f-input f-select" value={carouselLinkType} onChange={e => setCarouselLinkType(e.target.value as "product" | "category")}>
+                      <option value="product">Product</option>
+                      <option value="category">Category</option>
                     </select>
                   </div>
-                  <div className="adm-field">
-                    <label className="adm-label">{carouselLinkType === "product" ? "Product ID" : "Category Slug"}</label>
+                  <div className="f-field">
+                    <label className="f-label">{carouselLinkType === "product" ? "Select Product" : "Select Category"}</label>
                     {carouselLinkType === "product"
-                      ? <select className="adm-input adm-select" value={carouselLinkValue} onChange={e => setCarouselLinkValue(e.target.value)}><option value="">Select product</option>{products.map(p => <option key={p.id} value={p.id}>{p.name} (#{p.id})</option>)}</select>
-                      : <select className="adm-input adm-select" value={carouselLinkValue} onChange={e => setCarouselLinkValue(e.target.value)}><option value="">Select category</option>{categories.map(cat => <option key={cat.id} value={cat.slug}>{cat.name} ({cat.slug})</option>)}</select>}
+                      ? <select className="f-input f-select" value={carouselLinkValue} onChange={e => setCarouselLinkValue(e.target.value)}><option value="">Choose…</option>{products.map(p => <option key={p.id} value={p.id}>{p.name} #{p.id}</option>)}</select>
+                      : <select className="f-input f-select" value={carouselLinkValue} onChange={e => setCarouselLinkValue(e.target.value)}><option value="">Choose…</option>{categories.map(c => <option key={c.id} value={c.slug}>{c.name}</option>)}</select>}
                   </div>
                 </div>
-                <div className="adm-field" style={{ maxWidth: 200 }}><label className="adm-label">Sort Order</label><input className="adm-input" type="number" value={carouselSortOrder} onChange={e => setCarouselSortOrder(e.target.value)} placeholder="0"/></div>
-                {carouselUploading && (
-                  <div className="adm-progress-wrap">
-                    <div className="adm-progress-header"><span className="adm-progress-step">{uploadStep}</span><span className="adm-progress-pct">{uploadProgress}%</span></div>
-                    <div className="adm-progress-track"><div className="adm-progress-fill" style={{ width: `${uploadProgress}%` }}/></div>
-                  </div>
-                )}
-                <button className="adm-btn adm-btn--primary" onClick={addCarouselItem} disabled={carouselUploading} style={{ alignSelf: "flex-start" }}>
-                  {carouselUploading ? <><span className="adm-spinner"/>{uploadStep || "Uploading…"}</> : "Add to Carousel"}
+                <div className="f-field" style={{ maxWidth: 180 }}><label className="f-label">Sort Order</label><input className="f-input" type="number" value={carouselSortOrder} onChange={e => setCarouselSortOrder(e.target.value)}/></div>
+                {carouselUploading && <div className="f-prog"><div className="f-prog__bar" style={{ width: `${uploadProgress}%`, background: "#FF8C00" }}/></div>}
+                <button className="f-btn f-btn--orange" onClick={addCarouselItem} disabled={carouselUploading} style={{ alignSelf: "flex-start" }}>
+                  {carouselUploading ? "Uploading…" : "+ Add to Carousel"}
                 </button>
               </div>
             </div>
-            <div className="adm-card">
-              <h2 className="adm-card__title">Carousel Images <span className="adm-card__count">{carouselItems.length}</span></h2>
-              {carouselItems.length === 0 ? <p className="adm-empty">No carousel images yet.</p> : (
-                <div className="adm-banner-list">
+
+            <div className="f-card" style={{ borderTopColor: "#FF8C00" }}>
+              <h2 className="f-card-title">Carousel Images <span className="f-count">{carouselItems.length}</span></h2>
+              {carouselItems.length === 0 ? <p className="f-empty">No carousel images yet.</p> : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {carouselItems.map(item => (
-                    <div key={item.id} className="adm-banner-row">
-                      <img src={item.image_url} style={{ width: 140, height: 88, borderRadius: 8, objectFit: "cover", border: "1px solid var(--border)", flexShrink: 0 }} alt=""/>
-                      <div className="adm-banner-info">
-                        <span className="adm-banner-heading" style={{ fontSize: "0.82rem" }}>{item.link_type === "product" ? "→ Product" : "→ Category"}</span>
-                        <div className="adm-banner-meta">
-                          <span>Links to: <code style={{ background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: 4, padding: "1px 6px", fontSize: "0.75rem", color: "var(--accent)" }}>{item.link_value}</code></span>
-                          <span>Order: <b>{item.sort_order}</b></span>
+                    <div key={item.id} className="f-item-row">
+                      <img src={item.image_url} style={{ width: 120, height: 76, objectFit: "cover", borderRadius: 8, border: "2px solid #111", flexShrink: 0 }} alt=""/>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: "0.82rem", color: "#111", marginBottom: 4 }}>
+                          {item.link_type === "product" ? "📦 Product" : "🗂 Category"}
                         </div>
+                        <code className="f-code">{item.link_value}</code>
+                        <div style={{ fontSize: "0.72rem", color: "#888", marginTop: 4 }}>Order: {item.sort_order}</div>
                       </div>
-                      <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => deleteCarouselItem(item.id)}>Delete</button>
+                      <button className="f-btn f-btn--red f-btn--sm" onClick={() => deleteCarouselItem(item.id)}>Delete</button>
                     </div>
                   ))}
                 </div>
@@ -974,149 +791,87 @@ export default function Admin() {
           </div>
         )}
 
-        {/* ══ SETTINGS TAB ══ */}
+        {/* ══ SETTINGS ══ */}
         {activeTab === "settings" && (
-          <div className="adm-section">
+          <div className="f-section">
 
-            {/* ── Admin Emails ── */}
-            <div className="adm-card">
-              <h2 className="adm-card__title">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                Admin Access
-              </h2>
-              <p className="adm-hint">These emails have full admin access. Changes take effect on next login. You must keep at least one admin.</p>
-              <div className="adm-stack">
-                {/* existing admin list */}
-                <div className="adm-email-list">
-                  {adminEmails.length === 0 && <p className="adm-empty" style={{ padding: "10px 0" }}>No admin emails loaded yet — save one below or check your settings table.</p>}
+            {/* Admin Emails */}
+            <div className="f-card" style={{ borderTopColor: "#FF3E5E" }}>
+              <h2 className="f-card-title">🛡 Admin Access</h2>
+              <p className="f-hint">These emails have full admin dashboard access.</p>
+              <div className="f-stack">
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {adminEmails.length === 0 && <p className="f-empty">No admins loaded yet.</p>}
                   {adminEmails.map(email => (
-                    <div key={email} className="adm-email-row">
-                      <div className="adm-email-avatar">{email[0].toUpperCase()}</div>
-                      <span className="adm-email-addr">{email}</span>
-                      <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => removeAdminEmail(email)}>Remove</button>
+                    <div key={email} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "#FFF1F3", border: "2px solid #FFB3C1", borderRadius: 10, boxShadow: "2px 2px 0 #FFB3C1" }}>
+                      <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#FF3E5E", border: "2px solid #111", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: "0.8rem", flexShrink: 0 }}>{email[0].toUpperCase()}</div>
+                      <span style={{ flex: 1, fontWeight: 600, fontSize: "0.85rem", color: "#111" }}>{email}</span>
+                      <button className="f-btn f-btn--red f-btn--sm" onClick={() => removeAdminEmail(email)}>Remove</button>
                     </div>
                   ))}
                 </div>
-                {/* add new admin */}
-                <div className="adm-row" style={{ alignItems: "flex-end" }}>
-                  <div className="adm-field">
-                    <label className="adm-label">Add Admin Email</label>
-                    <input className="adm-input" type="email" placeholder="new-admin@example.com"
-                      value={newAdminEmail} onChange={e => setNewAdminEmail(e.target.value)}
-                      onKeyDown={e => e.key === "Enter" && addAdminEmail()}/>
-                  </div>
-                  <button className="adm-btn adm-btn--primary" onClick={addAdminEmail} disabled={adminEmailsSaving} style={{ alignSelf: "flex-end", marginBottom: 0 }}>
-                    {adminEmailsSaving ? <><span className="adm-spinner"/>Saving…</> : "Add Admin"}
-                  </button>
+                <div className="f-grid-2" style={{ alignItems: "flex-end" }}>
+                  <div className="f-field"><label className="f-label">Add Admin Email</label><input className="f-input" type="email" placeholder="admin@example.com" value={newAdminEmail} onChange={e => setNewAdminEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && addAdminEmail()}/></div>
+                  <button className="f-btn f-btn--red" onClick={addAdminEmail} disabled={adminEmailsSaving}>{adminEmailsSaving ? "Saving…" : "+ Add Admin"}</button>
                 </div>
-                <p className="adm-hint" style={{ marginBottom: 0 }}>
-                  ⚠ Also update your <code style={{ background: "var(--surface2)", padding: "1px 6px", borderRadius: 4, fontSize: "0.78rem" }}>middleware.ts</code> and <code style={{ background: "var(--surface2)", padding: "1px 6px", borderRadius: 4, fontSize: "0.78rem" }}>navbar.tsx</code> to read from <code style={{ background: "var(--surface2)", padding: "1px 6px", borderRadius: 4, fontSize: "0.78rem" }}>/api/settings?key=admin_emails</code> so the list stays dynamic (see the updated files provided).
-                </p>
               </div>
             </div>
 
-            {/* ── WhatsApp ── */}
-            <div className="adm-card">
-              <h2 className="adm-card__title">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                WhatsApp Contact
-              </h2>
-              <p className="adm-hint">Enter your WhatsApp number with country code (e.g. 923001234567). Shows as a floating button on the site.</p>
-              <div className="adm-stack">
-                <div className="adm-row" style={{ alignItems: "flex-end" }}>
-                  <div className="adm-field">
-                    <label className="adm-label">WhatsApp Number</label>
-                    <input className="adm-input" placeholder="e.g. 923001234567" value={whatsappNumber} onChange={e => setWhatsappNumber(e.target.value)} onKeyDown={e => e.key === "Enter" && saveWhatsapp()}/>
-                  </div>
-                  <button className="adm-btn adm-btn--primary" onClick={saveWhatsapp} disabled={whatsappSaving}>
-                    {whatsappSaving ? <><span className="adm-spinner"/>Saving…</> : "Save Number"}
-                  </button>
+            {/* WhatsApp */}
+            <div className="f-card" style={{ borderTopColor: "#25D366" }}>
+              <h2 className="f-card-title">💬 WhatsApp Contact</h2>
+              <p className="f-hint">Number with country code (e.g. 923001234567). Shows as floating button bottom-left.</p>
+              <div className="f-stack">
+                <div className="f-grid-2" style={{ alignItems: "flex-end" }}>
+                  <div className="f-field"><label className="f-label">Phone Number</label><input className="f-input" placeholder="923001234567" value={whatsappNumber} onChange={e => setWhatsappNumber(e.target.value)} onKeyDown={e => e.key === "Enter" && saveWhatsapp()}/></div>
+                  <button className="f-btn f-btn--wa" onClick={saveWhatsapp} disabled={whatsappSaving}>{whatsappSaving ? "Saving…" : "💾 Save"}</button>
                 </div>
                 {whatsappNumber && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", background: "rgba(37,211,102,0.08)", border: "1px solid rgba(37,211,102,0.25)", borderRadius: 12 }}>
-                    <div style={{ width: 42, height: 42, background: "#25D366", borderRadius: "50%", border: "2px solid #111", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", flexShrink: 0 }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", background: "#D1FAE5", border: "2px solid #6EE7B7", borderRadius: 10, boxShadow: "2px 2px 0 #6EE7B7" }}>
+                    <div style={{ width: 40, height: 40, background: "#25D366", borderRadius: "50%", border: "2px solid #111", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", flexShrink: 0 }}>💬</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 700, color: "#065f46" }}>+{whatsappNumber.replace(/\D/g, "")}</div>
+                      <div style={{ fontSize: "0.72rem", color: "#059669" }}>Active on site</div>
                     </div>
-                    <div>
-                      <p style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text)" }}>+{whatsappNumber.replace(/[^0-9]/g, "")}</p>
-                      <p style={{ fontSize: "0.72rem", color: "var(--text-3)" }}>Floating button active on site</p>
-                    </div>
-                    <a href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" style={{ marginLeft: "auto", fontSize: "0.75rem", color: "var(--accent)", textDecoration: "none" }}>Test ↗</a>
+                    <a href={`https://wa.me/${whatsappNumber.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 700, color: "#065f46", textDecoration: "none", fontSize: "0.8rem" }}>Test ↗</a>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* ── Social Media ── */}
-            <div className="adm-card">
-              <h2 className="adm-card__title">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                Social Media Links
-              </h2>
-              <p className="adm-hint">Toggle which platforms show in the footer. Enter the full URL for each. Changes save together.</p>
-              <div className="adm-stack">
+            {/* Socials */}
+            <div className="f-card" style={{ borderTopColor: "#0EA5E9" }}>
+              <h2 className="f-card-title">🔗 Social Media</h2>
+              <p className="f-hint">Toggle which platforms show in the footer. Enter the full URL for each.</p>
+              <div className="f-stack">
                 {SOCIAL_PLATFORMS.map(platform => (
-                  <div key={platform.key} className="adm-social-row">
-                    {/* Toggle */}
+                  <div key={platform.key} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: "1px solid #f0f0f0" }}>
                     <button
-                      className={`adm-toggle ${socials[platform.key].visible ? "adm-toggle--on" : ""}`}
                       onClick={() => setSocials(prev => ({ ...prev, [platform.key]: { ...prev[platform.key], visible: !prev[platform.key].visible } }))}
-                      title={socials[platform.key].visible ? "Hide from footer" : "Show in footer"}
+                      style={{ width: 36, height: 20, borderRadius: 100, border: "2px solid #111", cursor: "pointer", background: socials[platform.key].visible ? platform.color : "#eee", transition: "background 0.2s", flexShrink: 0, position: "relative", padding: 0 }}
                     >
-                      <span className="adm-toggle__knob"/>
+                      <span style={{ position: "absolute", top: 1, left: socials[platform.key].visible ? 15 : 1, width: 14, height: 14, borderRadius: "50%", background: "#fff", border: "1.5px solid #111", transition: "left 0.2s", display: "block" }}/>
                     </button>
-                    {/* Icon + label */}
-                    <div className="adm-social-icon" dangerouslySetInnerHTML={{ __html: platform.icon }}/>
-                    <span className="adm-social-label">{platform.label}</span>
-                    {/* URL input */}
-                    <input
-                      className="adm-input adm-social-input"
-                      placeholder={platform.key === "whatsapp" ? "https://wa.me/923001234567" : `https://${platform.key}.com/yourhandle`}
-                      value={socials[platform.key].url}
-                      onChange={e => setSocials(prev => ({ ...prev, [platform.key]: { ...prev[platform.key], url: e.target.value } }))}
-                      disabled={!socials[platform.key].visible}
-                    />
+                    <span style={{ width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", color: socials[platform.key].visible ? platform.color : "#ccc", flexShrink: 0 }} dangerouslySetInnerHTML={{ __html: platform.icon }}/>
+                    <span style={{ fontWeight: 600, fontSize: "0.82rem", color: "#111", minWidth: 90, flexShrink: 0 }}>{platform.label}</span>
+                    <input className="f-input" style={{ flex: 1 }} placeholder={`https://${platform.key}.com/…`} value={socials[platform.key].url} onChange={e => setSocials(prev => ({ ...prev, [platform.key]: { ...prev[platform.key], url: e.target.value } }))} disabled={!socials[platform.key].visible}/>
                   </div>
                 ))}
-                <button className="adm-btn adm-btn--primary" onClick={saveSocials} disabled={socialsSaving} style={{ alignSelf: "flex-start" }}>
-                  {socialsSaving ? <><span className="adm-spinner"/>Saving…</> : "Save Social Links"}
-                </button>
+                <button className="f-btn f-btn--blue" onClick={saveSocials} disabled={socialsSaving} style={{ alignSelf: "flex-start" }}>{socialsSaving ? "Saving…" : "💾 Save Social Links"}</button>
               </div>
             </div>
 
-            {/* ── Footer Message ── */}
-            <div className="adm-card">
-              <h2 className="adm-card__title">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Footer Message
-              </h2>
-              <p className="adm-hint">A short message or tagline shown at the bottom of the site footer. Leave empty to hide it.</p>
-              <div className="adm-stack">
-                <div className="adm-field">
-                  <label className="adm-label">Message / Tagline</label>
-                  <textarea
-                    className="adm-input adm-textarea"
-                    placeholder="e.g. © 2025 CrashCart · Delivering joy, one order at a time 💖"
-                    value={footerMessage}
-                    onChange={e => setFooterMessage(e.target.value)}
-                    style={{ minHeight: 70 }}
-                  />
+            {/* Footer Message */}
+            <div className="f-card" style={{ borderTopColor: "#F59E0B" }}>
+              <h2 className="f-card-title">✉️ Footer Message</h2>
+              <p className="f-hint">Short tagline shown at the bottom of the site. Leave empty to hide.</p>
+              <div className="f-stack">
+                <div className="f-field"><label className="f-label">Message</label><textarea className="f-input f-textarea" placeholder="e.g. Made with love in Pakistan 💖" value={footerMessage} onChange={e => setFooterMessage(e.target.value)} style={{ minHeight: 70 }}/></div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button className="f-btn f-btn--yellow" onClick={saveFooterMessage} disabled={footerMessageSaving}>{footerMessageSaving ? "Saving…" : "💾 Save"}</button>
+                  {footerMessage && <button className="f-btn f-btn--ghost" onClick={() => { setFooterMessage(""); }}>Clear</button>}
                 </div>
-                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                  <button className="adm-btn adm-btn--primary" onClick={saveFooterMessage} disabled={footerMessageSaving}>
-                    {footerMessageSaving ? <><span className="adm-spinner"/>Saving…</> : "Save Message"}
-                  </button>
-                  {footerMessage && (
-                    <button className="adm-btn adm-btn--ghost" onClick={() => { setFooterMessage(""); saveFooterMessage(); }}>
-                      Clear Message
-                    </button>
-                  )}
-                </div>
-                {footerMessage && (
-                  <div style={{ padding: "12px 16px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: 10, fontSize: "0.82rem", color: "var(--text-2)" }}>
-                    Preview: <span style={{ color: "var(--text)" }}>{footerMessage}</span>
-                  </div>
-                )}
+                {footerMessage && <div style={{ padding: "10px 14px", background: "#FFFBEB", border: "2px solid #FCD34D", borderRadius: 8, fontSize: "0.85rem", color: "#92400E", fontWeight: 500 }}>Preview: {footerMessage}</div>}
               </div>
             </div>
 
@@ -1128,211 +883,211 @@ export default function Admin() {
 }
 
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap');
-  :root {
-    --bg: #0f1117; --surface: #181c26; --surface2: #1e2333; --surface3: #232840;
-    --border: rgba(255,255,255,0.07); --border-hi: rgba(255,255,255,0.13);
-    --accent: #7c9e87; --accent-dim: rgba(124,158,135,0.15); --accent-glow: rgba(124,158,135,0.25);
-    --text: #e8eaf0; --text-2: #8b9099; --text-3: #545a66;
-    --danger: #f87171; --danger-dim: rgba(248,113,113,0.12);
-    --edit: #60a5fa; --edit-dim: rgba(96,165,250,0.12);
+  @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .f-page {
+    min-height: 100vh;
+    background: #f5f5f5;
+    padding: 80px 20px 100px;
+    font-family: 'Jost', sans-serif;
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  .adm-page { min-height: 100vh; background: radial-gradient(ellipse 60% 40% at 15% 0%, rgba(124,158,135,0.07) 0%, transparent 70%), radial-gradient(ellipse 40% 50% at 85% 100%, rgba(100,120,200,0.05) 0%, transparent 70%), var(--bg); padding: 88px 24px 100px; font-family: 'Jost', sans-serif; color: var(--text); }
-  .toast-stack { position: fixed; bottom: 28px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; pointer-events: none; }
-  .toast { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-radius: 14px; font-family: 'Jost', sans-serif; font-size: 0.83rem; color: var(--text); backdrop-filter: blur(16px); min-width: 260px; max-width: 380px; pointer-events: all; animation: toastIn 0.3s cubic-bezier(.22,1,.36,1) both; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
-  @keyframes toastIn { from { opacity: 0; transform: translateY(12px) scale(0.95); } to { opacity: 1; transform: none; } }
-  .toast--success { background: rgba(124,158,135,0.18); border: 1px solid rgba(124,158,135,0.35); }
-  .toast--success .toast__icon { color: var(--accent); }
-  .toast--error { background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.3); }
-  .toast--error .toast__icon { color: var(--danger); }
-  .toast--info { background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.25); }
-  .toast--info .toast__icon { color: #60a5fa; }
-  .toast__icon { flex-shrink: 0; display: flex; }
-  .toast__msg { flex: 1; }
-  .toast__close { flex-shrink: 0; background: none; border: none; color: var(--text-3); cursor: pointer; display: flex; align-items: center; padding: 2px; border-radius: 4px; transition: color 0.15s; }
-  .toast__close:hover { color: var(--text); }
-  .confirm-overlay { position: fixed; inset: 0; background: rgba(10,12,18,0.75); backdrop-filter: blur(6px); z-index: 9998; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.2s ease both; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  .confirm-box { background: var(--surface); border: 1px solid var(--border-hi); border-radius: 20px; padding: 32px 28px; max-width: 380px; width: 100%; text-align: center; animation: popIn 0.25s cubic-bezier(.22,1,.36,1) both; }
-  @keyframes popIn { from { opacity: 0; transform: scale(0.93); } to { opacity: 1; transform: scale(1); } }
-  .confirm-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.25); display: flex; align-items: center; justify-content: center; color: var(--danger); margin: 0 auto 18px; }
-  .confirm-msg { font-size: 0.9rem; color: var(--text-2); line-height: 1.65; margin-bottom: 24px; }
-  .confirm-btns { display: flex; gap: 10px; justify-content: center; }
-  .edit-overlay { position: fixed; inset: 0; background: rgba(8,10,16,0.82); backdrop-filter: blur(8px); z-index: 9990; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.2s ease both; }
-  .edit-modal { background: var(--surface); border: 1px solid var(--border-hi); border-radius: 22px; width: 100%; max-width: 560px; max-height: 90vh; display: flex; flex-direction: column; animation: popIn 0.28s cubic-bezier(.22,1,.36,1) both; box-shadow: 0 32px 80px rgba(0,0,0,0.6); overflow: hidden; }
-  .edit-modal__header { display: flex; align-items: center; justify-content: space-between; padding: 22px 26px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  .edit-modal__header-left { display: flex; align-items: center; gap: 14px; }
-  .edit-modal__icon { width: 38px; height: 38px; border-radius: 10px; background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.25); display: flex; align-items: center; justify-content: center; color: var(--edit); flex-shrink: 0; }
-  .edit-modal__title { font-size: 1rem; font-weight: 600; color: var(--text); }
-  .edit-modal__subtitle { font-size: 0.72rem; color: var(--text-3); margin-top: 2px; }
-  .edit-modal__close { width: 32px; height: 32px; border-radius: 8px; background: transparent; border: 1px solid var(--border); color: var(--text-3); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-  .edit-modal__close:hover { color: var(--text); border-color: var(--border-hi); background: var(--surface2); }
-  .edit-modal__body { overflow-y: auto; padding: 24px 26px; flex: 1; display: flex; flex-direction: column; gap: 20px; }
-  .edit-modal__footer { display: flex; justify-content: flex-end; gap: 10px; padding: 18px 26px; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--surface); }
-  .edit-modal__img-section { display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; }
-  .edit-modal__current-img-wrap { position: relative; flex-shrink: 0; }
-  .edit-modal__current-img { width: 100px; height: 72px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); display: block; }
-  .edit-modal__no-img { width: 100px; height: 72px; border-radius: 10px; border: 1px dashed var(--border-hi); display: flex; align-items: center; justify-content: center; color: var(--text-3); }
-  .edit-modal__img-clear { position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; background: var(--danger); color: #fff; border: none; border-radius: 50%; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .edit-modal__img-actions { display: flex; flex-direction: column; gap: 8px; }
-  .edit-modal__img-label { font-size: 0.78rem; font-weight: 500; color: var(--text-2); }
-  .edit-modal__img-hint { font-size: 0.68rem; color: var(--text-3); }
-  .upload-bar-wrap { position: fixed; top: 62px; left: 0; right: 0; z-index: 200; background: rgba(15,17,23,0.92); border-bottom: 1px solid var(--border); padding: 10px 24px; backdrop-filter: blur(10px); }
-  .upload-bar-inner { max-width: 1000px; margin: 0 auto; }
-  .upload-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
-  .upload-bar-step { font-size: 0.75rem; color: var(--text-2); }
-  .upload-bar-pct { font-size: 0.75rem; font-weight: 600; color: var(--accent); }
-  .upload-bar-track { height: 4px; background: var(--surface2); border-radius: 100px; overflow: hidden; }
-  .upload-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #9ec4aa); border-radius: 100px; transition: width 0.25s ease; }
-  .adm-progress-wrap { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
-  .adm-progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
-  .adm-progress-step { font-size: 0.75rem; color: var(--text-2); }
-  .adm-progress-pct { font-size: 0.8rem; font-weight: 700; color: var(--accent); }
-  .adm-progress-track { height: 6px; background: var(--surface); border-radius: 100px; overflow: hidden; }
-  .adm-progress-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent) 0%, #a8d4b4 100%); transition: width 0.2s ease; position: relative; overflow: hidden; }
-  .adm-progress-fill::after { content: ''; position: absolute; top: 0; left: -100%; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); animation: shimmer 1.2s ease infinite; }
-  @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
-  .adm-header { max-width: 1000px; margin: 0 auto 32px; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
-  .adm-chip { display: inline-flex; align-items: center; padding: 4px 12px; background: var(--accent-dim); border: 1px solid rgba(124,158,135,0.3); border-radius: 100px; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
-  .adm-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; letter-spacing: -0.04em; color: var(--text); line-height: 1; }
-  .adm-stats { display: flex; gap: 16px; flex-wrap: wrap; }
-  .adm-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 20px; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 80px; }
-  .adm-stat__num { font-size: 1.4rem; font-weight: 600; color: var(--text); }
-  .adm-stat__label { font-size: 0.67rem; color: var(--text-3); letter-spacing: 0.1em; text-transform: uppercase; }
-  .adm-tabs { max-width: 1000px; margin: 0 auto 24px; display: flex; gap: 6px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 6px; }
-  .adm-tab { display: flex; align-items: center; gap: 7px; padding: 9px 18px; background: transparent; border: none; border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 0.82rem; font-weight: 500; color: var(--text-3); cursor: pointer; transition: color 0.18s, background 0.18s; text-transform: capitalize; }
-  .adm-tab:hover { color: var(--text-2); background: rgba(255,255,255,0.04); }
-  .adm-tab--active { background: var(--surface2); color: var(--text); border: 1px solid var(--border-hi); }
-  .adm-section { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-  .adm-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 28px; position: relative; overflow: hidden; }
-  .adm-card::before { content: ''; position: absolute; inset: 0; border-radius: 18px; background: linear-gradient(135deg, rgba(255,255,255,0.025) 0%, transparent 50%); pointer-events: none; }
-  .adm-card__title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-  .adm-card__titlerow { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
-  .adm-card__titlerow .adm-card__title { margin-bottom: 0; }
-  .adm-card__count { font-size: 0.75rem; font-weight: 400; color: var(--text-3); background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; padding: 2px 10px; }
-  .adm-stack { display: flex; flex-direction: column; gap: 18px; }
-  .adm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
-  .adm-field { display: flex; flex-direction: column; gap: 7px; }
-  .adm-label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.14em; color: var(--text-3); text-transform: uppercase; }
-  .adm-label__hint { font-weight: 400; color: var(--accent); text-transform: none; letter-spacing: 0; font-size: 0.7rem; }
-  .adm-input { width: 100%; padding: 11px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 0.88rem; font-weight: 300; color: var(--text); transition: border-color 0.2s, box-shadow 0.2s; }
-  .adm-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-  .adm-input::placeholder { color: var(--text-3); }
-  .adm-input:disabled { opacity: 0.4; cursor: not-allowed; }
-  .adm-textarea { min-height: 90px; resize: vertical; }
-  .adm-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23545a66' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
-  .adm-file-label { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; background: var(--surface2); border: 1px dashed var(--border-hi); border-radius: 10px; font-size: 0.8rem; font-weight: 500; color: var(--text-2); cursor: pointer; transition: border-color 0.2s, color 0.2s; }
-  .adm-file-label:hover { border-color: var(--accent); color: var(--accent); }
-  .adm-previews { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-  .adm-preview { position: relative; border-radius: 8px; }
-  .adm-preview img { width: 80px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); display: block; }
-  .adm-preview__badge { position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; background: var(--accent); color: #0f1117; padding: 2px 6px; border-radius: 100px; font-weight: 600; white-space: nowrap; }
-  .adm-preview__remove { position: absolute; top: -7px; right: -7px; width: 20px; height: 20px; background: var(--danger); color: #fff; border: none; border-radius: 50%; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .adm-link-cell { display: flex; align-items: center; gap: 6px; }
-  .adm-product-link { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; font-size: 0.72rem; color: var(--text-3); white-space: nowrap; }
-  .adm-link-copy-btn, .adm-link-open-btn { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-3); cursor: pointer; transition: all 0.15s; text-decoration: none; }
-  .adm-link-copy-btn:hover { color: var(--accent); border-color: rgba(124,158,135,0.4); background: var(--accent-dim); }
-  .adm-link-open-btn:hover { color: var(--edit); border-color: rgba(96,165,250,0.4); background: var(--edit-dim); }
-  .adm-action-btns { display: flex; gap: 6px; align-items: center; }
-  .adm-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border: none; border-radius: 100px; font-family: 'Jost', sans-serif; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; transition: opacity 0.18s, transform 0.18s, box-shadow 0.18s; white-space: nowrap; }
-  .adm-btn:hover:not(:disabled) { opacity: 0.82; transform: translateY(-1px); }
-  .adm-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-  .adm-btn--primary { background: var(--accent); color: #0f1117; }
-  .adm-btn--primary:hover:not(:disabled) { box-shadow: 0 6px 20px var(--accent-glow); }
-  .adm-btn--danger { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(248,113,113,0.2); }
-  .adm-btn--edit { background: var(--edit-dim); color: var(--edit); border: 1px solid rgba(96,165,250,0.2); }
-  .adm-btn--ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border-hi); }
-  .adm-btn--ghost:hover:not(:disabled) { color: var(--text); border-color: var(--text-2); }
-  .adm-btn--sm { padding: 6px 14px; font-size: 0.72rem; }
-  .adm-spinner { display: inline-block; width: 12px; height: 12px; border: 1.5px solid rgba(15,17,23,0.25); border-top-color: #0f1117; border-radius: 50%; animation: admSpin 0.65s linear infinite; flex-shrink: 0; }
-  @keyframes admSpin { to { transform: rotate(360deg); } }
-  .adm-hint { font-size: 0.78rem; color: var(--text-3); line-height: 1.6; margin-bottom: 20px; }
-  .adm-table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
-  .adm-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  .adm-table thead tr { background: var(--surface2); }
-  .adm-table th { padding: 11px 14px; text-align: left; font-size: 0.67rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); border-bottom: 1px solid var(--border); white-space: nowrap; }
-  .adm-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text-2); vertical-align: middle; }
-  .adm-table tbody tr:last-child td { border-bottom: none; }
-  .adm-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
-  .adm-id { font-size: 0.75rem; color: var(--text-3); font-weight: 500; }
-  .adm-price { font-weight: 600; color: var(--text); }
-  .adm-slug { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 2px 7px; font-size: 0.78rem; color: var(--accent); }
-  .adm-no-img { color: var(--text-3); }
-  .adm-thumb { width: 56px; height: 40px; object-fit: cover; border-radius: 7px; border: 1px solid var(--border); display: block; }
-  .adm-cat-badge { display: inline-flex; padding: 3px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; font-size: 0.72rem; color: var(--text-2); }
-  .adm-banner-list { display: flex; flex-direction: column; gap: 12px; }
-  .adm-banner-row { display: flex; align-items: center; gap: 16px; padding: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; flex-wrap: wrap; }
-  .adm-banner-thumb { width: 110px; height: 68px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid var(--border); }
-  .adm-banner-preview { margin-top: 12px; width: 200px; height: 120px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); display: block; }
-  .adm-banner-info { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 160px; }
-  .adm-banner-heading { font-weight: 600; font-size: 0.9rem; color: var(--text); }
-  .adm-banner-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.75rem; color: var(--text-3); }
-  .adm-banner-meta b { color: var(--text-2); font-weight: 500; }
-  .adm-link-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: var(--accent-dim); border: 1px solid rgba(124,158,135,0.25); border-radius: 100px; color: var(--accent); font-size: 0.72rem; }
-  .adm-link-badge--none { background: var(--surface); border-color: var(--border); color: var(--text-3); }
-  .adm-link-badge code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
-  .adm-orders { display: flex; flex-direction: column; gap: 10px; }
-  .adm-order { background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: border-color 0.2s; }
-  .adm-order:hover { border-color: var(--border-hi); }
-  .adm-order--open { border-color: var(--border-hi); }
-  .adm-order__head { width: 100%; display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: transparent; border: none; cursor: pointer; text-align: left; flex-wrap: wrap; }
-  .adm-order__id { display: flex; flex-direction: column; gap: 2px; min-width: 100px; }
-  .adm-order__num { font-weight: 600; font-size: 0.9rem; color: var(--text); }
-  .adm-order__date { font-size: 0.7rem; color: var(--text-3); }
-  .adm-order__user { flex: 1; font-size: 0.78rem; color: var(--text-3); }
-  .adm-order__right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
-  .adm-status-pill { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 100px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
-  .adm-order__total { font-weight: 600; font-size: 0.95rem; color: var(--text); }
-  .adm-chevron { color: var(--text-3); transition: transform 0.25s; display: flex; }
-  .adm-chevron--open { transform: rotate(180deg); }
-  .adm-order__body { max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(.22,1,.36,1); }
-  .adm-order__body--open { max-height: 600px; }
-  .adm-order__body-inner { padding: 20px; border-top: 1px solid var(--border); }
-  .adm-order__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .adm-section-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.16em; color: var(--text-3); text-transform: uppercase; margin-bottom: 12px; }
-  .adm-order__item { display: flex; align-items: center; gap: 9px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.83rem; }
-  .adm-order__item:last-child { border-bottom: none; }
-  .adm-item-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.6; flex-shrink: 0; }
-  .adm-order__item-name { flex: 1; color: var(--text); }
-  .adm-order__item-qty { color: var(--text-3); font-size: 0.75rem; }
-  .adm-order__item-price { font-weight: 600; color: var(--text); }
-  .adm-delivery-row { display: flex; align-items: flex-start; gap: 8px; font-size: 0.8rem; color: var(--text-2); padding: 7px 0; border-bottom: 1px solid var(--border); line-height: 1.5; }
-  .adm-delivery-row svg { flex-shrink: 0; color: var(--text-3); margin-top: 2px; }
-  .adm-status-select { padding: 9px 36px 9px 14px; background: var(--surface); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23545a66' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; transition: border-color 0.2s; }
-  .adm-status-select:focus { outline: none; box-shadow: 0 0 0 3px var(--accent-glow); }
-  .adm-empty { font-size: 0.85rem; color: var(--text-3); padding: 20px 0; }
 
-  /* ── Admin email list ── */
-  .adm-email-list { display: flex; flex-direction: column; gap: 8px; }
-  .adm-email-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; }
-  .adm-email-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent-dim); border: 1px solid rgba(124,158,135,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; color: var(--accent); flex-shrink: 0; }
-  .adm-email-addr { flex: 1; font-size: 0.85rem; color: var(--text-2); }
+  /* ── Header ── */
+  .f-header {
+    max-width: 1000px; margin: 0 auto 28px;
+    display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 20px;
+  }
+  .f-badge {
+    display: inline-block; padding: 4px 12px; background: #FF3E5E; color: #fff;
+    border: 2px solid #111; border-radius: 6px; font-size: 0.68rem; font-weight: 800;
+    letter-spacing: 0.12em; text-transform: uppercase; box-shadow: 2px 2px 0 #111; margin-bottom: 8px;
+  }
+  .f-title {
+    font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; color: #111; letter-spacing: -0.04em; line-height: 1;
+  }
+  .f-stats { display: flex; gap: 10px; flex-wrap: wrap; }
+  .f-stat {
+    background: #fff; border: 2.5px solid #111; border-radius: 10px;
+    padding: 12px 18px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    min-width: 80px; box-shadow: 3px 3px 0 #111; border-top-width: 4px;
+  }
+  .f-stat__n { font-size: 1.5rem; font-weight: 800; }
+  .f-stat__l { font-size: 0.66rem; color: #666; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
 
-  /* ── Social media rows ── */
-  .adm-social-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .adm-social-row:last-of-type { border-bottom: none; }
-  .adm-social-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: var(--text-2); flex-shrink: 0; }
-  .adm-social-label { font-size: 0.82rem; font-weight: 500; color: var(--text-2); min-width: 90px; flex-shrink: 0; }
-  .adm-social-input { flex: 1; }
+  /* ── Tabs ── */
+  .f-tabs {
+    max-width: 1000px; margin: 0 auto 24px;
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .f-tab {
+    padding: 8px 16px; background: #fff; border: 2px solid #111; border-radius: 8px;
+    font-family: 'Jost', sans-serif; font-size: 0.8rem; font-weight: 700; color: #444;
+    cursor: pointer; transition: all 0.15s; box-shadow: 2px 2px 0 #ddd;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .f-tab:hover { transform: translateY(-2px); box-shadow: 3px 3px 0 #111; border-color: #111; color: #111; }
 
-  /* ── Toggle switch ── */
-  .adm-toggle { position: relative; width: 36px; height: 20px; border-radius: 100px; border: none; cursor: pointer; transition: background 0.2s; background: var(--surface3); flex-shrink: 0; padding: 0; }
-  .adm-toggle--on { background: var(--accent); }
-  .adm-toggle__knob { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 0.2s; display: block; }
-  .adm-toggle--on .adm-toggle__knob { transform: translateX(16px); }
+  /* ── Section + Card ── */
+  .f-section { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+  .f-card {
+    background: #fff; border: 2.5px solid #111; border-radius: 14px;
+    padding: 24px; box-shadow: 4px 4px 0 #111; border-top-width: 5px;
+  }
+  .f-card-title {
+    font-size: 1.05rem; font-weight: 800; color: #111; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .f-count {
+    font-size: 0.72rem; font-weight: 700; background: #f0f0f0; color: #666;
+    border: 1.5px solid #ddd; border-radius: 100px; padding: 2px 9px;
+  }
+  .f-hint { font-size: 0.78rem; color: #888; line-height: 1.6; margin-bottom: 16px; }
+  .f-hint-text { font-size: 0.72rem; color: #00D084; font-weight: 600; margin-left: 4px; }
+  .f-stack { display: flex; flex-direction: column; gap: 16px; }
+  .f-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+  .f-field { display: flex; flex-direction: column; gap: 6px; }
+  .f-label { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.12em; color: #555; text-transform: uppercase; }
+  .f-empty { font-size: 0.85rem; color: #aaa; padding: 16px 0; }
 
+  /* ── Inputs ── */
+  .f-input {
+    width: 100%; padding: 10px 13px; background: #f9f9f9; border: 2px solid #111;
+    border-radius: 8px; font-family: 'Jost', sans-serif; font-size: 0.86rem; font-weight: 500; color: #111;
+    transition: box-shadow 0.15s, background 0.15s;
+  }
+  .f-input:focus { outline: none; background: #fff; box-shadow: 3px 3px 0 #111; }
+  .f-input::placeholder { color: #bbb; font-weight: 400; }
+  .f-input:disabled { opacity: 0.4; cursor: not-allowed; }
+  .f-textarea { min-height: 88px; resize: vertical; }
+  .f-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; background-color: #f9f9f9; }
+
+  /* ── Buttons ── */
+  .f-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 18px; border: 2px solid #111; border-radius: 8px;
+    font-family: 'Jost', sans-serif; font-size: 0.78rem; font-weight: 800;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap; letter-spacing: 0.02em;
+  }
+  .f-btn:hover:not(:disabled) { transform: translateY(-2px); }
+  .f-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .f-btn--red    { background: #FF3E5E; color: #fff; box-shadow: 3px 3px 0 #111; }
+  .f-btn--red:hover:not(:disabled) { box-shadow: 4px 5px 0 #111; }
+  .f-btn--green  { background: #00D084; color: #111; box-shadow: 3px 3px 0 #111; }
+  .f-btn--green:hover:not(:disabled) { box-shadow: 4px 5px 0 #111; }
+  .f-btn--yellow { background: #FFE14D; color: #111; box-shadow: 3px 3px 0 #111; }
+  .f-btn--yellow:hover:not(:disabled) { box-shadow: 4px 5px 0 #111; }
+  .f-btn--blue   { background: #0EA5E9; color: #fff; box-shadow: 3px 3px 0 #111; }
+  .f-btn--blue:hover:not(:disabled) { box-shadow: 4px 5px 0 #111; }
+  .f-btn--orange { background: #FF8C00; color: #fff; box-shadow: 3px 3px 0 #111; }
+  .f-btn--orange:hover:not(:disabled) { box-shadow: 4px 5px 0 #111; }
+  .f-btn--wa     { background: #25D366; color: #fff; box-shadow: 3px 3px 0 #111; }
+  .f-btn--wa:hover:not(:disabled) { box-shadow: 4px 5px 0 #111; }
+  .f-btn--ghost  { background: #fff; color: #444; box-shadow: 2px 2px 0 #ddd; }
+  .f-btn--ghost:hover:not(:disabled) { box-shadow: 3px 3px 0 #111; border-color: #111; color: #111; }
+  .f-btn--sm { padding: 5px 12px; font-size: 0.72rem; }
+
+  /* ── File button ── */
+  .f-file-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 16px; background: #fff; border: 2px dashed #111;
+    border-radius: 8px; font-family: 'Jost', sans-serif; font-size: 0.8rem; font-weight: 700;
+    color: #444; cursor: pointer; transition: all 0.15s;
+  }
+  .f-file-btn:hover { background: #FFE14D; border-style: solid; box-shadow: 2px 2px 0 #111; }
+
+  /* ── Clear button ── */
+  .f-clear-btn {
+    display: inline-block; margin-left: 8px; padding: 4px 10px;
+    background: #fff; border: 1.5px solid #111; border-radius: 6px;
+    font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .f-clear-btn:hover { background: #FF3E5E; color: #fff; }
+
+  /* ── Icon buttons ── */
+  .f-icon-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; background: #f5f5f5; border: 1.5px solid #111;
+    border-radius: 6px; cursor: pointer; font-size: 13px; text-decoration: none; color: #111;
+    transition: all 0.15s;
+  }
+  .f-icon-btn:hover { background: #FFE14D; box-shadow: 2px 2px 0 #111; }
+
+  /* ── Progress ── */
+  .f-prog { height: 8px; background: #f0f0f0; border: 2px solid #111; border-radius: 100px; overflow: hidden; }
+  .f-prog__bar { height: 100%; border-radius: 100px; transition: width 0.2s ease; }
+
+  /* ── Table ── */
+  .f-table-wrap { overflow-x: auto; border: 2px solid #111; border-radius: 10px; }
+  .f-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  .f-table thead tr { background: #111; }
+  .f-table th { padding: 10px 14px; text-align: left; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #fff; white-space: nowrap; }
+  .f-table td { padding: 11px 14px; border-bottom: 1.5px solid #f0f0f0; color: #333; vertical-align: middle; }
+  .f-table tbody tr:last-child td { border-bottom: none; }
+  .f-table tbody tr:hover td { background: #FFFBEB; }
+
+  /* ── Misc ── */
+  .f-code { background: #f5f5f5; border: 1.5px solid #ddd; border-radius: 5px; padding: 2px 7px; font-size: 0.76rem; color: #555; }
+  .f-badge-sm { display: inline-flex; padding: 2px 8px; background: #F3F4F6; border: 1.5px solid #ddd; border-radius: 100px; font-size: 0.71rem; font-weight: 700; color: #444; }
+  .f-item-row { display: flex; align-items: center; gap: 14px; padding: 14px; background: #f9f9f9; border: 2px solid #111; border-radius: 10px; box-shadow: 2px 2px 0 #ddd; flex-wrap: wrap; }
+
+  /* ── Toasts ── */
+  .f-toasts { position: fixed; bottom: 24px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+  .f-toast {
+    display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+    background: #fff; border: 2.5px solid #111; border-radius: 10px;
+    box-shadow: 4px 4px 0 #111; font-family: 'Jost', sans-serif; font-size: 0.82rem; font-weight: 600;
+    color: #111; min-width: 240px; max-width: 360px; pointer-events: all;
+    animation: fToastIn 0.25s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes fToastIn { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: none; } }
+  .f-toast--success { border-color: #00D084; box-shadow: 4px 4px 0 #00D084; }
+  .f-toast--error   { border-color: #FF3E5E; box-shadow: 4px 4px 0 #FF3E5E; }
+  .f-toast--info    { border-color: #0EA5E9; box-shadow: 4px 4px 0 #0EA5E9; }
+  .f-toast__dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid #111; flex-shrink: 0; }
+  .f-toast--success .f-toast__dot { background: #00D084; }
+  .f-toast--error   .f-toast__dot { background: #FF3E5E; }
+  .f-toast--info    .f-toast__dot { background: #0EA5E9; }
+  .f-toast__msg { flex: 1; }
+  .f-toast__x { background: none; border: none; font-size: 18px; cursor: pointer; color: #888; padding: 0; line-height: 1; }
+  .f-toast__x:hover { color: #111; }
+
+  /* ── Confirm / Overlay ── */
+  .f-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9998; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+  .f-dialog { background: #fff; border: 3px solid #111; border-radius: 16px; padding: 32px 28px; max-width: 360px; width: 100%; text-align: center; box-shadow: 6px 6px 0 #111; animation: fPopIn 0.22s cubic-bezier(.22,1,.36,1) both; }
+  @keyframes fPopIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+  .f-dialog__icon { font-size: 2.5rem; margin-bottom: 14px; }
+  .f-dialog__msg { font-size: 0.9rem; color: #444; line-height: 1.6; margin-bottom: 22px; font-family: 'Jost', sans-serif; }
+  .f-dialog__btns { display: flex; gap: 10px; justify-content: center; }
+
+  /* ── Edit Modal ── */
+  .f-modal { background: #fff; border: 3px solid #111; border-radius: 16px; width: 100%; max-width: 540px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 6px 6px 0 #111; overflow: hidden; animation: fPopIn 0.22s cubic-bezier(.22,1,.36,1) both; }
+  .f-modal__head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 2px solid #111; background: #111; }
+  .f-modal__title { font-size: 1rem; font-weight: 800; color: #fff; }
+  .f-modal__close { width: 30px; height: 30px; background: #FF3E5E; border: 2px solid #fff; border-radius: 6px; color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .f-modal__body { overflow-y: auto; padding: 20px 22px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
+  .f-modal__foot { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 22px; border-top: 2px solid #111; background: #f9f9f9; }
+  .f-img-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px; background: #f5f5f5; border: 2px solid #111; border-radius: 10px; }
+  .f-img-preview { width: 96px; height: 70px; border-radius: 8px; border: 2px solid #111; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #e0e0e0; font-size: 0.72rem; color: #888; }
+  .f-img-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ── Upload bar ── */
+  .f-upload-bar { position: fixed; top: 62px; left: 0; right: 0; z-index: 200; background: #111; padding: 8px 24px; display: flex; align-items: center; gap: 14px; }
+  .f-upload-bar span { font-family: 'Jost', sans-serif; font-size: 0.75rem; font-weight: 700; color: #fff; white-space: nowrap; }
+  .f-upload-bar__track { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 100px; overflow: hidden; }
+  .f-upload-bar__fill { height: 100%; background: #FFE14D; border-radius: 100px; transition: width 0.2s; }
+
+  /* ── Responsive ── */
   @media (max-width: 600px) {
-    .adm-row { grid-template-columns: 1fr; }
-    .adm-header { flex-direction: column; align-items: flex-start; }
-    .adm-stats { width: 100%; }
-    .adm-stat { flex: 1; }
-    .adm-order__cols { grid-template-columns: 1fr; }
-    .toast-stack { right: 14px; left: 14px; align-items: stretch; }
-    .toast { min-width: unset; max-width: 100%; }
-    .edit-modal { max-height: 95vh; border-radius: 18px; }
-    .edit-modal__img-section { flex-direction: column; }
-    .adm-social-row { flex-wrap: wrap; }
-    .adm-social-input { min-width: 100%; }
+    .f-grid-2 { grid-template-columns: 1fr; }
+    .f-header { flex-direction: column; align-items: flex-start; }
+    .f-stats { width: 100%; }
+    .f-stat { flex: 1; }
+    .f-toasts { left: 14px; right: 14px; }
+    .f-toast { min-width: unset; }
+    .f-modal { max-height: 95vh; }
+    .f-img-row { flex-direction: column; }
   }
 `;

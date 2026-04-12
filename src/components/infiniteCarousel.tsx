@@ -11,14 +11,21 @@ type CarouselItem = {
   created_at: string;
 };
 
-const SIDE_RATIO = 0.12;
 const GAP = 10;
 
+function getSideRatio(w: number) {
+  if (w < 480) return 0.04;
+  if (w < 768) return 0.06;
+  return 0.12;
+}
+
 export default function InfiniteCarousel() {
-  const [items, setItems]     = useState<CarouselItem[]>([]);
-  const [current, setCurrent] = useState(0);
-  const [sceneW, setSceneW]   = useState(0);
-  const [hovered, setHovered] = useState(false);
+  const [items, setItems]       = useState<CarouselItem[]>([]);
+  const [loading, setLoading]   = useState(true);
+  const [current, setCurrent]   = useState(0);
+  const [sceneW, setSceneW]     = useState(0);
+  const [hovered, setHovered]   = useState(false);
+  const [ready, setReady]       = useState(false);
 
   const isJumping  = useRef(false);
   const pausedRef  = useRef(false);
@@ -27,14 +34,19 @@ export default function InfiniteCarousel() {
   const trackRef   = useRef<HTMLDivElement>(null);
   const sceneRef   = useRef<HTMLDivElement>(null);
   const currentRef = useRef(0);
-  const router     = useRouter();
+  const initializedRef = useRef(false);
+  const router = useRouter();
 
   useEffect(() => { currentRef.current = current; }, [current]);
 
   useEffect(() => {
     fetch("/api/carousel")
-      .then((r) => r.json() as Promise<{ results: CarouselItem[] }>)
-      .then((d) => setItems(d.results || []));
+      .then(r => r.json() as Promise<{ results: CarouselItem[] }>)
+      .then(d => {
+        setItems(d.results || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -51,70 +63,51 @@ export default function InfiniteCarousel() {
   }, []);
 
   const TOTAL = items.length;
-  const sv    = sceneW * SIDE_RATIO;
+  const sv    = sceneW > 0 ? sceneW * getSideRatio(sceneW) : 0;
   const cw    = sceneW > 0 ? sceneW - 2 * (sv + GAP) : 0;
-  const ch    = cw > 0 ? Math.round(cw / (16 / 6.2)) : 0;
-
-  // tIdx is 1-based because extendedItems = [clone-last, ...items, clone-first]
-  // so real item[0] is at index 1 in the extended array
-  const tIdx = current + 1;
+  const ch    = cw > 0 ? Math.round(cw / (16 / 6.5)) : 0;
+  const tIdx  = current + 1;
 
   const getX = useCallback(
     (ti: number) => -(ti * (cw + GAP)) + sv + GAP,
     [cw, sv]
   );
 
-  // Move track instantly (no animation) to a given track index
-  const jumpSilent = useCallback(
-    (ti: number) => {
-      const el = trackRef.current;
-      if (!el) return;
-      el.style.transition = "none";
-      el.style.transform  = `translateX(${getX(ti)}px)`;
-      // force reflow so the next transition isn't skipped
-      void el.offsetHeight;
-    },
-    [getX]
-  );
+  const jumpSilent = useCallback((ti: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.style.transition = "none";
+    el.style.transform  = `translateX(${getX(ti)}px)`;
+    void el.offsetHeight;
+  }, [getX]);
 
-  // Animate to a given track index
-  const animateTo = useCallback(
-    (ti: number) => {
-      const el = trackRef.current;
-      if (!el) return;
-      el.style.transition = "transform 0.48s cubic-bezier(0.4,0,0.2,1)";
-      el.style.transform  = `translateX(${getX(ti)}px)`;
-    },
-    [getX]
-  );
+  const animateTo = useCallback((ti: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.style.transition = "transform 0.48s cubic-bezier(0.4,0,0.2,1)";
+    el.style.transform  = `translateX(${getX(ti)}px)`;
+  }, [getX]);
 
-  const goTo = useCallback(
-    (nextReal: number) => {
-      if (isJumping.current || TOTAL === 0) return;
-      isJumping.current = true;
+  const goTo = useCallback((nextReal: number) => {
+    if (isJumping.current || TOTAL === 0) return;
+    isJumping.current = true;
 
-      const wrappedReal = ((nextReal % TOTAL) + TOTAL) % TOTAL;
-      const nextTIdx    = nextReal + 1; // track index in extended array
+    const wrappedReal = ((nextReal % TOTAL) + TOTAL) % TOTAL;
+    const nextTIdx    = nextReal + 1;
 
-      // Animate to the requested track index (may be clone at 0 or TOTAL+1)
-      animateTo(nextTIdx);
-      setCurrent(wrappedReal);
-      currentRef.current = wrappedReal;
+    animateTo(nextTIdx);
+    setCurrent(wrappedReal);
+    currentRef.current = wrappedReal;
 
-      // After animation completes, silently jump to real position if we landed on a clone
-      setTimeout(() => {
-        if (nextReal >= TOTAL) {
-          // we animated to the clone-first at end → jump back to real index 1
-          jumpSilent(1);
-        } else if (nextReal < 0) {
-          // we animated to the clone-last at start → jump to real last index
-          jumpSilent(TOTAL);
-        }
-        isJumping.current = false;
-      }, 490);
-    },
-    [TOTAL, animateTo, jumpSilent]
-  );
+    setTimeout(() => {
+      if (nextReal >= TOTAL) {
+        jumpSilent(1);
+      } else if (nextReal < 0) {
+        jumpSilent(TOTAL);
+      }
+      isJumping.current = false;
+    }, 490);
+  }, [TOTAL, animateTo, jumpSilent]);
 
   const next = useCallback(() => {
     if (isJumping.current) return;
@@ -125,6 +118,29 @@ export default function InfiniteCarousel() {
     if (isJumping.current) return;
     goTo(currentRef.current - 1);
   }, [goTo]);
+
+  // KEY FIX: only initialize position ONCE when both items AND cw are ready
+  useEffect(() => {
+    if (cw === 0 || TOTAL === 0 || initializedRef.current) return;
+    initializedRef.current = true;
+    // reset to index 0 explicitly
+    setCurrent(0);
+    currentRef.current = 0;
+    // small delay to let DOM render the track with items first
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        jumpSilent(1); // tIdx for current=0 is always 1
+        setReady(true);
+      });
+    });
+  }, [cw, TOTAL, jumpSilent]);
+
+  // When cw changes AFTER init (resize), re-sync without animation
+  useEffect(() => {
+    if (!initializedRef.current || cw === 0) return;
+    jumpSilent(currentRef.current + 1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cw]);
 
   // Auto-play
   useEffect(() => {
@@ -139,22 +155,15 @@ export default function InfiniteCarousel() {
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [TOTAL, next]);
 
-  // On initial render and when cw changes, set position without animation
-  useEffect(() => {
-    if (cw === 0) return;
-    jumpSilent(tIdx);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cw]);
-
   const handleClick = (item: CarouselItem) => {
     if (item.link_type === "product") router.push(`/products/${item.link_value}`);
     else router.push(`/category/${item.link_value}`);
   };
 
-  const extendedItems =
-    TOTAL > 0 ? [items[TOTAL - 1], ...items, items[0]] : [];
+  const extendedItems = TOTAL > 0 ? [items[TOTAL - 1], ...items, items[0]] : [];
 
-  const ready = sceneW > 0 && TOTAL > 0 && cw > 0;
+  // Skeleton shimmer count based on screen
+  const skeletonCount = sceneW < 480 ? 1 : sceneW < 768 ? 2 : 3;
 
   return (
     <>
@@ -165,18 +174,37 @@ export default function InfiniteCarousel() {
           className="hc-scene"
           onMouseEnter={() => { pausedRef.current = true;  setHovered(true);  }}
           onMouseLeave={() => { pausedRef.current = false; setHovered(false); }}
-          onPointerDown={(e) => { dragStart.current = e.clientX; }}
-          onPointerUp={(e) => {
+          onPointerDown={e => { dragStart.current = e.clientX; }}
+          onPointerUp={e => {
             if (dragStart.current === null) return;
             const diff = dragStart.current - e.clientX;
             if (Math.abs(diff) > 50) diff > 0 ? next() : prev();
             dragStart.current = null;
           }}
         >
-          {ready && (
+          {/* Skeleton loading */}
+          {(loading || !ready) && sceneW > 0 && (
+            <div className="hc-skeleton-row" style={{ padding: `0 ${sv + GAP}px` }}>
+              {Array.from({ length: skeletonCount }).map((_, i) => (
+                <div
+                  key={i}
+                  className="hc-skeleton"
+                  style={{
+                    width: i === 0 ? cw || sceneW * 0.7 : (cw || sceneW * 0.7) * 0.88,
+                    height: ch || Math.round((cw || sceneW * 0.7) / (16 / 6.5)),
+                    opacity: i === 0 ? 1 : 0.5,
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Real track */}
+          {!loading && TOTAL > 0 && (
             <div
               ref={trackRef}
               className="hc-track"
+              style={{ opacity: ready ? 1 : 0, transition: "opacity 0.3s" }}
             >
               {extendedItems.map((item, i) => {
                 const isCenter = i === tIdx;
@@ -189,58 +217,47 @@ export default function InfiniteCarousel() {
                       width:      cw,
                       height:     ch,
                       marginLeft: i === 0 ? 0 : GAP,
-                      transform:  isCenter ? "scale(1)"    : "scale(0.9)",
-                      opacity:    isCenter ? 1              : 0.65,
-                      boxShadow:  isCenter
-                        ? "0 8px 40px rgba(0,0,0,0.22)"
-                        : "none",
+                      transform:  isCenter ? "scale(1)" : "scale(0.88)",
+                      opacity:    isCenter ? 1 : 0.55,
+                      boxShadow:  isCenter ? "0 8px 40px rgba(0,0,0,0.22)" : "none",
                     }}
                     onClick={() => {
                       if (!isCenter) goTo(realIdx);
                       else handleClick(item);
                     }}
                   >
-                    <img
-                      src={item.image_url}
-                      alt=""
-                      className="hc-img"
-                      draggable={false}
-                    />
+                    <img src={item.image_url} alt="" className="hc-img" draggable={false}/>
                   </div>
                 );
               })}
             </div>
           )}
 
-          {ready && TOTAL > 1 && (
+          {/* Arrows */}
+          {!loading && ready && TOTAL > 1 && (
             <>
               <button
                 className={`hc-arrow hc-arrow--left ${hovered ? "hc-arrow--visible" : ""}`}
-                onClick={prev}
-                aria-label="Previous"
+                onClick={prev} aria-label="Previous"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2.5"
-                  strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="15 18 9 12 15 6" />
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6"/>
                 </svg>
               </button>
               <button
                 className={`hc-arrow hc-arrow--right ${hovered ? "hc-arrow--visible" : ""}`}
-                onClick={next}
-                aria-label="Next"
+                onClick={next} aria-label="Next"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2.5"
-                  strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="9 18 15 12 9 6" />
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"/>
                 </svg>
               </button>
             </>
           )}
         </div>
 
-        {TOTAL > 1 && (
+        {/* Dots */}
+        {!loading && ready && TOTAL > 1 && (
           <div className="hc-dots">
             {items.map((_, i) => (
               <button
@@ -265,7 +282,7 @@ const css = `
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     overflow: hidden;
   }
   .hc-scene {
@@ -274,7 +291,7 @@ const css = `
     overflow: hidden;
     user-select: none;
     touch-action: pan-y;
-    min-height: 2px;
+    min-height: 60px;
   }
   .hc-track {
     display: flex;
@@ -283,7 +300,7 @@ const css = `
   }
   .hc-slide {
     flex-shrink: 0;
-    border-radius: 14px;
+    border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
     transition:
@@ -299,53 +316,74 @@ const css = `
     display: block;
     pointer-events: none;
   }
+
+  /* ── Skeleton ── */
+  .hc-skeleton-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .hc-skeleton {
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #fce4e9 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: hcShimmer 1.4s ease-in-out infinite;
+  }
+  @keyframes hcShimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ── Arrows ── */
   .hc-arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 10;
-    width: 40px;
-    height: 40px;
+    width: 38px; height: 38px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.92);
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #111;
-    opacity: 0;
-    pointer-events: none;
+    background: rgba(255,255,255,0.95);
+    border: 2px solid #111;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #111;
+    opacity: 0; pointer-events: none;
+    box-shadow: 2px 2px 0 #111;
     transition: opacity 0.2s, background 0.15s, transform 0.15s;
   }
   .hc-arrow--visible { opacity: 1; pointer-events: auto; }
   .hc-arrow:hover {
     background: #ff3e5e;
+    color: #fff;
+    border-color: #111;
     transform: translateY(calc(-50% - 2px));
+    box-shadow: 2px 4px 0 #111;
   }
-  .hc-arrow--left  { left: 16px; }
-  .hc-arrow--right { right: 16px; }
+  .hc-arrow--left  { left: 14px; }
+  .hc-arrow--right { right: 14px; }
+
+  /* ── Dots ── */
   .hc-dots {
-    display: flex;
-    gap: 6px;
-    align-items: center;
+    display: flex; gap: 6px; align-items: center;
   }
   .hc-dot {
-    height: 8px;
-    width: 8px;
-    border-radius: 4px;
-    background: #bbb;
-    border: none;
-    padding: 0;
-    cursor: pointer;
+    height: 7px; width: 7px; border-radius: 4px;
+    background: #ccc; border: none; padding: 0; cursor: pointer;
     transition: background 0.25s, width 0.3s;
   }
-  .hc-dot--active {
-    background: #ff3e5e;
-    width: 28px;
-  }
+  .hc-dot--active { background: #ff3e5e; width: 26px; }
+
+  /* ── Mobile ── */
   @media (max-width: 768px) {
-    .hc-arrow--left  { left: 8px; }
-    .hc-arrow--right { right: 8px; }
+    .hc-outer { padding: 14px 0 12px; gap: 10px; }
+    .hc-arrow--left  { left: 6px; }
+    .hc-arrow--right { right: 6px; }
+    .hc-arrow { width: 32px; height: 32px; }
+    .hc-slide { border-radius: 10px; }
+  }
+  @media (max-width: 480px) {
+    .hc-arrow--visible { opacity: 1; pointer-events: auto; }
   }
 `;

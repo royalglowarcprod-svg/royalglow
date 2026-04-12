@@ -15,8 +15,8 @@ export default function Home() {
       <InfiniteCarousel />
       <Banner />
       <WhatsAppButton />
-      <Footer />
       <Page />
+      <Footer />
     </div>
   );
 }
