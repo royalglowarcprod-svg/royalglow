@@ -11,7 +11,7 @@ type Banner = {
   link_to?: string;
 };
 
-// 👇 ADD THIS
+
 type BannerResponse = {
   results: Banner[];
 };

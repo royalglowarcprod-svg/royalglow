@@ -26,20 +26,18 @@ function shuffle<T>(arr: T[]): T[] {
 
 function ProductSection({ category }: { category: Category }) {
   const [products, setProducts] = useState<Product[]>([]);
-
   useEffect(() => {
-    const fetchProducts = async () => {
-      const res = await fetch(`/api/products?category_id=${category.id}`);
-      const data = (await res.json()) as ProductsResponse;
-      setProducts(shuffle(data.results || []));
-    };
-
-    fetchProducts();
+    fetch(`/api/products?category_id=${category.id}`)
+      .then(r => r.json() as Promise<ProductsResponse>)
+      .then(data => setProducts(shuffle(data.results || [])));
   }, [category.id]);
-
   return (
     <section id={`category-${category.slug}`}>
-      <ProductCard title={category.name} products={products} />
+      <ProductCard
+        title={category.name}
+        products={products}
+        categorySlug={category.slug}
+      />
     </section>
   );
 }

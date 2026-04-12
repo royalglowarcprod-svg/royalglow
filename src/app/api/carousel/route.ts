@@ -1,6 +1,5 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
 import { NextRequest, NextResponse } from "next/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
@@ -42,7 +41,7 @@ async function getDB(): Promise<D1Database> {
 export async function GET() {
   try {
     const db = await getDB();
-    const res = await db.prepare("SELECT * FROM categories ORDER BY id DESC").all();
+    const res = await db.prepare("SELECT * FROM carousel_items ORDER BY sort_order ASC, id ASC").all();
     return NextResponse.json({ results: res.results });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Internal Server Error";
@@ -53,25 +52,17 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const db = await getDB();
-    const { name, slug, image_url } = (await req.json()) as {
-      name?: string;
-      slug?: string;
-      image_url?: string;
+    const { image_url, link_type, link_value, sort_order } = (await req.json()) as {
+      image_url?: string; link_type?: string; link_value?: string; sort_order?: number;
     };
-
-    if (!name?.trim() || !slug?.trim()) {
-      return NextResponse.json({ error: "Please provide both name and slug" }, { status: 400 });
+    if (!image_url || !link_type || !link_value) {
+      return NextResponse.json({ error: "image_url, link_type, link_value required" }, { status: 400 });
     }
-
     const result = await db
-      .prepare("INSERT INTO categories (name, slug, image_url) VALUES (?, ?, ?)")
-      .bind(name.trim(), slug.trim(), image_url?.trim() || null)
+      .prepare("INSERT INTO carousel_items (image_url, link_type, link_value, sort_order) VALUES (?, ?, ?, ?)")
+      .bind(image_url, link_type, link_value, sort_order ?? 0)
       .run();
-
-    return NextResponse.json(
-      { success: true, category: { id: result.meta?.last_row_id, name, slug, image_url } },
-      { status: 201 }
-    );
+    return NextResponse.json({ success: true, id: result.meta?.last_row_id }, { status: 201 });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Internal Server Error";
     return NextResponse.json({ error: message }, { status: 500 });
@@ -84,20 +75,9 @@ export async function DELETE(req: NextRequest) {
     const { id } = (await req.json()) as { id?: unknown };
     const numId = Number(id);
     if (!numId || isNaN(numId)) {
-      return NextResponse.json({ error: "A valid numeric id is required" }, { status: 400 });
+      return NextResponse.json({ error: "Valid id required" }, { status: 400 });
     }
-    const existing = await db.prepare("SELECT id FROM categories WHERE id = ?").bind(numId).all();
-    if (!existing.results.length) {
-      return NextResponse.json({ error: "Category not found" }, { status: 404 });
-    }
-    const productsRes = await db.prepare("SELECT id FROM products WHERE category_id = ?").bind(numId).all();
-    const productIds = (productsRes.results as { id: number }[]).map((p) => p.id);
-    for (const productId of productIds) {
-      await db.prepare("DELETE FROM reviews WHERE product_id = ?").bind(productId).run();
-      await db.prepare("DELETE FROM product_images WHERE product_id = ?").bind(productId).run();
-    }
-    await db.prepare("DELETE FROM products WHERE category_id = ?").bind(numId).run();
-    await db.prepare("DELETE FROM categories WHERE id = ?").bind(numId).run();
+    await db.prepare("DELETE FROM carousel_items WHERE id = ?").bind(numId).run();
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Internal Server Error";

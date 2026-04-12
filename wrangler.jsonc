@@ -15,8 +15,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "crash-card-prod-db",
-      "database_id": "5a26386c-d5ed-4b62-abc2-ebcdb28df137"
+      "database_name": "royalglow-arc-prod-db",
+      "database_id": "75db49b8-9ca0-4089-9415-79efc4ea0f9f"
     }
   ]
 }

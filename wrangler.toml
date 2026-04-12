@@ -1,0 +1,7 @@
+name = "royalglow"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "royalglow-arc-prod-db"
+database_id = "75db49b8-9ca0-4089-9415-79efc4ea0f9f"

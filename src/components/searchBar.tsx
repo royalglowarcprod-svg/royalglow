@@ -12,7 +12,7 @@ type Product = {
   category_name: string;
 };
 
-// ✅ ADD THIS
+
 type SearchResponse = {
   results: Product[];
 };
@@ -50,8 +50,6 @@ export default function SearchBar() {
       setLoading(true);
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
-
-        // ✅ FIX — tell TS what API returns
         const data = (await res.json()) as SearchResponse;
 
         setSuggestions((data.results || []).slice(0, 6));
