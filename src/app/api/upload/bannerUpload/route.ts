@@ -2,13 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 const R2_ACCESS_KEY = process.env.R2_ACCESS_KEY!;
 const R2_SECRET_KEY = process.env.R2_SECRET_KEY!;
-const R2_BUCKET = process.env.R2_BUCKET!;
-const R2_ENDPOINT = process.env.R2_ENDPOINT!;
+const R2_BUCKET     = process.env.R2_BUCKET!;
+const R2_ENDPOINT   = process.env.R2_ENDPOINT!;
 const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL!;
 
-// ── Crypto helpers ──────────────────────────────────────────────
-
-/** Always returns a plain ArrayBuffer — never SharedArrayBuffer */
 function toPlainArrayBuffer(input: ArrayBuffer | Uint8Array): ArrayBuffer {
   if (input instanceof ArrayBuffer) return input;
   return input.buffer.slice(
@@ -30,11 +27,7 @@ async function sha256Hex(data: ArrayBuffer): Promise<string> {
 
 async function hmacSign(key: ArrayBuffer, data: string): Promise<ArrayBuffer> {
   const cryptoKey = await crypto.subtle.importKey(
-    "raw",
-    key,
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"]
+    "raw", key, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
   );
   const sig = await crypto.subtle.sign("HMAC", cryptoKey, encode(data));
   return toPlainArrayBuffer(sig);
@@ -48,10 +41,7 @@ async function hmacHex(key: ArrayBuffer, data: string): Promise<string> {
 }
 
 async function getSigningKey(
-  secret: string,
-  date: string,
-  region: string,
-  service: string
+  secret: string, date: string, region: string, service: string
 ): Promise<ArrayBuffer> {
   const kDate    = await hmacSign(encode(`AWS4${secret}`), date);
   const kRegion  = await hmacSign(kDate, region);
@@ -59,17 +49,13 @@ async function getSigningKey(
   return hmacSign(kService, "aws4_request");
 }
 
-// ── Upload ──────────────────────────────────────────────────────
-
 async function signAndUpload(
-  fileName: string,
-  body: ArrayBuffer,
-  contentType: string
+  fileName: string, body: ArrayBuffer, contentType: string
 ): Promise<void> {
-  const url       = `${R2_ENDPOINT}/${R2_BUCKET}/${fileName}`;
-  console.log("[bannerUpload] R2_ENDPOINT:", R2_ENDPOINT);
-console.log("[bannerUpload] R2_BUCKET:", R2_BUCKET);
-console.log("[bannerUpload] Upload URL:", url);
+  // Strip trailing slash from endpoint to avoid double slashes
+  const endpoint = R2_ENDPOINT.replace(/\/$/, "");
+  const url      = `${endpoint}/${R2_BUCKET}/${fileName}`;
+
   const now       = new Date();
   const datestamp = now.toISOString().slice(0, 10).replace(/-/g, "");
   const amzdate   = now.toISOString().replace(/[:-]|\.\d{3}/g, "").slice(0, 15) + "Z";
@@ -84,7 +70,7 @@ console.log("[bannerUpload] Upload URL:", url);
     `host:${host}\n` +
     `x-amz-content-sha256:${payloadHash}\n` +
     `x-amz-date:${amzdate}\n`;
-  const signedHeaders   = "content-type;host;x-amz-content-sha256;x-amz-date";
+  const signedHeaders    = "content-type;host;x-amz-content-sha256;x-amz-date";
   const canonicalRequest = [
     "PUT",
     `/${R2_BUCKET}/${fileName}`,
@@ -111,10 +97,10 @@ console.log("[bannerUpload] Upload URL:", url);
   const response = await fetch(url, {
     method: "PUT",
     headers: {
-      "Content-Type": contentType,
+      "Content-Type":        contentType,
       "x-amz-content-sha256": payloadHash,
-      "x-amz-date": amzdate,
-      Authorization: authorization,
+      "x-amz-date":          amzdate,
+      Authorization:         authorization,
     },
     body,
   });
@@ -125,18 +111,37 @@ console.log("[bannerUpload] Upload URL:", url);
   }
 }
 
-// ── Route handler ───────────────────────────────────────────────
-
 export async function POST(req: NextRequest) {
+  // Guard: catch missing env vars early with a clear error
+  if (!R2_ENDPOINT || !R2_BUCKET || !R2_ACCESS_KEY || !R2_SECRET_KEY || !R2_PUBLIC_URL) {
+    console.error("[bannerUpload] Missing env vars:", {
+      R2_ENDPOINT:   !!R2_ENDPOINT,
+      R2_BUCKET:     !!R2_BUCKET,
+      R2_ACCESS_KEY: !!R2_ACCESS_KEY,
+      R2_SECRET_KEY: !!R2_SECRET_KEY,
+      R2_PUBLIC_URL: !!R2_PUBLIC_URL,
+    });
+    return NextResponse.json(
+      { success: false, error: "Server misconfiguration: missing env vars" },
+      { status: 500 }
+    );
+  }
+
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
 
     if (!file) {
-      return NextResponse.json({ success: false, error: "No file uploaded" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: "No file uploaded" },
+        { status: 400 }
+      );
     }
     if (!file.type.startsWith("image/")) {
-      return NextResponse.json({ success: false, error: "Only image files are allowed" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: "Only image files are allowed" },
+        { status: 400 }
+      );
     }
 
     const body     = toPlainArrayBuffer(new Uint8Array(await file.arrayBuffer()));
@@ -145,9 +150,16 @@ export async function POST(req: NextRequest) {
 
     await signAndUpload(fileName, body, file.type);
 
-    return NextResponse.json({ success: true, url: `${R2_PUBLIC_URL}/${fileName}` });
-  } catch (err: any) {
+    // Strip trailing slash from public URL to avoid double slashes
+    const publicBase = R2_PUBLIC_URL.replace(/\/$/, "");
+    return NextResponse.json({ success: true, url: `${publicBase}/${fileName}` });
+
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Upload failed";
     console.error("[bannerUpload] error:", err);
-    return NextResponse.json({ success: false, error: err?.message ?? "Upload failed" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: message },
+      { status: 500 }
+    );
   }
 }
