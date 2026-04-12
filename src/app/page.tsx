@@ -4,6 +4,7 @@ import Page from "../components/cardDisplay";
 import CategoryCircles from "@/components/categoryCircles";
 import InfiniteCarousel from "@/components/infiniteCarousel";
 import WhatsAppButton from "@/components/whatsappButton";
+import SearchBar from "@/components/searchBar";
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
       <NavBar />
      
       <CategoryCircles />
+      <SearchBar />
       <InfiniteCarousel />
       <Banner />
       <WhatsAppButton />

@@ -320,7 +320,7 @@ const css = `
   }
   .hc-arrow--visible { opacity: 1; pointer-events: auto; }
   .hc-arrow:hover {
-    background: #FFE14D;
+    background: #ff3e5e;
     transform: translateY(calc(-50% - 2px));
   }
   .hc-arrow--left  { left: 16px; }
@@ -341,7 +341,7 @@ const css = `
     transition: background 0.25s, width 0.3s;
   }
   .hc-dot--active {
-    background: #FFE14D;
+    background: #ff3e5e;
     width: 28px;
   }
   @media (max-width: 768px) {

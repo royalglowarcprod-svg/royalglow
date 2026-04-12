@@ -148,7 +148,13 @@ const css = `
     letter-spacing: 0.03em;
     text-transform: uppercase;
   }
-
+ @media (max-width: 1026px){
+    .cc-track {
+      gap: 14px;
+      padding : 70px 32px 5px;
+    }
+ 
+ } 
   /* Mobile */
   @media (max-width: 600px) {
     .cc-wrap {

@@ -134,34 +134,88 @@ export default function Navbar() {
     );
   };
 
-  const SuggestionsList = ({ isMobileCtx = false }: { isMobileCtx?: boolean }) => (
-    <div className={`cc-suggestions ${isMobileCtx ? "cc-suggestions--mobile" : ""}`}>
-      <div className="cc-suggestions__header">Results for "{searchQuery}"</div>
-      {suggestions.map(product => (
-        <button key={product.id} className="cc-suggestion-item"
-          onClick={() => { setShowSuggestions(false); setSearchQuery(""); router.push(`/products/${product.id}`); }}>
-          <div className="cc-suggestion-item__img-wrap">
-            <img src={product.image_url || "https://placehold.co/44x44?text=?"} alt={product.name} className="cc-suggestion-item__img"/>
-          </div>
-          <div className="cc-suggestion-item__info">
-            <span className="cc-suggestion-item__name">{highlight(product.name, searchQuery)}</span>
-            {product.category_name && <span className="cc-suggestion-item__cat">{product.category_name}</span>}
-          </div>
-          <span className="cc-suggestion-item__price">RS {product.price.toFixed(2)}</span>
-          <svg className="cc-suggestion-item__arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
-        </button>
-      ))}
-      <button className="cc-suggestions__footer"
-        onClick={() => { setShowSuggestions(false); router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`); }}>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+ const SuggestionsList = ({ isMobileCtx = false }: { isMobileCtx?: boolean }) => (
+  <div className={`cc-suggestions ${isMobileCtx ? "cc-suggestions--mobile" : ""}`}>
+    <div className="cc-suggestions__header">Results for "{searchQuery}"</div>
+
+    {suggestions.map(product => (
+      <button
+        key={product.id}
+        className="cc-suggestion-item"
+        onMouseDown={(e) => {
+          e.stopPropagation(); // 🔥 prevents outside click from interfering
+          setShowSuggestions(false);
+          setSearchQuery("");
+          router.push(`/products/${product.id}`);
+        }}
+      >
+        <div className="cc-suggestion-item__img-wrap">
+          <img
+            src={product.image_url || "https://placehold.co/44x44?text=?"}
+            alt={product.name}
+            className="cc-suggestion-item__img"
+          />
+        </div>
+
+        <div className="cc-suggestion-item__info">
+          <span className="cc-suggestion-item__name">
+            {highlight(product.name, searchQuery)}
+          </span>
+          {product.category_name && (
+            <span className="cc-suggestion-item__cat">
+              {product.category_name}
+            </span>
+          )}
+        </div>
+
+        <span className="cc-suggestion-item__price">
+          RS {product.price.toFixed(2)}
+        </span>
+
+        <svg
+          className="cc-suggestion-item__arrow"
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="9 18 15 12 9 6" />
         </svg>
-        See all results for "{searchQuery}"
       </button>
-    </div>
-  );
+    ))}
+
+    {/* 🔥 FIXED "SEE ALL" */}
+    <button
+      className="cc-suggestions__footer"
+      onMouseDown={(e) => {
+        e.stopPropagation();
+        const q = searchQuery.trim();
+        if (!q) return;
+        setShowSuggestions(false);
+        router.push(`/search?q=${encodeURIComponent(q)}`);
+      }}
+    >
+      <svg
+        width="13"
+        height="13"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      See all results for "{searchQuery}"
+    </button>
+  </div>
+);
 
   return (
     <>
