@@ -19,6 +19,19 @@ type EditProductState = {
   newImages: File[]; newImagePreviews: string[]; saving: boolean;
 };
 
+const SOCIAL_PLATFORMS = [
+  { key: "instagram", label: "Instagram", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>` },
+  { key: "facebook", label: "Facebook", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>` },
+  { key: "tiktok", label: "TikTok", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.26 8.26 0 0 0 4.83 1.55V6.79a4.85 4.85 0 0 1-1.06-.1z"/></svg>` },
+  { key: "twitter", label: "X / Twitter", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>` },
+  { key: "youtube", label: "YouTube", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.97C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>` },
+  { key: "whatsapp", label: "WhatsApp", icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>` },
+] as const;
+
+type SocialKey = typeof SOCIAL_PLATFORMS[number]["key"];
+
+type SocialSettings = Record<SocialKey, { url: string; visible: boolean }>;
+
 const STATUS_META: Record<string, { color: string; bg: string; border: string }> = {
   pending:   { color: "#e8a838", bg: "rgba(232,168,56,0.12)",  border: "rgba(232,168,56,0.3)"  },
   confirmed: { color: "#60a5fa", bg: "rgba(96,165,250,0.12)",  border: "rgba(96,165,250,0.3)"  },
@@ -29,6 +42,11 @@ const STATUS_META: Record<string, { color: string; bg: string; border: string }>
 
 const TABS = ["categories", "products", "banners", "orders", "carousel", "settings"] as const;
 type Tab = typeof TABS[number];
+
+const defaultSocials = (): SocialSettings =>
+  Object.fromEntries(
+    SOCIAL_PLATFORMS.map(p => [p.key, { url: "", visible: false }])
+  ) as SocialSettings;
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState<Tab>("categories");
@@ -94,9 +112,22 @@ export default function Admin() {
   const [carouselSortOrder, setCarouselSortOrder] = useState("0");
   const [carouselUploading, setCarouselUploading] = useState(false);
 
-  /* ── Settings ── */
+  /* ── Settings: WhatsApp ── */
   const [whatsappNumber, setWhatsappNumber] = useState("");
   const [whatsappSaving, setWhatsappSaving] = useState(false);
+
+  /* ── Settings: Admin Emails ── */
+  const [adminEmails, setAdminEmails] = useState<string[]>([]);
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [adminEmailsSaving, setAdminEmailsSaving] = useState(false);
+
+  /* ── Settings: Social Media ── */
+  const [socials, setSocials] = useState<SocialSettings>(defaultSocials());
+  const [socialsSaving, setSocialsSaving] = useState(false);
+
+  /* ── Settings: Footer Message ── */
+  const [footerMessage, setFooterMessage] = useState("");
+  const [footerMessageSaving, setFooterMessageSaving] = useState(false);
 
   /* ── Fetchers ── */
   const fetchCategories = useCallback(async () => {
@@ -128,6 +159,13 @@ export default function Admin() {
   const fetchSettings = useCallback(async () => {
     const data = await fetchJSON<{ settings: Record<string, string> }>("/api/settings");
     if (data.settings?.whatsapp) setWhatsappNumber(data.settings.whatsapp);
+    if (data.settings?.admin_emails) {
+      try { setAdminEmails(JSON.parse(data.settings.admin_emails)); } catch { /* ignore */ }
+    }
+    if (data.settings?.socials) {
+      try { setSocials({ ...defaultSocials(), ...JSON.parse(data.settings.socials) }); } catch { /* ignore */ }
+    }
+    if (data.settings?.footer_message) setFooterMessage(data.settings.footer_message);
   }, []);
 
   useEffect(() => { fetchCategories(); }, [fetchCategories]);
@@ -161,28 +199,22 @@ export default function Admin() {
 
   /* ── Category Actions ── */
   const addCategory = async () => {
-    if (!categoryName.trim() || !categorySlug.trim()) {
-      toast("error", "Please fill both Name and Slug fields."); return;
-    }
+    if (!categoryName.trim() || !categorySlug.trim()) { toast("error", "Please fill both Name and Slug fields."); return; }
     setCategoryUploading(true);
     try {
       let image_url: string | undefined;
       if (categoryImage) {
-        setUploadStep("Uploading category image…");
-        setUploadProgress(0);
+        setUploadStep("Uploading category image…"); setUploadProgress(0);
         image_url = await uploadImageWithProgress(categoryImage, pct => setUploadProgress(pct));
         setUploadProgress(100);
       }
       const res = await fetch("/api/categories", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: categoryName.trim(), slug: categorySlug.trim(), image_url }),
       });
       if (res.ok) {
-        setCategoryName(""); setCategorySlug("");
-        setCategoryImage(null); setCategoryImagePreview("");
-        fetchCategories();
-        toast("success", `Category "${categoryName.trim()}" added.`);
+        setCategoryName(""); setCategorySlug(""); setCategoryImage(null); setCategoryImagePreview("");
+        fetchCategories(); toast("success", `Category "${categoryName.trim()}" added.`);
       } else { toast("error", "Failed to add category."); }
     } catch { toast("error", "Upload failed."); }
     finally { setCategoryUploading(false); setUploadProgress(0); setUploadStep(""); }
@@ -191,8 +223,7 @@ export default function Admin() {
   const deleteCategory = (id: number, name: string) => {
     askConfirm(`Delete category "${name}"? This cannot be undone.`, async () => {
       const res = await fetch("/api/categories", {
-        method: "DELETE", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
+        method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }),
       });
       if (res.ok) { fetchCategories(); toast("success", `Category "${name}" deleted.`); }
       else toast("error", "Failed to delete category.");
@@ -211,30 +242,18 @@ export default function Admin() {
   };
 
   const openEditModal = (product: Product) => {
-    setEditModal({
-      open: true, product,
-      name: product.name, price: String(product.price),
-      description: product.description || "",
-      category_id: String(product.category_id),
-      newImages: [], newImagePreviews: [], saving: false,
-    });
+    setEditModal({ open: true, product, name: product.name, price: String(product.price), description: product.description || "", category_id: String(product.category_id), newImages: [], newImagePreviews: [], saving: false });
   };
   const closeEditModal = () => setEditModal(prev => ({ ...prev, open: false, newImages: [], newImagePreviews: [] }));
 
   const handleEditImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setEditModal(prev => ({
-      ...prev,
-      newImages: [...prev.newImages, ...files],
-      newImagePreviews: [...prev.newImagePreviews, ...files.map(f => URL.createObjectURL(f))],
-    }));
+    setEditModal(prev => ({ ...prev, newImages: [...prev.newImages, ...files], newImagePreviews: [...prev.newImagePreviews, ...files.map(f => URL.createObjectURL(f))] }));
   };
 
   const saveProductEdit = async () => {
     if (!editModal.product) return;
-    if (!editModal.name.trim() || !editModal.price || !editModal.category_id) {
-      toast("error", "Please fill all required fields."); return;
-    }
+    if (!editModal.name.trim() || !editModal.price || !editModal.category_id) { toast("error", "Please fill all required fields."); return; }
     setEditModal(prev => ({ ...prev, saving: true }));
     try {
       let image_url = editModal.product.image_url;
@@ -245,25 +264,16 @@ export default function Admin() {
       }
       const res = await fetch("/api/products", {
         method: "PATCH", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: editModal.product.id, name: editModal.name.trim(),
-          price: parseFloat(editModal.price), description: editModal.description.trim(),
-          category_id: parseInt(editModal.category_id), image_url,
-        }),
+        body: JSON.stringify({ id: editModal.product.id, name: editModal.name.trim(), price: parseFloat(editModal.price), description: editModal.description.trim(), category_id: parseInt(editModal.category_id), image_url }),
       });
-      if (res.ok) {
-        fetchProducts();
-        toast("success", `"${editModal.name.trim()}" updated.`);
-        closeEditModal();
-      } else { toast("error", "Failed to update product."); }
+      if (res.ok) { fetchProducts(); toast("success", `"${editModal.name.trim()}" updated.`); closeEditModal(); }
+      else toast("error", "Failed to update product.");
     } catch { toast("error", "Update failed."); }
     finally { setEditModal(prev => ({ ...prev, saving: false })); setUploadProgress(0); setUploadStep(""); }
   };
 
   const addProduct = async () => {
-    if (!productName.trim() || !productPrice || !productCategory) {
-      toast("error", "Please fill all required fields."); return;
-    }
+    if (!productName.trim() || !productPrice || !productCategory) { toast("error", "Please fill all required fields."); return; }
     setUploading(true); setUploadProgress(0);
     try {
       const image_urls: string[] = [];
@@ -278,18 +288,12 @@ export default function Admin() {
       setUploadStep("Saving product…"); setUploadProgress(100);
       const res = await fetch("/api/products", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: productName.trim(), price: parseFloat(productPrice),
-          description: productDescription.trim(),
-          category_id: parseInt(productCategory), image_urls,
-        }),
+        body: JSON.stringify({ name: productName.trim(), price: parseFloat(productPrice), description: productDescription.trim(), category_id: parseInt(productCategory), image_urls }),
       });
       if (res.ok) {
-        setProductName(""); setProductPrice(""); setProductDescription("");
-        setProductCategory(""); setProductImages([]); setImagePreviews([]);
-        fetchProducts();
-        toast("success", `"${productName.trim()}" added.`);
-      } else { toast("error", "Failed to save product."); }
+        setProductName(""); setProductPrice(""); setProductDescription(""); setProductCategory(""); setProductImages([]); setImagePreviews([]);
+        fetchProducts(); toast("success", `"${productName.trim()}" added.`);
+      } else toast("error", "Failed to save product.");
     } catch { toast("error", "Upload failed."); }
     finally { setUploading(false); setUploadProgress(0); setUploadStep(""); }
   };
@@ -297,8 +301,7 @@ export default function Admin() {
   const deleteProduct = (id: number, name: string) => {
     askConfirm(`Delete "${name}"? This cannot be undone.`, async () => {
       const res = await fetch("/api/products", {
-        method: "DELETE", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
+        method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }),
       });
       if (res.ok) { fetchProducts(); toast("success", "Product deleted."); }
       else toast("error", "Failed to delete product.");
@@ -313,36 +316,26 @@ export default function Admin() {
 
   /* ── Banner Actions ── */
   const addBanner = async () => {
-    if (!bannerHeading.trim() || !bannerButtonText.trim() || !bannerImage) {
-      toast("error", "Please fill all fields and select an image."); return;
-    }
+    if (!bannerHeading.trim() || !bannerButtonText.trim() || !bannerImage) { toast("error", "Please fill all fields and select an image."); return; }
     setBannerUploading(true); setUploadProgress(0); setUploadStep("Uploading banner image…");
     try {
       const image_url = await uploadImageWithProgress(bannerImage, pct => setUploadProgress(pct));
       setUploadStep("Saving banner…"); setUploadProgress(100);
       const res = await fetch("/api/banners", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          image_url, heading: bannerHeading.trim(), button_text: bannerButtonText.trim(),
-          sort_order: parseInt(bannerSortOrder) || 0,
-          link_to: bannerLinkTo.trim() || null,
-        }),
+        body: JSON.stringify({ image_url, heading: bannerHeading.trim(), button_text: bannerButtonText.trim(), sort_order: parseInt(bannerSortOrder) || 0, link_to: bannerLinkTo.trim() || null }),
       });
       if (res.ok) {
-        setBannerHeading(""); setBannerButtonText(""); setBannerSortOrder("0");
-        setBannerLinkTo(""); setBannerImage(null); setBannerPreview("");
+        setBannerHeading(""); setBannerButtonText(""); setBannerSortOrder("0"); setBannerLinkTo(""); setBannerImage(null); setBannerPreview("");
         fetchBanners(); toast("success", "Banner added.");
-      } else { toast("error", "Failed to save banner."); }
+      } else toast("error", "Failed to save banner.");
     } catch { toast("error", "Banner upload failed."); }
     finally { setBannerUploading(false); setUploadProgress(0); setUploadStep(""); }
   };
 
   const deleteBanner = (id: number, heading: string) => {
     askConfirm(`Delete banner "${heading}"?`, async () => {
-      const res = await fetch("/api/banners", {
-        method: "DELETE", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
+      const res = await fetch("/api/banners", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
       if (res.ok) { fetchBanners(); toast("success", "Banner deleted."); }
       else toast("error", "Failed to delete banner.");
     });
@@ -371,52 +364,80 @@ export default function Admin() {
 
   /* ── Carousel Actions ── */
   const addCarouselItem = async () => {
-    if (!carouselImage || !carouselLinkValue.trim()) {
-      toast("error", "Please select an image and set a link value."); return;
-    }
+    if (!carouselImage || !carouselLinkValue.trim()) { toast("error", "Please select an image and set a link value."); return; }
     setCarouselUploading(true); setUploadStep("Uploading carousel image…"); setUploadProgress(0);
     try {
       const image_url = await uploadImageWithProgress(carouselImage, pct => setUploadProgress(pct));
       setUploadProgress(100); setUploadStep("Saving…");
       const res = await fetch("/api/carousel", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          image_url, link_type: carouselLinkType,
-          link_value: carouselLinkValue.trim(),
-          sort_order: parseInt(carouselSortOrder) || 0,
-        }),
+        body: JSON.stringify({ image_url, link_type: carouselLinkType, link_value: carouselLinkValue.trim(), sort_order: parseInt(carouselSortOrder) || 0 }),
       });
       if (res.ok) {
-        setCarouselImage(null); setCarouselPreview("");
-        setCarouselLinkValue(""); setCarouselSortOrder("0");
+        setCarouselImage(null); setCarouselPreview(""); setCarouselLinkValue(""); setCarouselSortOrder("0");
         fetchCarousel(); toast("success", "Carousel item added.");
-      } else { toast("error", "Failed to add carousel item."); }
+      } else toast("error", "Failed to add carousel item.");
     } catch { toast("error", "Upload failed."); }
     finally { setCarouselUploading(false); setUploadProgress(0); setUploadStep(""); }
   };
 
   const deleteCarouselItem = (id: number) => {
     askConfirm("Delete this carousel image?", async () => {
-      const res = await fetch("/api/carousel", {
-        method: "DELETE", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
+      const res = await fetch("/api/carousel", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
       if (res.ok) { fetchCarousel(); toast("success", "Carousel item deleted."); }
       else toast("error", "Failed to delete.");
     });
   };
 
-  /* ── Settings Actions ── */
+  /* ── Settings: WhatsApp ── */
   const saveWhatsapp = async () => {
     if (!whatsappNumber.trim()) { toast("error", "Enter a phone number."); return; }
     setWhatsappSaving(true);
-    const res = await fetch("/api/settings", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key: "whatsapp", value: whatsappNumber.trim() }),
-    });
+    const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "whatsapp", value: whatsappNumber.trim() }) });
     setWhatsappSaving(false);
     if (res.ok) toast("success", "WhatsApp number saved.");
     else toast("error", "Failed to save.");
+  };
+
+  /* ── Settings: Admin Emails ── */
+  const addAdminEmail = async () => {
+    const email = newAdminEmail.trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast("error", "Enter a valid email address."); return; }
+    if (adminEmails.includes(email)) { toast("error", "This email is already an admin."); return; }
+    const updated = [...adminEmails, email];
+    setAdminEmailsSaving(true);
+    const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "admin_emails", value: JSON.stringify(updated) }) });
+    setAdminEmailsSaving(false);
+    if (res.ok) { setAdminEmails(updated); setNewAdminEmail(""); toast("success", `${email} added as admin.`); }
+    else toast("error", "Failed to save admin emails.");
+  };
+
+  const removeAdminEmail = (email: string) => {
+    if (adminEmails.length <= 1) { toast("error", "You must keep at least one admin email."); return; }
+    askConfirm(`Remove ${email} from admins?`, async () => {
+      const updated = adminEmails.filter(e => e !== email);
+      const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "admin_emails", value: JSON.stringify(updated) }) });
+      if (res.ok) { setAdminEmails(updated); toast("success", `${email} removed.`); }
+      else toast("error", "Failed to update admin emails.");
+    });
+  };
+
+  /* ── Settings: Socials ── */
+  const saveSocials = async () => {
+    setSocialsSaving(true);
+    const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "socials", value: JSON.stringify(socials) }) });
+    setSocialsSaving(false);
+    if (res.ok) toast("success", "Social links saved.");
+    else toast("error", "Failed to save social links.");
+  };
+
+  /* ── Settings: Footer Message ── */
+  const saveFooterMessage = async () => {
+    setFooterMessageSaving(true);
+    const res = await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: "footer_message", value: footerMessage }) });
+    setFooterMessageSaving(false);
+    if (res.ok) toast("success", "Footer message saved.");
+    else toast("error", "Failed to save footer message.");
   };
 
   const isUploading = uploading || bannerUploading || editModal.saving || categoryUploading || carouselUploading;
@@ -480,18 +501,13 @@ export default function Admin() {
             <div className="edit-modal__body">
               <div className="edit-modal__img-section">
                 <div className="edit-modal__current-img-wrap">
-                  {editModal.newImagePreviews.length > 0 ? (
-                    <img src={editModal.newImagePreviews[0]} className="edit-modal__current-img" alt=""/>
-                  ) : editModal.product?.image_url ? (
-                    <img src={editModal.product.image_url} className="edit-modal__current-img" alt=""/>
-                  ) : (
-                    <div className="edit-modal__no-img">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    </div>
-                  )}
+                  {editModal.newImagePreviews.length > 0
+                    ? <img src={editModal.newImagePreviews[0]} className="edit-modal__current-img" alt=""/>
+                    : editModal.product?.image_url
+                      ? <img src={editModal.product.image_url} className="edit-modal__current-img" alt=""/>
+                      : <div className="edit-modal__no-img"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>}
                   {editModal.newImagePreviews.length > 0 && (
-                    <button className="edit-modal__img-clear"
-                      onClick={() => setEditModal(prev => ({ ...prev, newImages: [], newImagePreviews: [] }))}>
+                    <button className="edit-modal__img-clear" onClick={() => setEditModal(prev => ({ ...prev, newImages: [], newImagePreviews: [] }))}>
                       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
                   )}
@@ -510,37 +526,28 @@ export default function Admin() {
                 <div className="adm-row">
                   <div className="adm-field">
                     <label className="adm-label">Product Name</label>
-                    <input className="adm-input" placeholder="Product name" value={editModal.name}
-                      onChange={e => setEditModal(prev => ({ ...prev, name: e.target.value }))}/>
+                    <input className="adm-input" placeholder="Product name" value={editModal.name} onChange={e => setEditModal(prev => ({ ...prev, name: e.target.value }))}/>
                   </div>
                   <div className="adm-field">
                     <label className="adm-label">Price (RS)</label>
-                    <input className="adm-input" type="number" placeholder="0.00" value={editModal.price}
-                      onChange={e => setEditModal(prev => ({ ...prev, price: e.target.value }))}/>
+                    <input className="adm-input" type="number" placeholder="0.00" value={editModal.price} onChange={e => setEditModal(prev => ({ ...prev, price: e.target.value }))}/>
                   </div>
                 </div>
                 <div className="adm-field">
                   <label className="adm-label">Description</label>
-                  <textarea className="adm-input adm-textarea" placeholder="Product description…" value={editModal.description}
-                    onChange={e => setEditModal(prev => ({ ...prev, description: e.target.value }))}/>
+                  <textarea className="adm-input adm-textarea" placeholder="Product description…" value={editModal.description} onChange={e => setEditModal(prev => ({ ...prev, description: e.target.value }))}/>
                 </div>
                 <div className="adm-field">
                   <label className="adm-label">Category</label>
-                  <select className="adm-input adm-select" value={editModal.category_id}
-                    onChange={e => setEditModal(prev => ({ ...prev, category_id: e.target.value }))}>
+                  <select className="adm-input adm-select" value={editModal.category_id} onChange={e => setEditModal(prev => ({ ...prev, category_id: e.target.value }))}>
                     <option value="">Select category</option>
                     {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                   </select>
                 </div>
                 {editModal.saving && uploadStep && (
                   <div className="adm-progress-wrap">
-                    <div className="adm-progress-header">
-                      <span className="adm-progress-step">{uploadStep}</span>
-                      <span className="adm-progress-pct">{uploadProgress}%</span>
-                    </div>
-                    <div className="adm-progress-track">
-                      <div className="adm-progress-fill" style={{ width: `${uploadProgress}%` }}/>
-                    </div>
+                    <div className="adm-progress-header"><span className="adm-progress-step">{uploadStep}</span><span className="adm-progress-pct">{uploadProgress}%</span></div>
+                    <div className="adm-progress-track"><div className="adm-progress-fill" style={{ width: `${uploadProgress}%` }}/></div>
                   </div>
                 )}
               </div>
@@ -561,13 +568,8 @@ export default function Admin() {
       {isUploading && !editModal.open && (
         <div className="upload-bar-wrap">
           <div className="upload-bar-inner">
-            <div className="upload-bar-header">
-              <span className="upload-bar-step">{uploadStep}</span>
-              <span className="upload-bar-pct">{uploadProgress}%</span>
-            </div>
-            <div className="upload-bar-track">
-              <div className="upload-bar-fill" style={{ width: `${uploadProgress}%` }}/>
-            </div>
+            <div className="upload-bar-header"><span className="upload-bar-step">{uploadStep}</span><span className="upload-bar-pct">{uploadProgress}%</span></div>
+            <div className="upload-bar-track"><div className="upload-bar-fill" style={{ width: `${uploadProgress}%` }}/></div>
           </div>
         </div>
       )}
@@ -602,46 +604,33 @@ export default function Admin() {
           ))}
         </div>
 
-        {/* ══════════════ CATEGORIES TAB ══════════════ */}
+        {/* ══ CATEGORIES TAB ══ */}
         {activeTab === "categories" && (
           <div className="adm-section">
             <div className="adm-card">
               <h2 className="adm-card__title">Add Category</h2>
               <div className="adm-stack">
                 <div className="adm-row">
-                  <div className="adm-field">
-                    <label className="adm-label">Name</label>
-                    <input className="adm-input" placeholder="e.g. Electronics" value={categoryName}
-                      onChange={e => setCategoryName(e.target.value)} onKeyDown={e => e.key === "Enter" && addCategory()}/>
-                  </div>
-                  <div className="adm-field">
-                    <label className="adm-label">Slug</label>
-                    <input className="adm-input" placeholder="e.g. electronics" value={categorySlug}
-                      onChange={e => setCategorySlug(e.target.value)} onKeyDown={e => e.key === "Enter" && addCategory()}/>
-                  </div>
+                  <div className="adm-field"><label className="adm-label">Name</label><input className="adm-input" placeholder="e.g. Electronics" value={categoryName} onChange={e => setCategoryName(e.target.value)} onKeyDown={e => e.key === "Enter" && addCategory()}/></div>
+                  <div className="adm-field"><label className="adm-label">Slug</label><input className="adm-input" placeholder="e.g. electronics" value={categorySlug} onChange={e => setCategorySlug(e.target.value)} onKeyDown={e => e.key === "Enter" && addCategory()}/></div>
                 </div>
                 <div className="adm-field">
                   <label className="adm-label">Category Image <span className="adm-label__hint"> — shown in homepage circles</span></label>
                   <label className="adm-file-label">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                     Choose Image
-                    <input type="file" accept="image/*" style={{ display: "none" }}
-                      onChange={e => { const f = e.target.files?.[0] || null; setCategoryImage(f); setCategoryImagePreview(f ? URL.createObjectURL(f) : ""); }}/>
+                    <input type="file" accept="image/*" style={{ display: "none" }} onChange={e => { const f = e.target.files?.[0] || null; setCategoryImage(f); setCategoryImagePreview(f ? URL.createObjectURL(f) : ""); }}/>
                   </label>
                   {categoryImagePreview && (
                     <div style={{ position: "relative", display: "inline-block", marginTop: 10 }}>
                       <img src={categoryImagePreview} style={{ width: 68, height: 68, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(255,255,255,0.1)", display: "block" }} alt=""/>
-                      <button onClick={() => { setCategoryImage(null); setCategoryImagePreview(""); }}
-                        style={{ position: "absolute", top: -6, right: -6, width: 20, height: 20, background: "var(--danger)", color: "#fff", border: "none", borderRadius: "50%", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>×</button>
+                      <button onClick={() => { setCategoryImage(null); setCategoryImagePreview(""); }} style={{ position: "absolute", top: -6, right: -6, width: 20, height: 20, background: "var(--danger)", color: "#fff", border: "none", borderRadius: "50%", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>×</button>
                     </div>
                   )}
                 </div>
                 {categoryUploading && (
                   <div className="adm-progress-wrap">
-                    <div className="adm-progress-header">
-                      <span className="adm-progress-step">{uploadStep}</span>
-                      <span className="adm-progress-pct">{uploadProgress}%</span>
-                    </div>
+                    <div className="adm-progress-header"><span className="adm-progress-step">{uploadStep}</span><span className="adm-progress-pct">{uploadProgress}%</span></div>
                     <div className="adm-progress-track"><div className="adm-progress-fill" style={{ width: `${uploadProgress}%` }}/></div>
                   </div>
                 )}
@@ -650,7 +639,6 @@ export default function Admin() {
                 </button>
               </div>
             </div>
-
             <div className="adm-card">
               <h2 className="adm-card__title">All Categories <span className="adm-card__count">{categories.length}</span></h2>
               {categories.length === 0 ? <p className="adm-empty">No categories yet.</p> : (
@@ -660,11 +648,7 @@ export default function Admin() {
                     <tbody>
                       {categories.map(cat => (
                         <tr key={cat.id}>
-                          <td>
-                            {cat.image_url
-                              ? <img src={cat.image_url} style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", border: "1px solid var(--border)" }} alt=""/>
-                              : <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--surface2)", border: "1px dashed var(--border-hi)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-3)", fontSize: 10 }}>—</div>}
-                          </td>
+                          <td>{cat.image_url ? <img src={cat.image_url} style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", border: "1px solid var(--border)" }} alt=""/> : <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--surface2)", border: "1px dashed var(--border-hi)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-3)", fontSize: 10 }}>—</div>}</td>
                           <td><span className="adm-id">#{cat.id}</span></td>
                           <td>{cat.name}</td>
                           <td><code className="adm-slug">{cat.slug}</code></td>
@@ -679,26 +663,17 @@ export default function Admin() {
           </div>
         )}
 
-        {/* ══════════════ PRODUCTS TAB ══════════════ */}
+        {/* ══ PRODUCTS TAB ══ */}
         {activeTab === "products" && (
           <div className="adm-section">
             <div className="adm-card">
               <h2 className="adm-card__title">Add Product</h2>
               <div className="adm-stack">
                 <div className="adm-row">
-                  <div className="adm-field">
-                    <label className="adm-label">Product Name</label>
-                    <input className="adm-input" placeholder="Product name" value={productName} onChange={e => setProductName(e.target.value)}/>
-                  </div>
-                  <div className="adm-field">
-                    <label className="adm-label">Price (RS)</label>
-                    <input className="adm-input" type="number" placeholder="0.00" value={productPrice} onChange={e => setProductPrice(e.target.value)}/>
-                  </div>
+                  <div className="adm-field"><label className="adm-label">Product Name</label><input className="adm-input" placeholder="Product name" value={productName} onChange={e => setProductName(e.target.value)}/></div>
+                  <div className="adm-field"><label className="adm-label">Price (RS)</label><input className="adm-input" type="number" placeholder="0.00" value={productPrice} onChange={e => setProductPrice(e.target.value)}/></div>
                 </div>
-                <div className="adm-field">
-                  <label className="adm-label">Description</label>
-                  <textarea className="adm-input adm-textarea" placeholder="Product description..." value={productDescription} onChange={e => setProductDescription(e.target.value)}/>
-                </div>
+                <div className="adm-field"><label className="adm-label">Description</label><textarea className="adm-input adm-textarea" placeholder="Product description..." value={productDescription} onChange={e => setProductDescription(e.target.value)}/></div>
                 <div className="adm-field">
                   <label className="adm-label">Category</label>
                   <select className="adm-input adm-select" value={productCategory} onChange={e => setProductCategory(e.target.value)}>
@@ -727,10 +702,7 @@ export default function Admin() {
                 </div>
                 {uploading && (
                   <div className="adm-progress-wrap">
-                    <div className="adm-progress-header">
-                      <span className="adm-progress-step">{uploadStep}</span>
-                      <span className="adm-progress-pct">{uploadProgress}%</span>
-                    </div>
+                    <div className="adm-progress-header"><span className="adm-progress-step">{uploadStep}</span><span className="adm-progress-pct">{uploadProgress}%</span></div>
                     <div className="adm-progress-track"><div className="adm-progress-fill" style={{ width: `${uploadProgress}%` }}/></div>
                   </div>
                 )}
@@ -739,7 +711,6 @@ export default function Admin() {
                 </button>
               </div>
             </div>
-
             <div className="adm-card">
               <div className="adm-card__titlerow">
                 <h2 className="adm-card__title">Products <span className="adm-card__count">{products.length}</span></h2>
@@ -789,7 +760,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* ══════════════ BANNERS TAB ══════════════ */}
+        {/* ══ BANNERS TAB ══ */}
         {activeTab === "banners" && (
           <div className="adm-section">
             <div className="adm-card">
@@ -797,20 +768,11 @@ export default function Admin() {
               <p className="adm-hint">Max 4 banners. Sort Order (0–3) controls carousel position.</p>
               <div className="adm-stack">
                 <div className="adm-row">
-                  <div className="adm-field">
-                    <label className="adm-label">Heading</label>
-                    <input className="adm-input" placeholder="Banner headline" value={bannerHeading} onChange={e => setBannerHeading(e.target.value)}/>
-                  </div>
-                  <div className="adm-field">
-                    <label className="adm-label">Button Text</label>
-                    <input className="adm-input" placeholder="e.g. Shop Now" value={bannerButtonText} onChange={e => setBannerButtonText(e.target.value)}/>
-                  </div>
+                  <div className="adm-field"><label className="adm-label">Heading</label><input className="adm-input" placeholder="Banner headline" value={bannerHeading} onChange={e => setBannerHeading(e.target.value)}/></div>
+                  <div className="adm-field"><label className="adm-label">Button Text</label><input className="adm-input" placeholder="e.g. Shop Now" value={bannerButtonText} onChange={e => setBannerButtonText(e.target.value)}/></div>
                 </div>
                 <div className="adm-row">
-                  <div className="adm-field">
-                    <label className="adm-label">Sort Order</label>
-                    <input className="adm-input" type="number" placeholder="0 = first" value={bannerSortOrder} onChange={e => setBannerSortOrder(e.target.value)}/>
-                  </div>
+                  <div className="adm-field"><label className="adm-label">Sort Order</label><input className="adm-input" type="number" placeholder="0 = first" value={bannerSortOrder} onChange={e => setBannerSortOrder(e.target.value)}/></div>
                   <div className="adm-field">
                     <label className="adm-label">Link To Category <span className="adm-label__hint"> — button scrolls to section</span></label>
                     <select className="adm-input adm-select" value={bannerLinkTo} onChange={e => setBannerLinkTo(e.target.value)}>
@@ -830,10 +792,7 @@ export default function Admin() {
                 </div>
                 {bannerUploading && (
                   <div className="adm-progress-wrap">
-                    <div className="adm-progress-header">
-                      <span className="adm-progress-step">{uploadStep}</span>
-                      <span className="adm-progress-pct">{uploadProgress}%</span>
-                    </div>
+                    <div className="adm-progress-header"><span className="adm-progress-step">{uploadStep}</span><span className="adm-progress-pct">{uploadProgress}%</span></div>
                     <div className="adm-progress-track"><div className="adm-progress-fill" style={{ width: `${uploadProgress}%` }}/></div>
                   </div>
                 )}
@@ -842,7 +801,6 @@ export default function Admin() {
                 </button>
               </div>
             </div>
-
             <div className="adm-card">
               <h2 className="adm-card__title">Existing Banners <span className="adm-card__count">{banners.length}/4</span></h2>
               {banners.length === 0 ? <p className="adm-empty">No banners yet.</p> : (
@@ -867,7 +825,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* ══════════════ ORDERS TAB ══════════════ */}
+        {/* ══ ORDERS TAB ══ */}
         {activeTab === "orders" && (
           <div className="adm-section">
             <div className="adm-card">
@@ -878,14 +836,7 @@ export default function Admin() {
                     const sm = STATUS_META[f] || { color: "var(--text-2)", bg: "transparent", border: "var(--border-hi)" };
                     const isActive = orderFilter === f;
                     return (
-                      <button key={f} onClick={() => setOrderFilter(f)} style={{
-                        padding: "5px 14px", borderRadius: 100,
-                        border: `1px solid ${isActive ? sm.border : "var(--border)"}`,
-                        background: isActive ? sm.bg : "transparent",
-                        color: isActive ? (f === "all" ? "var(--text)" : sm.color) : "var(--text-3)",
-                        fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", fontWeight: 600,
-                        cursor: "pointer", letterSpacing: "0.08em", textTransform: "capitalize", transition: "all 0.15s",
-                      }}>
+                      <button key={f} onClick={() => setOrderFilter(f)} style={{ padding: "5px 14px", borderRadius: 100, border: `1px solid ${isActive ? sm.border : "var(--border)"}`, background: isActive ? sm.bg : "transparent", color: isActive ? (f === "all" ? "var(--text)" : sm.color) : "var(--text-3)", fontFamily: "'Jost', sans-serif", fontSize: "0.72rem", fontWeight: 600, cursor: "pointer", letterSpacing: "0.08em", textTransform: "capitalize", transition: "all 0.15s" }}>
                         {f === "all" ? "All" : f}
                         {f !== "all" && <span style={{ marginLeft: 5, opacity: 0.7 }}>{orders.filter(o => o.status === f).length}</span>}
                       </button>
@@ -903,17 +854,12 @@ export default function Admin() {
                       return (
                         <div key={order.id} className={`adm-order ${open ? "adm-order--open" : ""}`}>
                           <button className="adm-order__head" onClick={() => setExpandedOrder(open ? null : order.id)}>
-                            <div className="adm-order__id">
-                              <span className="adm-order__num">#{String(order.id).padStart(6, "0")}</span>
-                              <span className="adm-order__date">{new Date(order.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
-                            </div>
+                            <div className="adm-order__id"><span className="adm-order__num">#{String(order.id).padStart(6, "0")}</span><span className="adm-order__date">{new Date(order.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span></div>
                             <span className="adm-order__user">{order.user_name} · {order.user_email}</span>
                             <div className="adm-order__right">
                               <span className="adm-status-pill" style={{ color: sm.color, background: sm.bg, border: `1px solid ${sm.border}` }}>{order.status}</span>
                               <span className="adm-order__total">RS {order.total.toFixed(2)}</span>
-                              <span className={`adm-chevron ${open ? "adm-chevron--open" : ""}`}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-                              </span>
+                              <span className={`adm-chevron ${open ? "adm-chevron--open" : ""}`}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg></span>
                             </div>
                           </button>
                           <div className={`adm-order__body ${open ? "adm-order__body--open" : ""}`}>
@@ -932,18 +878,10 @@ export default function Admin() {
                                 </div>
                                 <div>
                                   <div className="adm-section-label">Delivery</div>
-                                  <div className="adm-delivery-row">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                                    {order.address}, {order.city}
-                                  </div>
-                                  <div className="adm-delivery-row">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.64a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/></svg>
-                                    {order.phone}
-                                  </div>
+                                  <div className="adm-delivery-row"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>{order.address}, {order.city}</div>
+                                  <div className="adm-delivery-row"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.64a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/></svg>{order.phone}</div>
                                   <div className="adm-section-label" style={{ marginTop: 20 }}>Update Status</div>
-                                  <select className="adm-status-select" value={order.status}
-                                    onChange={e => updateOrderStatus(order.id, e.target.value)}
-                                    style={{ borderColor: sm.border, color: sm.color }}>
+                                  <select className="adm-status-select" value={order.status} onChange={e => updateOrderStatus(order.id, e.target.value)} style={{ borderColor: sm.border, color: sm.color }}>
                                     <option value="pending">⏳ Pending</option>
                                     <option value="confirmed">✅ Confirmed</option>
                                     <option value="shipped">🚚 Shipped</option>
@@ -970,7 +908,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* ══════════════ CAROUSEL TAB ══════════════ */}
+        {/* ══ CAROUSEL TAB ══ */}
         {activeTab === "carousel" && (
           <div className="adm-section">
             <div className="adm-card">
@@ -982,47 +920,29 @@ export default function Admin() {
                   <label className="adm-file-label">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                     Choose Image
-                    <input type="file" accept="image/*" style={{ display: "none" }}
-                      onChange={e => { const f = e.target.files?.[0] || null; setCarouselImage(f); setCarouselPreview(f ? URL.createObjectURL(f) : ""); }}/>
+                    <input type="file" accept="image/*" style={{ display: "none" }} onChange={e => { const f = e.target.files?.[0] || null; setCarouselImage(f); setCarouselPreview(f ? URL.createObjectURL(f) : ""); }}/>
                   </label>
-                  {carouselPreview && (
-                    <img src={carouselPreview} style={{ marginTop: 10, width: 220, height: 140, objectFit: "cover", borderRadius: 10, border: "1px solid var(--border)" }} alt=""/>
-                  )}
+                  {carouselPreview && <img src={carouselPreview} style={{ marginTop: 10, width: 220, height: 140, objectFit: "cover", borderRadius: 10, border: "1px solid var(--border)" }} alt=""/>}
                 </div>
                 <div className="adm-row">
                   <div className="adm-field">
                     <label className="adm-label">Link Type</label>
-                    <select className="adm-input adm-select" value={carouselLinkType}
-                      onChange={e => setCarouselLinkType(e.target.value as "product" | "category")}>
+                    <select className="adm-input adm-select" value={carouselLinkType} onChange={e => setCarouselLinkType(e.target.value as "product" | "category")}>
                       <option value="product">Product (by ID)</option>
                       <option value="category">Category (by slug)</option>
                     </select>
                   </div>
                   <div className="adm-field">
                     <label className="adm-label">{carouselLinkType === "product" ? "Product ID" : "Category Slug"}</label>
-                    {carouselLinkType === "product" ? (
-                      <select className="adm-input adm-select" value={carouselLinkValue} onChange={e => setCarouselLinkValue(e.target.value)}>
-                        <option value="">Select product</option>
-                        {products.map(p => <option key={p.id} value={p.id}>{p.name} (#{p.id})</option>)}
-                      </select>
-                    ) : (
-                      <select className="adm-input adm-select" value={carouselLinkValue} onChange={e => setCarouselLinkValue(e.target.value)}>
-                        <option value="">Select category</option>
-                        {categories.map(cat => <option key={cat.id} value={cat.slug}>{cat.name} ({cat.slug})</option>)}
-                      </select>
-                    )}
+                    {carouselLinkType === "product"
+                      ? <select className="adm-input adm-select" value={carouselLinkValue} onChange={e => setCarouselLinkValue(e.target.value)}><option value="">Select product</option>{products.map(p => <option key={p.id} value={p.id}>{p.name} (#{p.id})</option>)}</select>
+                      : <select className="adm-input adm-select" value={carouselLinkValue} onChange={e => setCarouselLinkValue(e.target.value)}><option value="">Select category</option>{categories.map(cat => <option key={cat.id} value={cat.slug}>{cat.name} ({cat.slug})</option>)}</select>}
                   </div>
                 </div>
-                <div className="adm-field" style={{ maxWidth: 200 }}>
-                  <label className="adm-label">Sort Order</label>
-                  <input className="adm-input" type="number" value={carouselSortOrder} onChange={e => setCarouselSortOrder(e.target.value)} placeholder="0"/>
-                </div>
+                <div className="adm-field" style={{ maxWidth: 200 }}><label className="adm-label">Sort Order</label><input className="adm-input" type="number" value={carouselSortOrder} onChange={e => setCarouselSortOrder(e.target.value)} placeholder="0"/></div>
                 {carouselUploading && (
                   <div className="adm-progress-wrap">
-                    <div className="adm-progress-header">
-                      <span className="adm-progress-step">{uploadStep}</span>
-                      <span className="adm-progress-pct">{uploadProgress}%</span>
-                    </div>
+                    <div className="adm-progress-header"><span className="adm-progress-step">{uploadStep}</span><span className="adm-progress-pct">{uploadProgress}%</span></div>
                     <div className="adm-progress-track"><div className="adm-progress-fill" style={{ width: `${uploadProgress}%` }}/></div>
                   </div>
                 )}
@@ -1031,7 +951,6 @@ export default function Admin() {
                 </button>
               </div>
             </div>
-
             <div className="adm-card">
               <h2 className="adm-card__title">Carousel Images <span className="adm-card__count">{carouselItems.length}</span></h2>
               {carouselItems.length === 0 ? <p className="adm-empty">No carousel images yet.</p> : (
@@ -1040,9 +959,7 @@ export default function Admin() {
                     <div key={item.id} className="adm-banner-row">
                       <img src={item.image_url} style={{ width: 140, height: 88, borderRadius: 8, objectFit: "cover", border: "1px solid var(--border)", flexShrink: 0 }} alt=""/>
                       <div className="adm-banner-info">
-                        <span className="adm-banner-heading" style={{ fontSize: "0.82rem" }}>
-                          {item.link_type === "product" ? "→ Product" : "→ Category"}
-                        </span>
+                        <span className="adm-banner-heading" style={{ fontSize: "0.82rem" }}>{item.link_type === "product" ? "→ Product" : "→ Category"}</span>
                         <div className="adm-banner-meta">
                           <span>Links to: <code style={{ background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: 4, padding: "1px 6px", fontSize: "0.75rem", color: "var(--accent)" }}>{item.link_value}</code></span>
                           <span>Order: <b>{item.sort_order}</b></span>
@@ -1057,29 +974,63 @@ export default function Admin() {
           </div>
         )}
 
-        {/* ══════════════ SETTINGS TAB ══════════════ */}
+        {/* ══ SETTINGS TAB ══ */}
         {activeTab === "settings" && (
           <div className="adm-section">
+
+            {/* ── Admin Emails ── */}
             <div className="adm-card">
-              <h2 className="adm-card__title">WhatsApp Contact</h2>
-              <p className="adm-hint">Enter your WhatsApp number with country code (e.g. 923001234567). This shows as a floating button on the bottom-left of the site.</p>
+              <h2 className="adm-card__title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Admin Access
+              </h2>
+              <p className="adm-hint">These emails have full admin access. Changes take effect on next login. You must keep at least one admin.</p>
               <div className="adm-stack">
-                <div className="adm-field" style={{ maxWidth: 340 }}>
-                  <label className="adm-label">WhatsApp Number</label>
-                  <input className="adm-input" placeholder="e.g. 923001234567"
-                    value={whatsappNumber} onChange={e => setWhatsappNumber(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && saveWhatsapp()}/>
+                {/* existing admin list */}
+                <div className="adm-email-list">
+                  {adminEmails.length === 0 && <p className="adm-empty" style={{ padding: "10px 0" }}>No admin emails loaded yet — save one below or check your settings table.</p>}
+                  {adminEmails.map(email => (
+                    <div key={email} className="adm-email-row">
+                      <div className="adm-email-avatar">{email[0].toUpperCase()}</div>
+                      <span className="adm-email-addr">{email}</span>
+                      <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => removeAdminEmail(email)}>Remove</button>
+                    </div>
+                  ))}
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <button className="adm-btn adm-btn--primary" onClick={saveWhatsapp} disabled={whatsappSaving} style={{ alignSelf: "flex-start" }}>
+                {/* add new admin */}
+                <div className="adm-row" style={{ alignItems: "flex-end" }}>
+                  <div className="adm-field">
+                    <label className="adm-label">Add Admin Email</label>
+                    <input className="adm-input" type="email" placeholder="new-admin@example.com"
+                      value={newAdminEmail} onChange={e => setNewAdminEmail(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && addAdminEmail()}/>
+                  </div>
+                  <button className="adm-btn adm-btn--primary" onClick={addAdminEmail} disabled={adminEmailsSaving} style={{ alignSelf: "flex-end", marginBottom: 0 }}>
+                    {adminEmailsSaving ? <><span className="adm-spinner"/>Saving…</> : "Add Admin"}
+                  </button>
+                </div>
+                <p className="adm-hint" style={{ marginBottom: 0 }}>
+                  ⚠ Also update your <code style={{ background: "var(--surface2)", padding: "1px 6px", borderRadius: 4, fontSize: "0.78rem" }}>middleware.ts</code> and <code style={{ background: "var(--surface2)", padding: "1px 6px", borderRadius: 4, fontSize: "0.78rem" }}>navbar.tsx</code> to read from <code style={{ background: "var(--surface2)", padding: "1px 6px", borderRadius: 4, fontSize: "0.78rem" }}>/api/settings?key=admin_emails</code> so the list stays dynamic (see the updated files provided).
+                </p>
+              </div>
+            </div>
+
+            {/* ── WhatsApp ── */}
+            <div className="adm-card">
+              <h2 className="adm-card__title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                WhatsApp Contact
+              </h2>
+              <p className="adm-hint">Enter your WhatsApp number with country code (e.g. 923001234567). Shows as a floating button on the site.</p>
+              <div className="adm-stack">
+                <div className="adm-row" style={{ alignItems: "flex-end" }}>
+                  <div className="adm-field">
+                    <label className="adm-label">WhatsApp Number</label>
+                    <input className="adm-input" placeholder="e.g. 923001234567" value={whatsappNumber} onChange={e => setWhatsappNumber(e.target.value)} onKeyDown={e => e.key === "Enter" && saveWhatsapp()}/>
+                  </div>
+                  <button className="adm-btn adm-btn--primary" onClick={saveWhatsapp} disabled={whatsappSaving}>
                     {whatsappSaving ? <><span className="adm-spinner"/>Saving…</> : "Save Number"}
                   </button>
-                  {whatsappNumber && (
-                    <a href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer"
-                      style={{ fontSize: "0.78rem", color: "var(--accent)", textDecoration: "none" }}>
-                      Test link ↗
-                    </a>
-                  )}
                 </div>
                 {whatsappNumber && (
                   <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", background: "rgba(37,211,102,0.08)", border: "1px solid rgba(37,211,102,0.25)", borderRadius: 12 }}>
@@ -1087,13 +1038,88 @@ export default function Admin() {
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                     </div>
                     <div>
-                      <p style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text)", fontFamily: "'Jost', sans-serif" }}>+{whatsappNumber.replace(/[^0-9]/g, "")}</p>
-                      <p style={{ fontSize: "0.72rem", color: "var(--text-3)", fontFamily: "'Jost', sans-serif" }}>Floating button active on site</p>
+                      <p style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text)" }}>+{whatsappNumber.replace(/[^0-9]/g, "")}</p>
+                      <p style={{ fontSize: "0.72rem", color: "var(--text-3)" }}>Floating button active on site</p>
                     </div>
+                    <a href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" style={{ marginLeft: "auto", fontSize: "0.75rem", color: "var(--accent)", textDecoration: "none" }}>Test ↗</a>
                   </div>
                 )}
               </div>
             </div>
+
+            {/* ── Social Media ── */}
+            <div className="adm-card">
+              <h2 className="adm-card__title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                Social Media Links
+              </h2>
+              <p className="adm-hint">Toggle which platforms show in the footer. Enter the full URL for each. Changes save together.</p>
+              <div className="adm-stack">
+                {SOCIAL_PLATFORMS.map(platform => (
+                  <div key={platform.key} className="adm-social-row">
+                    {/* Toggle */}
+                    <button
+                      className={`adm-toggle ${socials[platform.key].visible ? "adm-toggle--on" : ""}`}
+                      onClick={() => setSocials(prev => ({ ...prev, [platform.key]: { ...prev[platform.key], visible: !prev[platform.key].visible } }))}
+                      title={socials[platform.key].visible ? "Hide from footer" : "Show in footer"}
+                    >
+                      <span className="adm-toggle__knob"/>
+                    </button>
+                    {/* Icon + label */}
+                    <div className="adm-social-icon" dangerouslySetInnerHTML={{ __html: platform.icon }}/>
+                    <span className="adm-social-label">{platform.label}</span>
+                    {/* URL input */}
+                    <input
+                      className="adm-input adm-social-input"
+                      placeholder={platform.key === "whatsapp" ? "https://wa.me/923001234567" : `https://${platform.key}.com/yourhandle`}
+                      value={socials[platform.key].url}
+                      onChange={e => setSocials(prev => ({ ...prev, [platform.key]: { ...prev[platform.key], url: e.target.value } }))}
+                      disabled={!socials[platform.key].visible}
+                    />
+                  </div>
+                ))}
+                <button className="adm-btn adm-btn--primary" onClick={saveSocials} disabled={socialsSaving} style={{ alignSelf: "flex-start" }}>
+                  {socialsSaving ? <><span className="adm-spinner"/>Saving…</> : "Save Social Links"}
+                </button>
+              </div>
+            </div>
+
+            {/* ── Footer Message ── */}
+            <div className="adm-card">
+              <h2 className="adm-card__title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Footer Message
+              </h2>
+              <p className="adm-hint">A short message or tagline shown at the bottom of the site footer. Leave empty to hide it.</p>
+              <div className="adm-stack">
+                <div className="adm-field">
+                  <label className="adm-label">Message / Tagline</label>
+                  <textarea
+                    className="adm-input adm-textarea"
+                    placeholder="e.g. © 2025 CrashCart · Delivering joy, one order at a time 💖"
+                    value={footerMessage}
+                    onChange={e => setFooterMessage(e.target.value)}
+                    style={{ minHeight: 70 }}
+                  />
+                </div>
+                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <button className="adm-btn adm-btn--primary" onClick={saveFooterMessage} disabled={footerMessageSaving}>
+                    {footerMessageSaving ? <><span className="adm-spinner"/>Saving…</> : "Save Message"}
+                  </button>
+                  {footerMessage && (
+                    <button className="adm-btn adm-btn--ghost" onClick={() => { setFooterMessage(""); saveFooterMessage(); }}>
+                      Clear Message
+                    </button>
+                  )}
+                </div>
+                {footerMessage && (
+                  <div style={{ padding: "12px 16px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: 10, fontSize: "0.82rem", color: "var(--text-2)" }}>
+                    Preview: <span style={{ color: "var(--text)" }}>{footerMessage}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
           </div>
         )}
       </div>
@@ -1123,7 +1149,7 @@ const css = `
   .toast--info { background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.25); }
   .toast--info .toast__icon { color: #60a5fa; }
   .toast__icon { flex-shrink: 0; display: flex; }
-  .toast__msg  { flex: 1; }
+  .toast__msg { flex: 1; }
   .toast__close { flex-shrink: 0; background: none; border: none; color: var(--text-3); cursor: pointer; display: flex; align-items: center; padding: 2px; border-radius: 4px; transition: color 0.15s; }
   .toast__close:hover { color: var(--text); }
   .confirm-overlay { position: fixed; inset: 0; background: rgba(10,12,18,0.75); backdrop-filter: blur(6px); z-index: 9998; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.2s ease both; }
@@ -1131,7 +1157,7 @@ const css = `
   .confirm-box { background: var(--surface); border: 1px solid var(--border-hi); border-radius: 20px; padding: 32px 28px; max-width: 380px; width: 100%; text-align: center; animation: popIn 0.25s cubic-bezier(.22,1,.36,1) both; }
   @keyframes popIn { from { opacity: 0; transform: scale(0.93); } to { opacity: 1; transform: scale(1); } }
   .confirm-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.25); display: flex; align-items: center; justify-content: center; color: var(--danger); margin: 0 auto 18px; }
-  .confirm-msg { font-size: 0.9rem; color: var(--text-2); line-height: 1.65; margin-bottom: 24px; font-family: 'Jost', sans-serif; }
+  .confirm-msg { font-size: 0.9rem; color: var(--text-2); line-height: 1.65; margin-bottom: 24px; }
   .confirm-btns { display: flex; gap: 10px; justify-content: center; }
   .edit-overlay { position: fixed; inset: 0; background: rgba(8,10,16,0.82); backdrop-filter: blur(8px); z-index: 9990; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.2s ease both; }
   .edit-modal { background: var(--surface); border: 1px solid var(--border-hi); border-radius: 22px; width: 100%; max-width: 560px; max-height: 90vh; display: flex; flex-direction: column; animation: popIn 0.28s cubic-bezier(.22,1,.36,1) both; box-shadow: 0 32px 80px rgba(0,0,0,0.6); overflow: hidden; }
@@ -1155,14 +1181,14 @@ const css = `
   .upload-bar-wrap { position: fixed; top: 62px; left: 0; right: 0; z-index: 200; background: rgba(15,17,23,0.92); border-bottom: 1px solid var(--border); padding: 10px 24px; backdrop-filter: blur(10px); }
   .upload-bar-inner { max-width: 1000px; margin: 0 auto; }
   .upload-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
-  .upload-bar-step { font-size: 0.75rem; color: var(--text-2); font-family: 'Jost', sans-serif; }
-  .upload-bar-pct  { font-size: 0.75rem; font-weight: 600; color: var(--accent); font-family: 'Jost', sans-serif; }
+  .upload-bar-step { font-size: 0.75rem; color: var(--text-2); }
+  .upload-bar-pct { font-size: 0.75rem; font-weight: 600; color: var(--accent); }
   .upload-bar-track { height: 4px; background: var(--surface2); border-radius: 100px; overflow: hidden; }
   .upload-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #9ec4aa); border-radius: 100px; transition: width 0.25s ease; }
   .adm-progress-wrap { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
   .adm-progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
   .adm-progress-step { font-size: 0.75rem; color: var(--text-2); }
-  .adm-progress-pct  { font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .adm-progress-pct { font-size: 0.8rem; font-weight: 700; color: var(--accent); }
   .adm-progress-track { height: 6px; background: var(--surface); border-radius: 100px; overflow: hidden; }
   .adm-progress-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent) 0%, #a8d4b4 100%); transition: width 0.2s ease; position: relative; overflow: hidden; }
   .adm-progress-fill::after { content: ''; position: absolute; top: 0; left: -100%; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); animation: shimmer 1.2s ease infinite; }
@@ -1172,7 +1198,7 @@ const css = `
   .adm-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; letter-spacing: -0.04em; color: var(--text); line-height: 1; }
   .adm-stats { display: flex; gap: 16px; flex-wrap: wrap; }
   .adm-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 20px; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 80px; }
-  .adm-stat__num   { font-size: 1.4rem; font-weight: 600; color: var(--text); }
+  .adm-stat__num { font-size: 1.4rem; font-weight: 600; color: var(--text); }
   .adm-stat__label { font-size: 0.67rem; color: var(--text-3); letter-spacing: 0.1em; text-transform: uppercase; }
   .adm-tabs { max-width: 1000px; margin: 0 auto 24px; display: flex; gap: 6px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 6px; }
   .adm-tab { display: flex; align-items: center; gap: 7px; padding: 9px 18px; background: transparent; border: none; border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 0.82rem; font-weight: 500; color: var(--text-3); cursor: pointer; transition: color 0.18s, background 0.18s; text-transform: capitalize; }
@@ -1186,19 +1212,20 @@ const css = `
   .adm-card__titlerow .adm-card__title { margin-bottom: 0; }
   .adm-card__count { font-size: 0.75rem; font-weight: 400; color: var(--text-3); background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; padding: 2px 10px; }
   .adm-stack { display: flex; flex-direction: column; gap: 18px; }
-  .adm-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+  .adm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
   .adm-field { display: flex; flex-direction: column; gap: 7px; }
   .adm-label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.14em; color: var(--text-3); text-transform: uppercase; }
   .adm-label__hint { font-weight: 400; color: var(--accent); text-transform: none; letter-spacing: 0; font-size: 0.7rem; }
   .adm-input { width: 100%; padding: 11px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 0.88rem; font-weight: 300; color: var(--text); transition: border-color 0.2s, box-shadow 0.2s; }
   .adm-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
   .adm-input::placeholder { color: var(--text-3); }
+  .adm-input:disabled { opacity: 0.4; cursor: not-allowed; }
   .adm-textarea { min-height: 90px; resize: vertical; }
   .adm-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23545a66' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
   .adm-file-label { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; background: var(--surface2); border: 1px dashed var(--border-hi); border-radius: 10px; font-size: 0.8rem; font-weight: 500; color: var(--text-2); cursor: pointer; transition: border-color 0.2s, color 0.2s; }
   .adm-file-label:hover { border-color: var(--accent); color: var(--accent); }
   .adm-previews { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-  .adm-preview  { position: relative; border-radius: 8px; }
+  .adm-preview { position: relative; border-radius: 8px; }
   .adm-preview img { width: 80px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); display: block; }
   .adm-preview__badge { position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; background: var(--accent); color: #0f1117; padding: 2px 6px; border-radius: 100px; font-weight: 600; white-space: nowrap; }
   .adm-preview__remove { position: absolute; top: -7px; right: -7px; width: 20px; height: 20px; background: var(--danger); color: #fff; border: none; border-radius: 50%; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -1213,9 +1240,9 @@ const css = `
   .adm-btn:disabled { opacity: 0.45; cursor: not-allowed; }
   .adm-btn--primary { background: var(--accent); color: #0f1117; }
   .adm-btn--primary:hover:not(:disabled) { box-shadow: 0 6px 20px var(--accent-glow); }
-  .adm-btn--danger  { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(248,113,113,0.2); }
-  .adm-btn--edit    { background: var(--edit-dim); color: var(--edit); border: 1px solid rgba(96,165,250,0.2); }
-  .adm-btn--ghost   { background: transparent; color: var(--text-2); border: 1px solid var(--border-hi); }
+  .adm-btn--danger { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(248,113,113,0.2); }
+  .adm-btn--edit { background: var(--edit-dim); color: var(--edit); border: 1px solid rgba(96,165,250,0.2); }
+  .adm-btn--ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border-hi); }
   .adm-btn--ghost:hover:not(:disabled) { color: var(--text); border-color: var(--text-2); }
   .adm-btn--sm { padding: 6px 14px; font-size: 0.72rem; }
   .adm-spinner { display: inline-block; width: 12px; height: 12px; border: 1.5px solid rgba(15,17,23,0.25); border-top-color: #0f1117; border-radius: 50%; animation: admSpin 0.65s linear infinite; flex-shrink: 0; }
@@ -1228,20 +1255,20 @@ const css = `
   .adm-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text-2); vertical-align: middle; }
   .adm-table tbody tr:last-child td { border-bottom: none; }
   .adm-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
-  .adm-id    { font-size: 0.75rem; color: var(--text-3); font-weight: 500; }
+  .adm-id { font-size: 0.75rem; color: var(--text-3); font-weight: 500; }
   .adm-price { font-weight: 600; color: var(--text); }
-  .adm-slug  { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 2px 7px; font-size: 0.78rem; color: var(--accent); }
+  .adm-slug { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 2px 7px; font-size: 0.78rem; color: var(--accent); }
   .adm-no-img { color: var(--text-3); }
   .adm-thumb { width: 56px; height: 40px; object-fit: cover; border-radius: 7px; border: 1px solid var(--border); display: block; }
   .adm-cat-badge { display: inline-flex; padding: 3px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; font-size: 0.72rem; color: var(--text-2); }
   .adm-banner-list { display: flex; flex-direction: column; gap: 12px; }
-  .adm-banner-row  { display: flex; align-items: center; gap: 16px; padding: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; flex-wrap: wrap; }
-  .adm-banner-thumb   { width: 110px; height: 68px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid var(--border); }
+  .adm-banner-row { display: flex; align-items: center; gap: 16px; padding: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; flex-wrap: wrap; }
+  .adm-banner-thumb { width: 110px; height: 68px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid var(--border); }
   .adm-banner-preview { margin-top: 12px; width: 200px; height: 120px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); display: block; }
-  .adm-banner-info    { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 160px; }
+  .adm-banner-info { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 160px; }
   .adm-banner-heading { font-weight: 600; font-size: 0.9rem; color: var(--text); }
-  .adm-banner-meta    { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.75rem; color: var(--text-3); }
-  .adm-banner-meta b  { color: var(--text-2); font-weight: 500; }
+  .adm-banner-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.75rem; color: var(--text-3); }
+  .adm-banner-meta b { color: var(--text-2); font-weight: 500; }
   .adm-link-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: var(--accent-dim); border: 1px solid rgba(124,158,135,0.25); border-radius: 100px; color: var(--accent); font-size: 0.72rem; }
   .adm-link-badge--none { background: var(--surface); border-color: var(--border); color: var(--text-3); }
   .adm-link-badge code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
@@ -1250,8 +1277,8 @@ const css = `
   .adm-order:hover { border-color: var(--border-hi); }
   .adm-order--open { border-color: var(--border-hi); }
   .adm-order__head { width: 100%; display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: transparent; border: none; cursor: pointer; text-align: left; flex-wrap: wrap; }
-  .adm-order__id   { display: flex; flex-direction: column; gap: 2px; min-width: 100px; }
-  .adm-order__num  { font-weight: 600; font-size: 0.9rem; color: var(--text); }
+  .adm-order__id { display: flex; flex-direction: column; gap: 2px; min-width: 100px; }
+  .adm-order__num { font-weight: 600; font-size: 0.9rem; color: var(--text); }
   .adm-order__date { font-size: 0.7rem; color: var(--text-3); }
   .adm-order__user { flex: 1; font-size: 0.78rem; color: var(--text-3); }
   .adm-order__right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
@@ -1267,14 +1294,34 @@ const css = `
   .adm-order__item { display: flex; align-items: center; gap: 9px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.83rem; }
   .adm-order__item:last-child { border-bottom: none; }
   .adm-item-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.6; flex-shrink: 0; }
-  .adm-order__item-name  { flex: 1; color: var(--text); }
-  .adm-order__item-qty   { color: var(--text-3); font-size: 0.75rem; }
+  .adm-order__item-name { flex: 1; color: var(--text); }
+  .adm-order__item-qty { color: var(--text-3); font-size: 0.75rem; }
   .adm-order__item-price { font-weight: 600; color: var(--text); }
   .adm-delivery-row { display: flex; align-items: flex-start; gap: 8px; font-size: 0.8rem; color: var(--text-2); padding: 7px 0; border-bottom: 1px solid var(--border); line-height: 1.5; }
   .adm-delivery-row svg { flex-shrink: 0; color: var(--text-3); margin-top: 2px; }
   .adm-status-select { padding: 9px 36px 9px 14px; background: var(--surface); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23545a66' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; transition: border-color 0.2s; }
   .adm-status-select:focus { outline: none; box-shadow: 0 0 0 3px var(--accent-glow); }
   .adm-empty { font-size: 0.85rem; color: var(--text-3); padding: 20px 0; }
+
+  /* ── Admin email list ── */
+  .adm-email-list { display: flex; flex-direction: column; gap: 8px; }
+  .adm-email-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; }
+  .adm-email-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent-dim); border: 1px solid rgba(124,158,135,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+  .adm-email-addr { flex: 1; font-size: 0.85rem; color: var(--text-2); }
+
+  /* ── Social media rows ── */
+  .adm-social-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .adm-social-row:last-of-type { border-bottom: none; }
+  .adm-social-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: var(--text-2); flex-shrink: 0; }
+  .adm-social-label { font-size: 0.82rem; font-weight: 500; color: var(--text-2); min-width: 90px; flex-shrink: 0; }
+  .adm-social-input { flex: 1; }
+
+  /* ── Toggle switch ── */
+  .adm-toggle { position: relative; width: 36px; height: 20px; border-radius: 100px; border: none; cursor: pointer; transition: background 0.2s; background: var(--surface3); flex-shrink: 0; padding: 0; }
+  .adm-toggle--on { background: var(--accent); }
+  .adm-toggle__knob { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 0.2s; display: block; }
+  .adm-toggle--on .adm-toggle__knob { transform: translateX(16px); }
+
   @media (max-width: 600px) {
     .adm-row { grid-template-columns: 1fr; }
     .adm-header { flex-direction: column; align-items: flex-start; }
@@ -1285,5 +1332,7 @@ const css = `
     .toast { min-width: unset; max-width: 100%; }
     .edit-modal { max-height: 95vh; border-radius: 18px; }
     .edit-modal__img-section { flex-direction: column; }
+    .adm-social-row { flex-wrap: wrap; }
+    .adm-social-input { min-width: 100%; }
   }
 `;

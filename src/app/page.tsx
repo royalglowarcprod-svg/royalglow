@@ -4,18 +4,18 @@ import Page from "../components/cardDisplay";
 import CategoryCircles from "@/components/categoryCircles";
 import InfiniteCarousel from "@/components/infiniteCarousel";
 import WhatsAppButton from "@/components/whatsappButton";
-import SearchBar from "@/components/searchBar";
+import Footer from "@/components/footer";
+
 
 export default function Home() {
   return (
     <div className="main">
       <NavBar />
-     
       <CategoryCircles />
-      <SearchBar />
       <InfiniteCarousel />
       <Banner />
       <WhatsAppButton />
+      <Footer />
       <Page />
     </div>
   );
