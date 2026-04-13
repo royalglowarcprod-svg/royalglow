@@ -5,6 +5,7 @@ import CategoryCircles from "@/components/categoryCircles";
 import InfiniteCarousel from "@/components/infiniteCarousel";
 import WhatsAppButton from "@/components/whatsappButton";
 import Footer from "@/components/footer";
+import HomepageBuilder from "@/components/HomepageBuilder";
 
 
 export default function Home() {
@@ -15,7 +16,7 @@ export default function Home() {
       <InfiniteCarousel />
       <Banner />
       <WhatsAppButton />
-      <Page />
+      <HomepageBuilder />
       <Footer />
     </div>
   );
