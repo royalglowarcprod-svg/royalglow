@@ -8,7 +8,8 @@ type Banner = {
   heading: string;
   button_text: string;
   sort_order: number;
-  link_to?: string;
+  link_type?: "category" | "product" | "none";
+  link_value?: string;
 };
 
 export default function PromoBanners() {
@@ -18,12 +19,21 @@ export default function PromoBanners() {
   useEffect(() => {
     fetch("/api/banners")
       .then(r => r.json())
-.then((d: unknown) => {
-  const data = d as { results: Banner[] };
-  setBanners((data.results || []).sort((a, b) => a.sort_order - b.sort_order));
-})
+      .then((d: unknown) => {
+        const data = d as { results: Banner[] };
+        setBanners((data.results || []).sort((a, b) => a.sort_order - b.sort_order));
+      })
       .catch(() => {});
   }, []);
+
+  function handleClick(banner: Banner, e?: React.MouseEvent) {
+    e?.stopPropagation();
+    if (!banner.link_type || banner.link_type === "none" || !banner.link_value) return;
+    if (banner.link_type === "category") router.push(`/category/${banner.link_value}`);
+    else if (banner.link_type === "product") router.push(`/products/${banner.link_value}`);
+  }
+
+  const hasLink = (b: Banner) => b.link_type && b.link_type !== "none" && b.link_value;
 
   if (banners.length === 0) return null;
 
@@ -36,18 +46,15 @@ export default function PromoBanners() {
             <div
               key={banner.id}
               className={`pb-card ${i === 0 && banners.length % 2 !== 0 ? "pb-card--wide" : ""}`}
-              onClick={() => banner.link_to && router.push(`/#${banner.link_to}`)}
-              style={{ cursor: banner.link_to ? "pointer" : "default" }}
+              onClick={() => handleClick(banner)}
+              style={{ cursor: hasLink(banner) ? "pointer" : "default" }}
             >
               <img src={banner.image_url} alt={banner.heading} className="pb-img" />
               <div className="pb-shine" />
               <div className="pb-overlay">
                 {banner.heading && <h3 className="pb-heading">{banner.heading}</h3>}
-                {banner.button_text && banner.link_to && (
-                  <button
-                    className="pb-cta"
-                    onClick={e => { e.stopPropagation(); router.push(`/#${banner.link_to}`); }}
-                  >
+                {banner.button_text && hasLink(banner) && (
+                  <button className="pb-cta" onClick={e => handleClick(banner, e)}>
                     {banner.button_text} →
                   </button>
                 )}

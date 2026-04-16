@@ -8,7 +8,7 @@ import { fetchJSON } from "@/lib/fetcher";
 type ApiResponse<T> = { results: T[] };
 type Category  = { id: number; name: string; slug: string; image_url?: string };
 type Product   = { id: number; name: string; price: number; image_url: string; category_id: number; description: string };
-type Banner    = { id: number; image_url: string; heading: string; button_text: string; sort_order: number; link_to?: string };
+type Banner    = { id: number; image_url: string; heading: string; button_text: string; sort_order: number; link_type?: "category"|"product"|"none"; link_value?: string };
 type OrderItem = { id: number; product_name: string; price: number; quantity: number };
 type Order     = { id: number; user_name: string; user_email: string; address: string; city: string; phone: string; total: number; status: string; created_at: string; items: OrderItem[] };
 type CarouselItem = { id: number; image_url: string; link_type: string; link_value: string; sort_order: number };
@@ -137,11 +137,12 @@ export default function Admin() {
   const [uploading, setUploading] = useState(false);
   const [editModal, setEditModal] = useState<EditProductState>({ open:false, product:null, name:"", price:"", description:"", category_id:"", newImages:[], newImagePreviews:[], saving:false });
 
-  // ── Banners (standalone tab) ──
+  // ── Banners (standalone tab) — now with link_type + link_value ──
   const [bannerHeading, setBannerHeading] = useState("");
   const [bannerButtonText, setBannerButtonText] = useState("");
   const [bannerSortOrder, setBannerSortOrder] = useState("0");
-  const [bannerLinkTo, setBannerLinkTo] = useState("");
+  const [bannerLinkType, setBannerLinkType] = useState<"category"|"product"|"none">("none");
+  const [bannerLinkValue, setBannerLinkValue] = useState("");
   const [bannerImage, setBannerImage] = useState<File|null>(null);
   const [bannerPreview, setBannerPreview] = useState("");
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -170,7 +171,7 @@ export default function Admin() {
   const [brandLogoPreview, setBrandLogoPreview] = useState("");
   const [brandUploading, setBrandUploading] = useState(false);
 
-  // ── Homepage Sections (new independent system) ──
+  // ── Homepage Sections ──
   const [hpSections, setHpSections] = useState<HomepageSection[]>([]);
   const [hpLoading, setHpLoading] = useState(false);
   const [addSectionType, setAddSectionType] = useState<SectionType>("promo_banners");
@@ -286,15 +287,26 @@ export default function Admin() {
   const deleteProduct = (id:number,name:string) => askConfirm(`Delete "${name}"?`, async()=>{const res=await fetch("/api/products",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})});if(res.ok){fetchProducts();toast("success","Deleted!");}else toast("error","Failed.");});
   const copyProductLink = (id:number) => navigator.clipboard.writeText(`${window.location.origin}/products/${id}`).then(()=>toast("success","Link copied!")).catch(()=>toast("error","Copy failed."));
 
-  // ── Banner actions ──
+  // ── Banner actions — updated to use link_type + link_value ──
   const addBanner = async () => {
     if (!bannerHeading.trim()||!bannerButtonText.trim()||!bannerImage) { toast("error","Fill all fields."); return; }
     setBannerUploading(true); setUploadStep("Uploading…");
     try {
       const image_url = await uploadImageWithProgress(bannerImage,pct=>setUploadProgress(pct));
-      const res = await fetch("/api/banners",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image_url,heading:bannerHeading.trim(),button_text:bannerButtonText.trim(),sort_order:parseInt(bannerSortOrder)||0,link_to:bannerLinkTo.trim()||null})});
-      if(res.ok){setBannerHeading("");setBannerButtonText("");setBannerSortOrder("0");setBannerLinkTo("");setBannerImage(null);setBannerPreview("");fetchBanners();toast("success","Banner added!");}
-      else toast("error","Failed.");
+      const res = await fetch("/api/banners",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+        image_url,
+        heading: bannerHeading.trim(),
+        button_text: bannerButtonText.trim(),
+        sort_order: parseInt(bannerSortOrder)||0,
+        link_type: bannerLinkType,
+        link_value: bannerLinkType !== "none" ? bannerLinkValue.trim() : "",
+      })});
+      if(res.ok){
+        setBannerHeading(""); setBannerButtonText(""); setBannerSortOrder("0");
+        setBannerLinkType("none"); setBannerLinkValue("");
+        setBannerImage(null); setBannerPreview("");
+        fetchBanners(); toast("success","Banner added!");
+      } else toast("error","Failed.");
     } catch { toast("error","Upload failed."); }
     finally { setBannerUploading(false); setUploadProgress(0); setUploadStep(""); }
   };
@@ -687,10 +699,40 @@ export default function Admin() {
                   <div className="f-field"><label className="f-label">Heading</label><input className="f-input" placeholder="Banner headline" value={bannerHeading} onChange={e=>setBannerHeading(e.target.value)}/></div>
                   <div className="f-field"><label className="f-label">Button Text</label><input className="f-input" placeholder="e.g. Shop Now" value={bannerButtonText} onChange={e=>setBannerButtonText(e.target.value)}/></div>
                 </div>
-                <div className="f-grid-2">
-                  <div className="f-field"><label className="f-label">Sort Order</label><input className="f-input" type="number" value={bannerSortOrder} onChange={e=>setBannerSortOrder(e.target.value)}/></div>
-                  <div className="f-field"><label className="f-label">Link To Category</label><select className="f-input f-select" value={bannerLinkTo} onChange={e=>setBannerLinkTo(e.target.value)}><option value="">No link</option>{categories.map(c=><option key={c.id} value={c.slug}>{c.name}</option>)}</select></div>
+                <div className="f-field" style={{maxWidth:180}}>
+                  <label className="f-label">Sort Order</label>
+                  <input className="f-input" type="number" value={bannerSortOrder} onChange={e=>setBannerSortOrder(e.target.value)}/>
                 </div>
+
+                {/* ── New link_type + link_value selectors ── */}
+                <div className="f-field">
+                  <label className="f-label">Link To</label>
+                  <select className="f-input f-select" value={bannerLinkType}
+                    onChange={e=>{ setBannerLinkType(e.target.value as any); setBannerLinkValue(""); }}>
+                    <option value="none">No link</option>
+                    <option value="category">Category page</option>
+                    <option value="product">Product page</option>
+                  </select>
+                </div>
+                {bannerLinkType==="category"&&(
+                  <div className="f-field">
+                    <label className="f-label">Select Category</label>
+                    <select className="f-input f-select" value={bannerLinkValue} onChange={e=>setBannerLinkValue(e.target.value)}>
+                      <option value="">Choose category…</option>
+                      {categories.map(c=><option key={c.id} value={c.slug}>{c.name}</option>)}
+                    </select>
+                  </div>
+                )}
+                {bannerLinkType==="product"&&(
+                  <div className="f-field">
+                    <label className="f-label">Select Product</label>
+                    <select className="f-input f-select" value={bannerLinkValue} onChange={e=>setBannerLinkValue(e.target.value)}>
+                      <option value="">Choose product…</option>
+                      {products.map(p=><option key={p.id} value={String(p.id)}>{p.name} — RS {p.price}</option>)}
+                    </select>
+                  </div>
+                )}
+
                 <div className="f-field">
                   <label className="f-label">Banner Image</label>
                   <label className="f-file-btn">🖼 Choose Image<input type="file" accept="image/*" onChange={e=>{const f=e.target.files?.[0]||null;setBannerImage(f);setBannerPreview(f?URL.createObjectURL(f):"");}} style={{display:"none"}}/></label>
@@ -710,8 +752,13 @@ export default function Admin() {
                       <div style={{flex:1,minWidth:0}}>
                         <div style={{fontWeight:700,color:"#111",marginBottom:4}}>{b.heading}</div>
                         <div style={{fontSize:"0.75rem",color:"#666",display:"flex",gap:10,flexWrap:"wrap"}}>
-                          <span>Btn: <b>{b.button_text}</b></span><span>Order: <b>{b.sort_order}</b></span>
-                          {b.link_to&&<span className="f-badge-sm" style={{background:"#E0F2FE",borderColor:"#0EA5E9",color:"#0369A1"}}>→ {b.link_to}</span>}
+                          <span>Btn: <b>{b.button_text}</b></span>
+                          <span>Order: <b>{b.sort_order}</b></span>
+                          {b.link_type&&b.link_type!=="none"&&b.link_value&&(
+                            <span className="f-badge-sm" style={b.link_type==="category"?{background:"#DCFCE7",borderColor:"#86EFAC",color:"#166534"}:{background:"#E0F2FE",borderColor:"#93C5FD",color:"#1e40af"}}>
+                              {b.link_type==="category"?"🗂 /category/":"📦 /products/"}{b.link_value}
+                            </span>
+                          )}
                         </div>
                       </div>
                       <button className="f-btn f-btn--red f-btn--sm" onClick={()=>deleteBanner(b.id,b.heading)}>Delete</button>
@@ -877,15 +924,11 @@ export default function Admin() {
         {/* ══ HOMEPAGE SECTIONS ══ */}
         {activeTab==="homepage"&&(
           <div className="f-section">
-
-            {/* Info banner */}
             <div style={{padding:"14px 18px",background:"#FDF2F8",border:"2px solid #F9A8D4",borderRadius:12,boxShadow:"3px 3px 0 #F9A8D4",fontSize:"0.82rem",color:"#9D174D",fontWeight:600,lineHeight:1.6}}>
               🏠 <strong>Each section is fully independent.</strong> You can add the same type multiple times with different content.
               Every section has its own images, links, and data — they don't share anything.
               Each item can link to a <strong>category page</strong> or a <strong>product page</strong> individually.
             </div>
-
-            {/* Add new section */}
             <div className="f-card" style={{borderTopColor:"#EC4899"}}>
               <h2 className="f-card-title">➕ Create New Section</h2>
               <div className="f-stack">
@@ -911,32 +954,21 @@ export default function Admin() {
                 </button>
               </div>
             </div>
-
-            {/* Loading */}
             {hpLoading&&<p className="f-empty" style={{textAlign:"center",padding:"30px 0"}}>Loading sections…</p>}
-
-            {/* Empty state */}
             {!hpLoading&&hpSections.length===0&&(
               <div className="f-card" style={{borderTopColor:"#EC4899",textAlign:"center",padding:"48px 24px"}}>
                 <div style={{fontSize:"2.8rem",marginBottom:12}}>📭</div>
-                <p style={{color:"#888",fontSize:"0.88rem",fontWeight:600}}>No homepage sections yet.<br/>Create your first one above — you can add multiple of any type!</p>
+                <p style={{color:"#888",fontSize:"0.88rem",fontWeight:600}}>No homepage sections yet.<br/>Create your first one above!</p>
               </div>
             )}
-
-            {/* Section cards */}
             {hpSections.map(section=>{
               const items = getHpItems(section);
               const isOpen = openSectionId===section.id;
               const form = getForm(section.id);
               const meta = SECTION_META[section.type];
-
               return (
                 <div key={section.id} className="f-card" style={{borderTopColor:meta.color,padding:0,overflow:"hidden"}}>
-
-                  {/* Header row */}
                   <div style={{display:"flex",alignItems:"center",gap:10,padding:"14px 18px",background:section.enabled?"#fff":"#f9f9f9",flexWrap:"wrap"}}>
-
-                    {/* Toggle */}
                     <button onClick={()=>toggleHpSection(section)}
                       style={{width:40,height:22,borderRadius:100,border:"2px solid #111",cursor:"pointer",
                         background:section.enabled?meta.color:"#eee",flexShrink:0,padding:0,
@@ -945,105 +977,52 @@ export default function Admin() {
                         borderRadius:"50%",background:"#fff",border:"1.5px solid #111",
                         transition:"left 0.2s",display:"block"}}/>
                     </button>
-
                     <span style={{fontSize:"1.1rem",flexShrink:0}}>{meta.emoji}</span>
-
-                    {/* Inline-editable label */}
                     <input className="f-input"
                       style={{flex:1,fontWeight:700,fontSize:"0.88rem",minWidth:100,
                         background:"transparent",border:"1.5px dashed #ccc",padding:"4px 8px",borderRadius:6}}
                       defaultValue={section.label}
                       onBlur={e=>updateHpSectionLabel(section,e.target.value)}
                       onKeyDown={e=>{if(e.key==="Enter")(e.target as HTMLInputElement).blur();}}/>
-
-                    <span style={{fontSize:"0.7rem",color:"#888",background:"#f0f0f0",border:"1.5px solid #ddd",
-                      borderRadius:6,padding:"3px 8px",whiteSpace:"nowrap",flexShrink:0}}>
-                      {meta.label}
-                    </span>
-
-                    <span style={{fontSize:"0.7rem",fontWeight:800,padding:"3px 10px",borderRadius:100,flexShrink:0,
-                      border:`2px solid ${section.enabled?meta.color:"#ddd"}`,
-                      background:section.enabled?meta.color:"#f0f0f0",
-                      color:section.enabled?(meta.color==="#FFE14D"?"#111":"#fff"):"#999"}}>
-                      {section.enabled?"ON":"OFF"}
-                    </span>
-
-                    <span style={{fontSize:"0.72rem",color:"#888",background:"#f5f5f5",border:"1.5px solid #ddd",
-                      borderRadius:6,padding:"3px 8px",flexShrink:0}}>
-                      {section.type==="category_circles"?"auto":items.length+" item"+(items.length!==1?"s":"")}
-                    </span>
-
+                    <span style={{fontSize:"0.7rem",color:"#888",background:"#f0f0f0",border:"1.5px solid #ddd",borderRadius:6,padding:"3px 8px",whiteSpace:"nowrap",flexShrink:0}}>{meta.label}</span>
+                    <span style={{fontSize:"0.7rem",fontWeight:800,padding:"3px 10px",borderRadius:100,flexShrink:0,border:`2px solid ${section.enabled?meta.color:"#ddd"}`,background:section.enabled?meta.color:"#f0f0f0",color:section.enabled?(meta.color==="#FFE14D"?"#111":"#fff"):"#999"}}>{section.enabled?"ON":"OFF"}</span>
+                    <span style={{fontSize:"0.72rem",color:"#888",background:"#f5f5f5",border:"1.5px solid #ddd",borderRadius:6,padding:"3px 8px",flexShrink:0}}>{section.type==="category_circles"?"auto":items.length+" item"+(items.length!==1?"s":"")}</span>
                     <button onClick={()=>setOpenSectionId(isOpen?null:section.id)}
-                      style={{width:30,height:30,background:"#f5f5f5",border:"1.5px solid #111",borderRadius:6,
-                        cursor:"pointer",fontSize:"0.85rem",flexShrink:0,display:"flex",
-                        alignItems:"center",justifyContent:"center",
-                        transform:isOpen?"rotate(180deg)":"none",transition:"transform 0.2s"}}>
-                      ▾
-                    </button>
-
-                    <button className="f-btn f-btn--red f-btn--sm" onClick={()=>deleteHpSection(section.id,section.label)}>
-                      Delete
-                    </button>
+                      style={{width:30,height:30,background:"#f5f5f5",border:"1.5px solid #111",borderRadius:6,cursor:"pointer",fontSize:"0.85rem",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transform:isOpen?"rotate(180deg)":"none",transition:"transform 0.2s"}}>▾</button>
+                    <button className="f-btn f-btn--red f-btn--sm" onClick={()=>deleteHpSection(section.id,section.label)}>Delete</button>
                   </div>
-
-                  {/* Expanded editor */}
                   {isOpen&&(
                     <div style={{borderTop:`2.5px solid ${meta.color}`,padding:"22px",background:"#fafafa"}}>
-
-                      {/* ── category_circles: auto ── */}
                       {section.type==="category_circles"&&(
-                        <div style={{padding:"18px",background:"#F0FDF4",border:"2px solid #6EE7B7",
-                          borderRadius:10,fontSize:"0.84rem",color:"#065f46",fontWeight:600,lineHeight:1.7}}>
-                          🔄 <strong>No items needed here.</strong> This section automatically renders
-                          circles from your <strong>Categories</strong> tab — including their names and images.
-                          Go to the Categories tab to manage them.
+                        <div style={{padding:"18px",background:"#F0FDF4",border:"2px solid #6EE7B7",borderRadius:10,fontSize:"0.84rem",color:"#065f46",fontWeight:600,lineHeight:1.7}}>
+                          🔄 <strong>No items needed here.</strong> This section automatically renders circles from your <strong>Categories</strong> tab.
                         </div>
                       )}
-
-                      {/* ── promo_banners ── */}
                       {section.type==="promo_banners"&&(
                         <div className="f-stack">
-                          <div style={{padding:"10px 14px",background:"#FFFBEB",border:"2px solid #FCD34D",
-                            borderRadius:8,fontSize:"0.78rem",color:"#92400E",fontWeight:600}}>
-                            💡 Each banner can link independently to any category or product. Add as many as you like.
+                          <div style={{padding:"10px 14px",background:"#FFFBEB",border:"2px solid #FCD34D",borderRadius:8,fontSize:"0.78rem",color:"#92400E",fontWeight:600}}>
+                            💡 Each banner can link independently to any category or product.
                           </div>
-
-                          {/* Add form */}
-                          <div style={{background:"#fff",border:"2px solid #FFE14D",borderRadius:10,
-                            padding:"16px",boxShadow:"3px 3px 0 #FFE14D"}}>
-                            <div style={{fontWeight:800,fontSize:"0.8rem",color:"#111",marginBottom:12,
-                              textTransform:"uppercase",letterSpacing:"0.08em"}}>
-                              ➕ Add Banner to This Section
-                            </div>
+                          <div style={{background:"#fff",border:"2px solid #FFE14D",borderRadius:10,padding:"16px",boxShadow:"3px 3px 0 #FFE14D"}}>
+                            <div style={{fontWeight:800,fontSize:"0.8rem",color:"#111",marginBottom:12,textTransform:"uppercase",letterSpacing:"0.08em"}}>➕ Add Banner to This Section</div>
                             <div className="f-stack">
                               <div className="f-grid-2">
-                                <div className="f-field"><label className="f-label">Heading</label>
-                                  <input className="f-input" placeholder="e.g. Summer Sale" value={form.heading} onChange={e=>setForm(section.id,{heading:e.target.value})}/></div>
-                                <div className="f-field"><label className="f-label">Button Text</label>
-                                  <input className="f-input" placeholder="e.g. Shop Now" value={form.button_text} onChange={e=>setForm(section.id,{button_text:e.target.value})}/></div>
+                                <div className="f-field"><label className="f-label">Heading</label><input className="f-input" placeholder="e.g. Summer Sale" value={form.heading} onChange={e=>setForm(section.id,{heading:e.target.value})}/></div>
+                                <div className="f-field"><label className="f-label">Button Text</label><input className="f-input" placeholder="e.g. Shop Now" value={form.button_text} onChange={e=>setForm(section.id,{button_text:e.target.value})}/></div>
                               </div>
                               <LinkSelector sectionId={section.id}/>
                               <div className="f-field">
                                 <label className="f-label">Banner Image</label>
-                                <label className="f-file-btn">🖼 Choose Image
-                                  <input type="file" accept="image/*" style={{display:"none"}}
-                                    onChange={e=>{const f=e.target.files?.[0]||null;setForm(section.id,{bannerImage:f,bannerPreview:f?URL.createObjectURL(f):""});}}/>
-                                </label>
+                                <label className="f-file-btn">🖼 Choose Image<input type="file" accept="image/*" style={{display:"none"}} onChange={e=>{const f=e.target.files?.[0]||null;setForm(section.id,{bannerImage:f,bannerPreview:f?URL.createObjectURL(f):""});}}/></label>
                                 {form.bannerPreview&&<img src={form.bannerPreview} style={{marginTop:10,width:180,height:100,objectFit:"cover",borderRadius:8,border:"2.5px solid #111",boxShadow:"3px 3px 0 #FFE14D",display:"block"}} alt=""/>}
                               </div>
                               {form.uploading&&<div className="f-prog"><div className="f-prog__bar" style={{width:`${uploadProgress}%`,background:"#FFE14D"}}/></div>}
-                              <button className="f-btn f-btn--yellow" onClick={()=>addItemToSection(section)} disabled={form.uploading} style={{alignSelf:"flex-start"}}>
-                                {form.uploading?"Uploading…":"+ Add This Banner"}
-                              </button>
+                              <button className="f-btn f-btn--yellow" onClick={()=>addItemToSection(section)} disabled={form.uploading} style={{alignSelf:"flex-start"}}>{form.uploading?"Uploading…":"+ Add This Banner"}</button>
                             </div>
                           </div>
-
-                          {/* Existing items */}
                           {items.length>0&&(
                             <div className="f-stack">
-                              <div style={{fontSize:"0.7rem",fontWeight:800,letterSpacing:"0.1em",textTransform:"uppercase",color:"#888"}}>
-                                Banners in this section ({items.length})
-                              </div>
+                              <div style={{fontSize:"0.7rem",fontWeight:800,letterSpacing:"0.1em",textTransform:"uppercase",color:"#888"}}>Banners in this section ({items.length})</div>
                               {(items as HpBannerItem[]).map(item=>(
                                 <div key={item.id} className="f-item-row">
                                   <img src={item.image_url} style={{width:100,height:62,objectFit:"cover",borderRadius:6,border:"2px solid #111",flexShrink:0}} alt=""/>
@@ -1052,8 +1031,8 @@ export default function Admin() {
                                     <div style={{fontSize:"0.72rem",color:"#666",marginTop:3,display:"flex",gap:8,flexWrap:"wrap"}}>
                                       <span>Btn: <b>{item.button_text}</b></span>
                                       {item.link_type!=="none"&&item.link_value&&(
-                                        <span className="f-badge-sm" style={{background:"#E0F2FE",borderColor:"#0EA5E9",color:"#0369A1"}}>
-                                          {item.link_type==="category"?"🗂":"📦"} {item.link_value}
+                                        <span className="f-badge-sm" style={item.link_type==="category"?{background:"#DCFCE7",borderColor:"#86EFAC",color:"#166534"}:{background:"#E0F2FE",borderColor:"#93C5FD",color:"#1e40af"}}>
+                                          {item.link_type==="category"?"🗂 /category/":"📦 /products/"}{item.link_value}
                                         </span>
                                       )}
                                     </div>
@@ -1065,35 +1044,22 @@ export default function Admin() {
                           )}
                         </div>
                       )}
-
-                      {/* ── category_carousel ── */}
                       {section.type==="category_carousel"&&(
                         <div className="f-stack">
-                          <div style={{padding:"10px 14px",background:"#FFF7ED",border:"2px solid #FED7AA",
-                            borderRadius:8,fontSize:"0.78rem",color:"#92400E",fontWeight:600}}>
-                            💡 Each carousel image links independently to a category or product. Add as many images as you want.
+                          <div style={{padding:"10px 14px",background:"#FFF7ED",border:"2px solid #FED7AA",borderRadius:8,fontSize:"0.78rem",color:"#92400E",fontWeight:600}}>
+                            💡 Each carousel image links independently to a category or product.
                           </div>
-
-                          <div style={{background:"#fff",border:"2px solid #FF8C00",borderRadius:10,
-                            padding:"16px",boxShadow:"3px 3px 0 #FF8C00"}}>
-                            <div style={{fontWeight:800,fontSize:"0.8rem",color:"#111",marginBottom:12,
-                              textTransform:"uppercase",letterSpacing:"0.08em"}}>
-                              ➕ Add Image to This Carousel
-                            </div>
+                          <div style={{background:"#fff",border:"2px solid #FF8C00",borderRadius:10,padding:"16px",boxShadow:"3px 3px 0 #FF8C00"}}>
+                            <div style={{fontWeight:800,fontSize:"0.8rem",color:"#111",marginBottom:12,textTransform:"uppercase",letterSpacing:"0.08em"}}>➕ Add Image to This Carousel</div>
                             <div className="f-stack">
                               <div className="f-field">
                                 <label className="f-label">Image</label>
-                                <label className="f-file-btn">🖼 Choose Image
-                                  <input type="file" accept="image/*" style={{display:"none"}}
-                                    onChange={e=>{const f=e.target.files?.[0]||null;setForm(section.id,{carouselImage:f,carouselPreview:f?URL.createObjectURL(f):""});}}/>
-                                </label>
+                                <label className="f-file-btn">🖼 Choose Image<input type="file" accept="image/*" style={{display:"none"}} onChange={e=>{const f=e.target.files?.[0]||null;setForm(section.id,{carouselImage:f,carouselPreview:f?URL.createObjectURL(f):""});}}/></label>
                                 {form.carouselPreview&&<img src={form.carouselPreview} style={{marginTop:10,width:180,height:110,objectFit:"cover",borderRadius:8,border:"2.5px solid #111",boxShadow:"3px 3px 0 #FF8C00",display:"block"}} alt=""/>}
                               </div>
-                              {/* Reuse link selector but force category/product only */}
                               <div className="f-field">
                                 <label className="f-label">Link Type</label>
-                                <select className="f-input f-select" value={form.link_type==="none"?"category":form.link_type}
-                                  onChange={e=>setForm(section.id,{link_type:e.target.value as any,link_value:""})}>
+                                <select className="f-input f-select" value={form.link_type==="none"?"category":form.link_type} onChange={e=>setForm(section.id,{link_type:e.target.value as any,link_value:""})}>
                                   <option value="category">Category page</option>
                                   <option value="product">Product page</option>
                                 </select>
@@ -1117,24 +1083,17 @@ export default function Admin() {
                                 </div>
                               )}
                               {form.uploading&&<div className="f-prog"><div className="f-prog__bar" style={{width:`${uploadProgress}%`,background:"#FF8C00"}}/></div>}
-                              <button className="f-btn f-btn--orange" onClick={()=>addItemToSection(section)} disabled={form.uploading} style={{alignSelf:"flex-start"}}>
-                                {form.uploading?"Uploading…":"+ Add to This Carousel"}
-                              </button>
+                              <button className="f-btn f-btn--orange" onClick={()=>addItemToSection(section)} disabled={form.uploading} style={{alignSelf:"flex-start"}}>{form.uploading?"Uploading…":"+ Add to This Carousel"}</button>
                             </div>
                           </div>
-
                           {items.length>0&&(
                             <div className="f-stack">
-                              <div style={{fontSize:"0.7rem",fontWeight:800,letterSpacing:"0.1em",textTransform:"uppercase",color:"#888"}}>
-                                Images in this carousel ({items.length})
-                              </div>
+                              <div style={{fontSize:"0.7rem",fontWeight:800,letterSpacing:"0.1em",textTransform:"uppercase",color:"#888"}}>Images in this carousel ({items.length})</div>
                               {(items as HpCarouselItem[]).map(item=>(
                                 <div key={item.id} className="f-item-row">
                                   <img src={item.image_url} style={{width:120,height:74,objectFit:"cover",borderRadius:6,border:"2px solid #111",flexShrink:0}} alt=""/>
                                   <div style={{flex:1}}>
-                                    <div style={{fontWeight:700,fontSize:"0.82rem",marginBottom:4}}>
-                                      {item.link_type==="product"?"📦 Product":"🗂 Category"}
-                                    </div>
+                                    <div style={{fontWeight:700,fontSize:"0.82rem",marginBottom:4}}>{item.link_type==="product"?"📦 Product":"🗂 Category"}</div>
                                     <code className="f-code">{item.link_value||"—"}</code>
                                   </div>
                                   <button className="f-btn f-btn--red f-btn--sm" onClick={()=>deleteHpItem(section,item.id)}>Remove</button>
@@ -1144,31 +1103,19 @@ export default function Admin() {
                           )}
                         </div>
                       )}
-
-                      {/* ── brand_grid ── */}
                       {section.type==="brand_grid"&&(
                         <div className="f-stack">
-                          <div style={{padding:"10px 14px",background:"#EFF6FF",border:"2px solid #BAE6FD",
-                            borderRadius:8,fontSize:"0.78rem",color:"#075985",fontWeight:600}}>
-                            💡 Each brand in this section can link to its own category, product, or a custom URL.
+                          <div style={{padding:"10px 14px",background:"#EFF6FF",border:"2px solid #BAE6FD",borderRadius:8,fontSize:"0.78rem",color:"#075985",fontWeight:600}}>
+                            💡 Each brand can link to its own category, product, or a custom URL.
                           </div>
-
-                          <div style={{background:"#fff",border:"2px solid #0EA5E9",borderRadius:10,
-                            padding:"16px",boxShadow:"3px 3px 0 #0EA5E9"}}>
-                            <div style={{fontWeight:800,fontSize:"0.8rem",color:"#111",marginBottom:12,
-                              textTransform:"uppercase",letterSpacing:"0.08em"}}>
-                              ➕ Add Brand to This Section
-                            </div>
+                          <div style={{background:"#fff",border:"2px solid #0EA5E9",borderRadius:10,padding:"16px",boxShadow:"3px 3px 0 #0EA5E9"}}>
+                            <div style={{fontWeight:800,fontSize:"0.8rem",color:"#111",marginBottom:12,textTransform:"uppercase",letterSpacing:"0.08em"}}>➕ Add Brand to This Section</div>
                             <div className="f-stack">
-                              <div className="f-field"><label className="f-label">Brand Name</label>
-                                <input className="f-input" placeholder="e.g. Garnier" value={form.brandName} onChange={e=>setForm(section.id,{brandName:e.target.value})}/></div>
+                              <div className="f-field"><label className="f-label">Brand Name</label><input className="f-input" placeholder="e.g. Garnier" value={form.brandName} onChange={e=>setForm(section.id,{brandName:e.target.value})}/></div>
                               <LinkSelector sectionId={section.id} supportsUrl={true}/>
                               <div className="f-field">
                                 <label className="f-label">Logo</label>
-                                <label className="f-file-btn">🖼 Choose Logo
-                                  <input type="file" accept="image/*" style={{display:"none"}}
-                                    onChange={e=>{const f=e.target.files?.[0]||null;setForm(section.id,{brandLogo:f,brandLogoPreview:f?URL.createObjectURL(f):""});}}/>
-                                </label>
+                                <label className="f-file-btn">🖼 Choose Logo<input type="file" accept="image/*" style={{display:"none"}} onChange={e=>{const f=e.target.files?.[0]||null;setForm(section.id,{brandLogo:f,brandLogoPreview:f?URL.createObjectURL(f):""});}}/></label>
                                 {form.brandLogoPreview&&(
                                   <div style={{position:"relative",display:"inline-block",marginTop:10}}>
                                     <img src={form.brandLogoPreview} style={{height:52,maxWidth:160,objectFit:"contain",borderRadius:8,border:"2px solid #111",background:"#fff",padding:6,display:"block",boxShadow:"3px 3px 0 #0EA5E9"}} alt=""/>
@@ -1177,17 +1124,12 @@ export default function Admin() {
                                 )}
                               </div>
                               {form.uploading&&<div className="f-prog"><div className="f-prog__bar" style={{width:`${uploadProgress}%`,background:"#0EA5E9"}}/></div>}
-                              <button className="f-btn f-btn--blue" onClick={()=>addItemToSection(section)} disabled={form.uploading} style={{alignSelf:"flex-start"}}>
-                                {form.uploading?"Uploading…":"+ Add This Brand"}
-                              </button>
+                              <button className="f-btn f-btn--blue" onClick={()=>addItemToSection(section)} disabled={form.uploading} style={{alignSelf:"flex-start"}}>{form.uploading?"Uploading…":"+ Add This Brand"}</button>
                             </div>
                           </div>
-
                           {items.length>0&&(
                             <div className="f-stack">
-                              <div style={{fontSize:"0.7rem",fontWeight:800,letterSpacing:"0.1em",textTransform:"uppercase",color:"#888"}}>
-                                Brands in this section ({items.length})
-                              </div>
+                              <div style={{fontSize:"0.7rem",fontWeight:800,letterSpacing:"0.1em",textTransform:"uppercase",color:"#888"}}>Brands in this section ({items.length})</div>
                               <div className="f-table-wrap">
                                 <table className="f-table">
                                   <thead><tr><th>Logo</th><th>Name</th><th>Links to</th><th></th></tr></thead>
@@ -1196,14 +1138,7 @@ export default function Admin() {
                                       <tr key={item.id}>
                                         <td>{item.logo_url?<img src={item.logo_url} style={{height:36,maxWidth:90,objectFit:"contain",background:"#fff",border:"2px solid #111",borderRadius:4,padding:3}} alt=""/>:<span style={{color:"#aaa",fontSize:"0.76rem"}}>No logo</span>}</td>
                                         <td><strong>{item.name}</strong></td>
-                                        <td>
-                                          {item.link_type==="none"||!item.link_value
-                                            ? <span style={{color:"#aaa",fontSize:"0.76rem"}}>No link</span>
-                                            : <span className="f-badge-sm" style={item.link_type==="category"?{background:"#DCFCE7",borderColor:"#86EFAC",color:"#166534"}:{background:"#E0F2FE",borderColor:"#93C5FD",color:"#1e40af"}}>
-                                                {item.link_type==="category"?"🗂":item.link_type==="product"?"📦":"🔗"} {item.link_value}
-                                              </span>
-                                          }
-                                        </td>
+                                        <td>{item.link_type==="none"||!item.link_value?<span style={{color:"#aaa",fontSize:"0.76rem"}}>No link</span>:<span className="f-badge-sm" style={item.link_type==="category"?{background:"#DCFCE7",borderColor:"#86EFAC",color:"#166534"}:{background:"#E0F2FE",borderColor:"#93C5FD",color:"#1e40af"}}>{item.link_type==="category"?"🗂":item.link_type==="product"?"📦":"🔗"} {item.link_value}</span>}</td>
                                         <td><button className="f-btn f-btn--red f-btn--sm" onClick={()=>deleteHpItem(section,item.id)}>Remove</button></td>
                                       </tr>
                                     ))}
@@ -1245,7 +1180,6 @@ export default function Admin() {
                 </div>
               </div>
             </div>
-
             <div className="f-card" style={{borderTopColor:"#25D366"}}>
               <h2 className="f-card-title">💬 WhatsApp Contact</h2>
               <p className="f-hint">Number with country code (e.g. 923001234567). Shows as floating button.</p>
@@ -1263,7 +1197,6 @@ export default function Admin() {
                 )}
               </div>
             </div>
-
             <div className="f-card" style={{borderTopColor:"#0EA5E9"}}>
               <h2 className="f-card-title">🔗 Social Media</h2>
               <p className="f-hint">Toggle which platforms show in the footer. Enter the full URL for each.</p>
@@ -1281,7 +1214,6 @@ export default function Admin() {
                 <button className="f-btn f-btn--blue" onClick={saveSocials} disabled={socialsSaving} style={{alignSelf:"flex-start"}}>{socialsSaving?"Saving…":"💾 Save Social Links"}</button>
               </div>
             </div>
-
             <div className="f-card" style={{borderTopColor:"#F59E0B"}}>
               <h2 className="f-card-title">✉️ Footer Message</h2>
               <p className="f-hint">Short tagline shown at the bottom of the site. Leave empty to hide.</p>
