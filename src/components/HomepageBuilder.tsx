@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
+import { HomepageSection } from "@/app/api/homepage-sections/route";
 
 const PromoBanners     = dynamic(() => import("./PromoBanners"));
 const CategoryCarousel = dynamic(() => import("./CategoryCarousel"));
@@ -9,34 +10,13 @@ const PromoAndCarousel = dynamic(() => import("./PromoAndCarousel"));
 const AllSections      = dynamic(() => import("./AllSections"));
 const ProductGrid      = dynamic(() => import("./cardDisplay"));
 
-const COMPONENTS = {
+const COMPONENTS: Record<string, React.ComponentType> = {
   promo_banners:      PromoBanners,
   category_carousel:  CategoryCarousel,
   brand_grid:         BrandGrid,
   promo_and_carousel: PromoAndCarousel,
   all_sections:       AllSections,
   product_grid:       ProductGrid,
-} as const;
-
-export type SectionKey = keyof typeof COMPONENTS;
-export interface SectionConfig { key: SectionKey; enabled: boolean }
-
-export const DEFAULT_SECTIONS: SectionConfig[] = [
-  { key: "promo_banners",      enabled: true  },
-  { key: "category_carousel",  enabled: true  },
-  { key: "brand_grid",         enabled: true  },
-  { key: "promo_and_carousel", enabled: false },
-  { key: "all_sections",       enabled: false },
-  { key: "product_grid",       enabled: true  },
-];
-
-export const SECTION_REGISTRY: Record<SectionKey, { label: string }> = {
-  promo_banners:      { label: "Promo Banners" },
-  category_carousel:  { label: "Category Carousel" },
-  brand_grid:         { label: "Brand Grid" },
-  promo_and_carousel: { label: "Promo + Carousel" },
-  all_sections:       { label: "All Sections" },
-  product_grid:       { label: "Product Grid" },
 };
 
 function shuffle<T>(arr: T[]): T[] {
@@ -49,32 +29,20 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default function HomepageBuilder() {
-  const [sections, setSections] = useState<SectionConfig[]>([]);
+  const [sections, setSections] = useState<HomepageSection[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    fetch("/api/settings?key=homepage_sections")
-      .then(r => r.json() as Promise<{ settings?: Record<string, string> }>)
-      .then(d => {
-        const raw = d?.settings?.homepage_sections;
-        if (raw) {
-          try {
-            const parsed = JSON.parse(raw) as SectionConfig[];
-            setSections(DEFAULT_SECTIONS.map(def => parsed.find(p => p.key === def.key) ?? def));
-          } catch {
-            setSections(DEFAULT_SECTIONS);
-          }
-        } else {
-          setSections(DEFAULT_SECTIONS);
-        }
-      })
-      .catch(() => setSections(DEFAULT_SECTIONS))
+    fetch("/api/homepage-sections")
+      .then(r => r.json() as Promise<{ results: HomepageSection[] }>)
+      .then(d => setSections(d.results ?? []))
+      .catch(() => setSections([]))
       .finally(() => setLoaded(true));
   }, []);
 
   const shuffled = useMemo(() => {
     if (!loaded) return [];
-    return shuffle(sections.filter(s => s.enabled));
+    return shuffle(sections.filter(s => s.enabled === 1));
   }, [loaded, sections]);
 
   if (!loaded) return (
@@ -93,8 +61,9 @@ export default function HomepageBuilder() {
   return (
     <div>
       {shuffled.map(section => {
-        const Component = COMPONENTS[section.key];
-        return <div key={section.key}><Component /></div>;
+        const Component = COMPONENTS[section.type];
+        if (!Component) return null;
+        return <div key={section.id}><Component /></div>;
       })}
     </div>
   );
