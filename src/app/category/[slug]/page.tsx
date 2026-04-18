@@ -11,6 +11,15 @@ type Product = {
 };
 type Category = { id: number; name: string; slug: string; image_url?: string };
 
+// Normalize a slug for comparison: decode URI encoding, lowercase, trim
+function normalizeSlug(slug: string): string {
+  try {
+    return decodeURIComponent(slug).toLowerCase().trim();
+  } catch {
+    return slug.toLowerCase().trim();
+  }
+}
+
 export default function CategoryPage() {
   const { slug } = useParams<{ slug: string }>();
   const router = useRouter();
@@ -22,11 +31,16 @@ export default function CategoryPage() {
 
   useEffect(() => {
     if (!slug) return;
+
+    // Decode the slug from the URL (handles %20, %F0%9F%94%A5, etc.)
+    const decodedSlug = normalizeSlug(slug);
+
     Promise.all([
       fetch("/api/categories").then(r => r.json() as Promise<{ results: Category[] }>),
       fetch("/api/products").then(r => r.json() as Promise<{ results: Product[] }>),
-    ]).then(([catData, prodData]) => {
-      const cat = catData.results?.find(c => c.slug === slug);
+    ]).then(([catData]) => {
+      // Normalize both sides before comparing
+      const cat = catData.results?.find(c => normalizeSlug(c.slug) === decodedSlug);
       setCategory(cat || null);
       if (cat) {
         fetch(`/api/products?category_id=${cat.id}`)

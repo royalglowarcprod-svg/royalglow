@@ -41,12 +41,22 @@ export default function InfiniteCarousel() {
 
   useEffect(() => {
     fetch("/api/carousel")
-      .then(r => r.json() as Promise<{ results: CarouselItem[] }>)
-      .then(d => {
-        setItems(d.results || []);
-        setLoading(false);
+      .then(r => {
+        // treat any non-ok response as empty
+        if (!r.ok) return { results: [] };
+        return r.json() as Promise<{ results: CarouselItem[] }>;
       })
-      .catch(() => setLoading(false));
+      .then(d => {
+        const results = Array.isArray(d?.results) ? d.results : [];
+        setItems(results);
+        setLoading(false);
+        // If no items, mark ready immediately so we never hang
+        if (results.length === 0) setReady(true);
+      })
+      .catch(() => {
+        setLoading(false);
+        setReady(true); // always escape loading state on error
+      });
   }, []);
 
   useEffect(() => {
@@ -119,17 +129,15 @@ export default function InfiniteCarousel() {
     goTo(currentRef.current - 1);
   }, [goTo]);
 
-  // KEY FIX: only initialize position ONCE when both items AND cw are ready
+  // Initialize position ONCE when both items AND cw are ready
   useEffect(() => {
     if (cw === 0 || TOTAL === 0 || initializedRef.current) return;
     initializedRef.current = true;
-    // reset to index 0 explicitly
     setCurrent(0);
     currentRef.current = 0;
-    // small delay to let DOM render the track with items first
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        jumpSilent(1); // tIdx for current=0 is always 1
+        jumpSilent(1);
         setReady(true);
       });
     });
@@ -162,8 +170,10 @@ export default function InfiniteCarousel() {
 
   const extendedItems = TOTAL > 0 ? [items[TOTAL - 1], ...items, items[0]] : [];
 
-  // Skeleton shimmer count based on screen
   const skeletonCount = sceneW < 480 ? 1 : sceneW < 768 ? 2 : 3;
+
+  // Don't render anything if there are no items (logged out / empty)
+  if (!loading && TOTAL === 0) return null;
 
   return (
     <>

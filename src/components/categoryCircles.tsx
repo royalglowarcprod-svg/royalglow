@@ -7,6 +7,9 @@ type Category = { id: number; name: string; slug: string; image_url?: string };
 export default function CategoryCircles() {
   const [categories, setCategories] = useState<Category[]>([]);
   const trackRef = useRef<HTMLDivElement>(null);
+  const animFrameRef = useRef<number | null>(null);
+  const offsetRef = useRef(0);
+  const pausedRef = useRef(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -15,39 +18,78 @@ export default function CategoryCircles() {
       .then(d => setCategories(d.results || []));
   }, []);
 
+  // Infinite scroll animation
+  useEffect(() => {
+    if (categories.length === 0) return;
+    const track = trackRef.current;
+    if (!track) return;
+
+    const SPEED = 0.5; 
+    const ITEM_WIDTH = 100; 
+    const GAP = 20;
+    const UNIT = (ITEM_WIDTH + GAP) * categories.length; 
+
+    const animate = () => {
+      if (!pausedRef.current) {
+        offsetRef.current += SPEED;
+        if (offsetRef.current >= UNIT) {
+          offsetRef.current -= UNIT;
+        }
+        if (track) {
+          track.style.transform = `translateX(-${offsetRef.current}px)`;
+        }
+      }
+      animFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animFrameRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [categories]);
+
   if (categories.length === 0) return null;
+
+  const repeated = [...categories, ...categories, ...categories];
 
   return (
     <>
       <style>{css}</style>
       <section className="cc-wrap">
-        <div className="cc-track" ref={trackRef}>
-          {categories.map(cat => (
-            <button
-              key={cat.id}
-              className="cc-item"
-              onClick={() => router.push(`/category/${cat.slug}`)}
-            >
-              <div className="cc-ring">
-                <div className="cc-img-wrap">
-                  {cat.image_url ? (
-                    <img src={cat.image_url} alt={cat.name} className="cc-img" />
-                  ) : (
-                    <div className="cc-placeholder">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                        <rect x="3" y="3" width="7" height="7" rx="1"/>
-                        <rect x="14" y="3" width="7" height="7" rx="1"/>
-                        <rect x="3" y="14" width="7" height="7" rx="1"/>
-                        <rect x="14" y="14" width="7" height="7" rx="1"/>
-                      </svg>
-                    </div>
-                  )}
+        <div className="cc-viewport">
+          <div
+            className="cc-track"
+            ref={trackRef}
+            onMouseEnter={() => { pausedRef.current = true; }}
+            onMouseLeave={() => { pausedRef.current = false; }}
+          >
+            {repeated.map((cat, i) => (
+              <button
+                key={`${cat.id}-${i}`}
+                className="cc-item"
+                onClick={() => router.push(`/category/${encodeURIComponent(cat.slug)}`)}
+              >
+                <div className="cc-ring">
+                  <div className="cc-img-wrap">
+                    {cat.image_url ? (
+                      <img src={cat.image_url} alt={cat.name} className="cc-img" />
+                    ) : (
+                      <div className="cc-placeholder">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                          <rect x="3" y="3" width="7" height="7" rx="1"/>
+                          <rect x="14" y="3" width="7" height="7" rx="1"/>
+                          <rect x="3" y="14" width="7" height="7" rx="1"/>
+                          <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <span className="cc-label">{cat.name}</span>
-            </button>
-          ))}
+                <span className="cc-label">{cat.name}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </section>
     </>
@@ -57,22 +99,26 @@ export default function CategoryCircles() {
 const css = `
   .cc-wrap {
     width: 100%;
-    padding: 20px 20px 16px;
+    padding: 20px 0 16px;
     background: #fff;
     margin-top: 60px;
+    overflow: hidden;
+  }
+
+  .cc-viewport {
+    width: 100%;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
   }
 
   .cc-track {
     display: flex;
     gap: 20px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding:6px 32px 5px;
-    /* fade edges to hint scrollability */
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 90%, transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+    width: max-content;
+    padding: 8px 0 8px;
+    will-change: transform;
   }
-  .cc-track::-webkit-scrollbar { display: none; }
 
   .cc-item {
     display: flex;
@@ -83,13 +129,16 @@ const css = `
     border: none;
     cursor: pointer;
     flex-shrink: 0;
-    padding: 0;
-    transition: transform 0.18s;
+    padding: 4px;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  .cc-item:hover { transform: translateY(-4px); }
-  .cc-item:active { transform: translateY(-1px); }
+  .cc-item:hover {
+    transform: scale(1.18) translateY(-4px);
+  }
+  .cc-item:active {
+    transform: scale(1.08) translateY(-1px);
+  }
 
-  /* Bold gradient ring */
   .cc-ring {
     width: 80px;
     height: 80px;
@@ -97,11 +146,11 @@ const css = `
     background: linear-gradient(135deg, #FF3E5E 0%, #FFE14D 50%, #00D084 100%);
     padding: 3px;
     box-shadow: 3px 3px 0 #111;
-    transition: box-shadow 0.2s, background 0.25s, transform 0.18s;
+    transition: box-shadow 0.2s, background 0.25s;
   }
   .cc-item:hover .cc-ring {
     background: linear-gradient(135deg, #111 0%, #444 100%);
-    box-shadow: 4px 4px 0 #111;
+    box-shadow: 4px 5px 0 #111;
   }
 
   .cc-img-wrap {
@@ -148,18 +197,15 @@ const css = `
     letter-spacing: 0.03em;
     text-transform: uppercase;
   }
- @media (max-width: 1026px){
-    .cc-track {
-      gap: 14px;
-      padding : 70px 32px 5px;
-    }
- 
- } 
-  /* Mobile */
+
+  @media (max-width: 1026px) {
+    .cc-wrap { margin-top: 120px; }
+  }
+
   @media (max-width: 600px) {
     .cc-wrap {
-      padding: 14px 12px 12px;
-      margin-top: 60px;
+      padding: 14px 0 12px;
+      margin-top: 120px;
     }
     .cc-ring {
       width: 68px;
@@ -171,7 +217,6 @@ const css = `
     }
     .cc-track {
       gap: 14px;
-      padding : 60px 32px 5px;
     }
   }
 `;

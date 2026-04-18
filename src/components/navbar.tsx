@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { createBrowserClient } from "@supabase/ssr";
 import style from "../styles/navBar.module.css";
 import FloatingCart from "./floatingCart";
 import HamburgerMenu from "./hamburgerMenu";
-
+import { getSupabaseBrowser } from "@/lib/supabase"; 
+import type { Session, AuthChangeEvent } from '@supabase/supabase-js';
 
 type Product = {
   id: number;
@@ -19,7 +19,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(undefined); // undefined = not yet known
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [adminEmails, setAdminEmails] = useState<string[]>([]);
 
@@ -35,35 +35,37 @@ export default function Navbar() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const router = useRouter();
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  // ✅ Use singleton — never create a new client inside the component
+  const supabase = getSupabaseBrowser();
 
-  // Derive admin status dynamically from fetched list
   const isAdmin = user?.email && adminEmails.includes(user.email);
-  const userInitial = (user?.user_metadata?.full_name || user?.email || "?")[0].toUpperCase();
-  const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0] || "";
-
-  // Fetch admin emails from settings (cached by browser for the session)
-useEffect(() => {
-  fetch("/api/settings?key=admin_emails")
-    .then(r => r.json())
-    .then((data: unknown) => {
-      const d = data as { settings?: Record<string, string> };
-      const raw = d?.settings?.admin_emails;
-      if (raw) {
-        try { setAdminEmails(JSON.parse(raw)); } catch { /* ignore */ }
-      }
-    })
-    .catch(() => {});
-}, []);
+  const userInitial = user ? (user?.user_metadata?.full_name || user?.email || "?")[0].toUpperCase() : "";
+  const userName = user ? (user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0] || "") : "";
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+    fetch("/api/settings?key=admin_emails")
+      .then(r => r.json())
+      .then((data: unknown) => {
+        const d = data as { settings?: Record<string, string> };
+        const raw = d?.settings?.admin_emails;
+        if (raw) {
+          try { setAdminEmails(JSON.parse(raw)); } catch { /* ignore */ }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setUser(session?.user ?? null);
     });
+
+ 
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e: AuthChangeEvent, session: Session | null) => {
+      setUser(session?.user ?? null);
+    });
+
     return () => subscription.unsubscribe();
   }, []);
 
@@ -192,6 +194,42 @@ useEffect(() => {
     </div>
   );
 
+ 
+  const authSection = user === undefined ? (
+    <div style={{ width: 80 }} /> 
+  ) : !user ? (
+    <>
+      <button className="cc-btn cc-btn--ghost" onClick={() => router.push("/login")}>Sign In</button>
+      <button className="cc-btn cc-btn--primary" onClick={() => router.push("/register")}>Sign Up</button>
+    </>
+  ) : (
+    <div className="cc-user" ref={dropdownRef}>
+      <button className="cc-avatar" onClick={() => setDropdownOpen(o => !o)} aria-label="User menu">
+        {user.user_metadata?.avatar_url
+          ? <img src={user.user_metadata.avatar_url} alt="" className="cc-avatar__img"/>
+          : <span className="cc-avatar__initial">{userInitial}</span>
+        }
+        <span className="cc-avatar__name">{userName}</span>
+        <svg className={`cc-avatar__chevron ${dropdownOpen ? "cc-avatar__chevron--open" : ""}`} width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      {dropdownOpen && (
+        <div className="cc-dropdown">
+          <div className="cc-dropdown__header">
+            <span className="cc-dropdown__name">{userName}</span>
+            <span className="cc-dropdown__email">{user.email}</span>
+          </div>
+          <div className="cc-dropdown__divider"/>
+          <button className="cc-dropdown__item cc-dropdown__item--danger" onClick={handleSignOut}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <>
       <style>{navCss}</style>
@@ -259,39 +297,7 @@ useEffect(() => {
           )}
 
           <div className="cc-divider"/>
-
-          {!user ? (
-            <>
-              <button className="cc-btn cc-btn--ghost" onClick={() => router.push("/login")}>Sign In</button>
-              <button className="cc-btn cc-btn--primary" onClick={() => router.push("/register")}>Sign Up</button>
-            </>
-          ) : (
-            <div className="cc-user" ref={dropdownRef}>
-              <button className="cc-avatar" onClick={() => setDropdownOpen(o => !o)} aria-label="User menu">
-                {user.user_metadata?.avatar_url
-                  ? <img src={user.user_metadata.avatar_url} alt="" className="cc-avatar__img"/>
-                  : <span className="cc-avatar__initial">{userInitial}</span>
-                }
-                <span className="cc-avatar__name">{userName}</span>
-                <svg className={`cc-avatar__chevron ${dropdownOpen ? "cc-avatar__chevron--open" : ""}`} width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
-              </button>
-              {dropdownOpen && (
-                <div className="cc-dropdown">
-                  <div className="cc-dropdown__header">
-                    <span className="cc-dropdown__name">{userName}</span>
-                    <span className="cc-dropdown__email">{user.email}</span>
-                  </div>
-                  <div className="cc-dropdown__divider"/>
-                  <button className="cc-dropdown__item cc-dropdown__item--danger" onClick={handleSignOut}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                    Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+          {authSection}
         </div>
 
         {/* Hamburger — mobile only */}
@@ -339,7 +345,6 @@ useEffect(() => {
   );
 }
 
-// CSS is identical to original — no changes needed
 const navCss = `
   @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap');
 

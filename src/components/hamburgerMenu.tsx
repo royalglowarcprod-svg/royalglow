@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createBrowserClient } from "@supabase/ssr";
+import { getSupabaseBrowser } from "@/lib/supabase";
+import type { Session, AuthChangeEvent } from "@supabase/supabase-js";
 import style from "../styles/hamburgerMenu.module.css";
 
 interface HamburgerMenuProps {
@@ -10,28 +11,51 @@ interface HamburgerMenuProps {
   closeMenu: () => void;
 }
 
-const ADMIN_EMAILS = ["nbdotwork@gmail.com", "msdotxd1@gmail.com", "halayjan18@gmail.com"];
+type Category = { id: number; name: string; slug: string; image_url?: string };
 
 export default function HamburgerMenu({ isOpen, closeMenu }: HamburgerMenuProps) {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(undefined);
+  const [adminEmails, setAdminEmails] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const router = useRouter();
+  const sb = getSupabaseBrowser();
 
-  const sb = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
+  // Auth — singleton + getSession (no flash)
   useEffect(() => {
-    sb.auth.getUser().then(({ data }) => setUser(data.user));
-    const { data: { subscription } } = sb.auth.onAuthStateChange((_e, session) => {
+    sb.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
+      setUser(session?.user ?? null);
+    });
+    const { data: { subscription } } = sb.auth.onAuthStateChange((_e: AuthChangeEvent, session: Session | null) => {
       setUser(session?.user ?? null);
     });
     return () => subscription.unsubscribe();
   }, []);
 
-  const isAdmin = user?.email && ADMIN_EMAILS.includes(user.email);
+  // Admin emails from D1 via API
+  useEffect(() => {
+    fetch("/api/settings?key=admin_emails")
+      .then(r => r.json())
+      .then((data: unknown) => {
+        const d = data as { settings?: Record<string, string> };
+        const raw = d?.settings?.admin_emails;
+        if (raw) {
+          try { setAdminEmails(JSON.parse(raw)); } catch { /* ignore */ }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Fetch categories for the menu
+  useEffect(() => {
+    fetch("/api/categories")
+      .then(r => r.json() as Promise<{ results: Category[] }>)
+      .then(d => setCategories(d.results || []))
+      .catch(() => {});
+  }, []);
+
+  const isAdmin = user?.email && adminEmails.includes(user.email);
   const userName = user?.user_metadata?.full_name ?? user?.user_metadata?.name ?? user?.email?.split("@")[0] ?? "User";
-  const userInitial = userName[0].toUpperCase();
+  const userInitial = userName[0]?.toUpperCase() ?? "?";
 
   const go = (path: string) => { router.push(path); closeMenu(); };
 
@@ -45,142 +69,268 @@ export default function HamburgerMenu({ isOpen, closeMenu }: HamburgerMenuProps)
     <>
       <style>{css}</style>
       <div className={`${style.mobileMenu} ${isOpen ? style.active : ""} hm-wrap`}>
-        <ul className="hm-list">
 
-          {/* ── Nav Links ── */}
-          <li>
-            <button className="hm-link" onClick={() => go("/")}>
-              <span className="hm-link__icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-              </span>
-              Home
-            </button>
-          </li>
+        {/* ── User block ── */}
+        <div className="hm-user-block">
+          {user === undefined ? (
+            <div className="hm-user-skeleton" />
+          ) : user ? (
+            <div className="hm-user-card">
+              <div className="hm-avatar">
+                {user.user_metadata?.avatar_url
+                  ? <img src={user.user_metadata.avatar_url} alt="" className="hm-avatar__img" />
+                  : <span className="hm-avatar__initial">{userInitial}</span>
+                }
+              </div>
+              <div className="hm-user-info">
+                <span className="hm-user-name">{userName}</span>
+                <span className="hm-user-email">{user.email}</span>
+              </div>
+              {isAdmin && <span className="hm-badge hm-badge--admin">ADMIN</span>}
+            </div>
+          ) : (
+            <div className="hm-auth-btns">
+              <button className="hm-auth-btn hm-auth-btn--ghost" onClick={() => go("/login")}>Sign In</button>
+              <button className="hm-auth-btn hm-auth-btn--primary" onClick={() => go("/register")}>Sign Up</button>
+            </div>
+          )}
+        </div>
 
-          <li>
-            <button className="hm-link" onClick={() => go("/orders")}>
-              <span className="hm-link__icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
-                </svg>
-              </span>
-              Orders
-            </button>
-          </li>
+        {/* ── Nav ── */}
+        <nav className="hm-nav">
+          <button className="hm-nav-item" onClick={() => go("/")}>
+            <span className="hm-nav-item__icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+            </span>
+            Home
+          </button>
+
+          <button className="hm-nav-item" onClick={() => go("/orders")}>
+            <span className="hm-nav-item__icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/>
+              </svg>
+            </span>
+            Orders
+          </button>
 
           {isAdmin && (
-            <li>
-              <button className="hm-link hm-link--admin" onClick={() => go("/admin")}>
-                <span className="hm-link__icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  </svg>
-                </span>
-                Admin
-                <span className="hm-admin-badge">ADMIN</span>
-              </button>
-            </li>
-          )}
-
-          <li className="hm-divider" />
-
-          {/* ── Auth ── */}
-          <li>
-            {!user ? (
-              <div className="hm-auth">
-                <button className="hm-btn hm-btn--ghost" onClick={() => go("/login")}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
-                  </svg>
-                  Sign In
-                </button>
-                <button className="hm-btn hm-btn--primary" onClick={() => go("/register")}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
-                  </svg>
-                  Sign Up
-                </button>
-              </div>
-            ) : (
-              <div className="hm-user">
-                <div className="hm-avatar">
-                  {user.user_metadata?.avatar_url ? (
-                    <img src={user.user_metadata.avatar_url} alt="" className="hm-avatar__img" />
-                  ) : (
-                    <span className="hm-avatar__initial">{userInitial}</span>
-                  )}
-                </div>
-                <div className="hm-user__info">
-                  <span className="hm-user__name">{userName}</span>
-                  <span className="hm-user__email">{user.email}</span>
-                </div>
-                {isAdmin && <span className="hm-admin-tag">Admin</span>}
-              </div>
-            )}
-          </li>
-
-          {user && (
-            <li>
-              <button className="hm-btn hm-btn--signout" onClick={handleSignOut}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            <button className="hm-nav-item hm-nav-item--admin" onClick={() => go("/admin")}>
+              <span className="hm-nav-item__icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                 </svg>
-                Sign Out
-              </button>
-            </li>
+              </span>
+              Admin Panel
+            </button>
           )}
+        </nav>
 
-        </ul>
+        {/* ── Categories ── */}
+        {categories.length > 0 && (
+          <div className="hm-section">
+            <p className="hm-section__label">Shop by Category</p>
+            <div className="hm-cats">
+              {categories.map(cat => (
+                <button
+                  key={cat.id}
+                  className="hm-cat"
+                  onClick={() => go(`/category/${encodeURIComponent(cat.slug)}`)}
+                >
+                  {cat.image_url && (
+                    <img src={cat.image_url} alt="" className="hm-cat__img" />
+                  )}
+                  <span className="hm-cat__name">{cat.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Sign out ── */}
+        {user && (
+          <div className="hm-footer">
+            <button className="hm-signout" onClick={handleSignOut}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              Sign Out
+            </button>
+          </div>
+        )}
       </div>
     </>
   );
 }
 
 const css = `
-  .hm-wrap { font-family: 'Jost', sans-serif; }
+  .hm-wrap {
+    font-family: 'Jost', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow-y: auto;
+    padding-bottom: 24px;
+  }
 
-  .hm-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 2px; }
+  /* ── User block ── */
+  .hm-user-block {
+    padding: 16px 16px 12px;
+    border-bottom: 2px solid #111;
+  }
+  .hm-user-skeleton {
+    height: 52px;
+    border-radius: 12px;
+    background: repeating-linear-gradient(90deg, #f0f0f0 0px, #e8e8e8 40px, #f0f0f0 80px);
+    background-size: 200px;
+    animation: hmShimmer 1.2s ease-in-out infinite;
+  }
+  @keyframes hmShimmer {
+    0% { background-position: -200px; }
+    100% { background-position: 200px; }
+  }
+  .hm-user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 2px solid #111;
+    border-radius: 12px;
+    padding: 10px 12px;
+    box-shadow: 3px 3px 0 #111;
+  }
+  .hm-avatar__img {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #111;
+  }
+  .hm-avatar__initial {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: #FF3E5E;
+    color: #fff;
+    border: 2px solid #111;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 700;
+  }
+  .hm-user-info {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; gap: 1px;
+  }
+  .hm-user-name {
+    font-size: 0.84rem; font-weight: 700; color: #111;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .hm-user-email {
+    font-size: 0.68rem; color: #888;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .hm-badge {
+    font-size: 0.55rem; font-weight: 800;
+    letter-spacing: 0.12em; padding: 3px 7px;
+    border-radius: 100px; border: 1.5px solid; flex-shrink: 0;
+  }
+  .hm-badge--admin {
+    color: #7C3AED; background: #EDE9FE; border-color: #7C3AED;
+  }
 
-  .hm-link { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 16px; background: none; border: none; border-radius: 12px; font-family: 'Jost', sans-serif; font-size: 0.95rem; font-weight: 500; color: #8b9099; cursor: pointer; text-align: left; letter-spacing: 0.01em; transition: color 0.18s, background 0.18s; }
-  .hm-link:hover { color: #e8eaf0; background: rgba(255,255,255,0.05); }
+  /* Auth buttons */
+  .hm-auth-btns { display: flex; gap: 8px; }
+  .hm-auth-btn {
+    flex: 1; padding: 11px 0;
+    border-radius: 100px; font-family: 'Jost', sans-serif;
+    font-size: 0.8rem; font-weight: 700; cursor: pointer;
+    transition: all 0.15s; border: 2px solid #111;
+  }
+  .hm-auth-btn--ghost { background: #fff; color: #111; box-shadow: 2px 2px 0 #111; }
+  .hm-auth-btn--ghost:hover { background: #f5f5f5; }
+  .hm-auth-btn--primary { background: #FF3E5E; color: #fff; box-shadow: 2px 2px 0 #111; }
+  .hm-auth-btn--primary:hover { background: #e8304f; }
 
-  .hm-link__icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 9px; flex-shrink: 0; transition: background 0.18s, border-color 0.18s; }
-  .hm-link:hover .hm-link__icon { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); }
+  /* ── Nav ── */
+  .hm-nav {
+    display: flex; flex-direction: column;
+    padding: 8px 12px;
+    border-bottom: 2px solid #111;
+    gap: 2px;
+  }
+  .hm-nav-item {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%; padding: 12px 12px;
+    background: none; border: 2px solid transparent;
+    border-radius: 10px; cursor: pointer;
+    font-family: 'Jost', sans-serif; font-size: 0.9rem;
+    font-weight: 600; color: #333; text-align: left;
+    transition: all 0.15s;
+  }
+  .hm-nav-item:hover {
+    background: #FFE14D; border-color: #111;
+    color: #111; box-shadow: 2px 2px 0 #111;
+    transform: translateX(2px);
+  }
+  .hm-nav-item__icon {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    background: #f5f5f5; border: 2px solid #111;
+    border-radius: 8px; flex-shrink: 0; color: #111;
+    transition: background 0.15s;
+  }
+  .hm-nav-item:hover .hm-nav-item__icon { background: #fff; }
+  .hm-nav-item--admin { color: #7C3AED; }
+  .hm-nav-item--admin .hm-nav-item__icon { background: #EDE9FE; color: #7C3AED; border-color: #7C3AED; }
+  .hm-nav-item--admin:hover { background: #EDE9FE; border-color: #7C3AED; box-shadow: 2px 2px 0 #7C3AED; color: #7C3AED; }
 
-  .hm-link--admin { color: #c9a84c; }
-  .hm-link--admin .hm-link__icon { background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.2); color: #c9a84c; }
-  .hm-link--admin:hover { color: #e8c36a; background: rgba(201,168,76,0.07); }
-  .hm-link--admin:hover .hm-link__icon { background: rgba(201,168,76,0.18); }
+  /* ── Categories section ── */
+  .hm-section { padding: 14px 14px 4px; }
+  .hm-section__label {
+    font-size: 0.62rem; font-weight: 800;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: #aaa; margin: 0 0 10px 2px;
+  }
+  .hm-cats {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .hm-cat {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%; padding: 9px 12px;
+    background: #fff; border: 2px solid #111;
+    border-radius: 10px; cursor: pointer;
+    font-family: 'Jost', sans-serif; font-size: 0.82rem;
+    font-weight: 600; color: #111; text-align: left;
+    box-shadow: 2px 2px 0 #111;
+    transition: all 0.14s;
+  }
+  .hm-cat:hover {
+    background: #FFE14D;
+    transform: translateX(3px);
+    box-shadow: 3px 3px 0 #111;
+  }
+  .hm-cat__img {
+    width: 28px; height: 28px;
+    border-radius: 50%; object-fit: cover;
+    border: 2px solid #111; flex-shrink: 0;
+  }
+  .hm-cat__name {
+    flex: 1; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
 
-  .hm-admin-badge { margin-left: auto; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.14em; color: #c9a84c; background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.25); border-radius: 100px; padding: 2px 8px; }
-
-  .hm-divider { height: 1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.07) 20%, rgba(255,255,255,0.07) 80%, transparent); margin: 8px 0; }
-
-  .hm-auth { display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
-
-  .hm-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px 20px; border-radius: 100px; font-family: 'Jost', sans-serif; font-size: 0.83rem; font-weight: 600; letter-spacing: 0.07em; cursor: pointer; transition: opacity 0.18s, transform 0.18s, box-shadow 0.18s; border: none; }
-  .hm-btn:hover { opacity: 0.85; transform: translateY(-1px); }
-
-  .hm-btn--ghost { background: transparent; color: #8b9099; border: 1px solid rgba(255,255,255,0.12); }
-  .hm-btn--ghost:hover { color: #e8eaf0; border-color: rgba(255,255,255,0.25); }
-
-  .hm-btn--primary { background: #7c9e87; color: #0f1117; }
-  .hm-btn--primary:hover { box-shadow: 0 6px 20px rgba(124,158,135,0.3); }
-
-  .hm-btn--signout { background: rgba(248,113,113,0.08); color: #f87171; border: 1px solid rgba(248,113,113,0.2); margin-top: 4px; }
-  .hm-btn--signout:hover { background: rgba(248,113,113,0.15); opacity: 1; }
-
-  .hm-user { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; }
-
-  .hm-avatar { flex-shrink: 0; }
-  .hm-avatar__img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
-  .hm-avatar__initial { width: 36px; height: 36px; border-radius: 50%; background: #7c9e87; color: #0f1117; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; font-family: 'Jost', sans-serif; }
-
-  .hm-user__info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-  .hm-user__name { font-size: 0.88rem; font-weight: 600; color: #e8eaf0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .hm-user__email { font-size: 0.72rem; color: #545a66; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.02em; }
-
-  .hm-admin-tag { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; color: #c9a84c; background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.25); border-radius: 100px; padding: 3px 9px; flex-shrink: 0; text-transform: uppercase; }
+  /* ── Footer / Sign out ── */
+  .hm-footer {
+    margin-top: auto;
+    padding: 14px 14px 0;
+  }
+  .hm-signout {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 12px 0;
+    background: #fff0f3; color: #E11D48;
+    border: 2px solid #E11D48; border-radius: 100px;
+    font-family: 'Jost', sans-serif; font-size: 0.8rem; font-weight: 700;
+    cursor: pointer; box-shadow: 2px 2px 0 #E11D48;
+    transition: all 0.15s;
+  }
+  .hm-signout:hover { background: #ffe0e6; transform: translateY(-1px); box-shadow: 2px 3px 0 #E11D48; }
 `;
