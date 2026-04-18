@@ -1,4 +1,4 @@
-import { createServerClient, createBrowserClient } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 
@@ -28,19 +28,4 @@ export function createSupabaseAdminClient() {
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
-}
-
-// ── Browser client singleton (for "use client" components) ──
-// Reuses the same instance across all components so the session
-// is cached in memory — eliminates the login flicker on navigation
-let browserClient: ReturnType<typeof createBrowserClient> | null = null;
-
-export function getSupabaseBrowser() {
-  if (!browserClient) {
-    browserClient = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-  }
-  return browserClient;
 }

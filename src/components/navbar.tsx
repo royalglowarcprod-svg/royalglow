@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import style from "../styles/navBar.module.css";
 import FloatingCart from "./floatingCart";
 import HamburgerMenu from "./hamburgerMenu";
-import { getSupabaseBrowser } from "@/lib/supabase"; 
+import { getSupabaseBrowser } from '@/lib/supabase-browser';
 import type { Session, AuthChangeEvent } from '@supabase/supabase-js';
 
 type Product = {

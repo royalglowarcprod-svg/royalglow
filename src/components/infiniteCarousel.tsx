@@ -42,7 +42,6 @@ export default function InfiniteCarousel() {
   useEffect(() => {
     fetch("/api/carousel")
       .then(r => {
-        // treat any non-ok response as empty
         if (!r.ok) return { results: [] };
         return r.json() as Promise<{ results: CarouselItem[] }>;
       })
@@ -50,12 +49,11 @@ export default function InfiniteCarousel() {
         const results = Array.isArray(d?.results) ? d.results : [];
         setItems(results);
         setLoading(false);
-        // If no items, mark ready immediately so we never hang
         if (results.length === 0) setReady(true);
       })
       .catch(() => {
         setLoading(false);
-        setReady(true); // always escape loading state on error
+        setReady(true);
       });
   }, []);
 
@@ -129,7 +127,6 @@ export default function InfiniteCarousel() {
     goTo(currentRef.current - 1);
   }, [goTo]);
 
-  // Initialize position ONCE when both items AND cw are ready
   useEffect(() => {
     if (cw === 0 || TOTAL === 0 || initializedRef.current) return;
     initializedRef.current = true;
@@ -143,14 +140,12 @@ export default function InfiniteCarousel() {
     });
   }, [cw, TOTAL, jumpSilent]);
 
-  // When cw changes AFTER init (resize), re-sync without animation
   useEffect(() => {
     if (!initializedRef.current || cw === 0) return;
     jumpSilent(currentRef.current + 1);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cw]);
 
-  // Auto-play
   useEffect(() => {
     if (TOTAL === 0) return;
     const schedule = () => {
@@ -172,129 +167,148 @@ export default function InfiniteCarousel() {
 
   const skeletonCount = sceneW < 480 ? 1 : sceneW < 768 ? 2 : 3;
 
-  // Don't render anything if there are no items (logged out / empty)
   if (!loading && TOTAL === 0) return null;
 
   return (
     <>
       <style>{css}</style>
-      <div className="hc-outer">
-        <div
-          ref={sceneRef}
-          className="hc-scene"
-          onMouseEnter={() => { pausedRef.current = true;  setHovered(true);  }}
-          onMouseLeave={() => { pausedRef.current = false; setHovered(false); }}
-          onPointerDown={e => { dragStart.current = e.clientX; }}
-          onPointerUp={e => {
-            if (dragStart.current === null) return;
-            const diff = dragStart.current - e.clientX;
-            if (Math.abs(diff) > 50) diff > 0 ? next() : prev();
-            dragStart.current = null;
-          }}
-        >
-          {/* Skeleton loading */}
-          {(loading || !ready) && sceneW > 0 && (
-            <div className="hc-skeleton-row" style={{ padding: `0 ${sv + GAP}px` }}>
-              {Array.from({ length: skeletonCount }).map((_, i) => (
-                <div
+      {/* ── Outer wrapper: matches banner padding + max-width exactly ── */}
+      <div className="hc-wrapper">
+        <div className="hc-outer">
+          <div
+            ref={sceneRef}
+            className="hc-scene"
+            onMouseEnter={() => { pausedRef.current = true;  setHovered(true);  }}
+            onMouseLeave={() => { pausedRef.current = false; setHovered(false); }}
+            onPointerDown={e => { dragStart.current = e.clientX; }}
+            onPointerUp={e => {
+              if (dragStart.current === null) return;
+              const diff = dragStart.current - e.clientX;
+              if (Math.abs(diff) > 50) diff > 0 ? next() : prev();
+              dragStart.current = null;
+            }}
+          >
+            {/* Skeleton loading */}
+            {(loading || !ready) && sceneW > 0 && (
+              <div className="hc-skeleton-row" style={{ padding: `0 ${sv + GAP}px` }}>
+                {Array.from({ length: skeletonCount }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="hc-skeleton"
+                    style={{
+                      width: i === 0 ? cw || sceneW * 0.7 : (cw || sceneW * 0.7) * 0.88,
+                      height: ch || Math.round((cw || sceneW * 0.7) / (16 / 6.5)),
+                      opacity: i === 0 ? 1 : 0.5,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Real track */}
+            {!loading && TOTAL > 0 && (
+              <div
+                ref={trackRef}
+                className="hc-track"
+                style={{ opacity: ready ? 1 : 0, transition: "opacity 0.3s" }}
+              >
+                {extendedItems.map((item, i) => {
+                  const isCenter = i === tIdx;
+                  const realIdx  = ((i - 1) % TOTAL + TOTAL) % TOTAL;
+                  return (
+                    <div
+                      key={`${i}-${item.id}`}
+                      className="hc-slide"
+                      style={{
+                        width:      cw,
+                        height:     ch,
+                        marginLeft: i === 0 ? 0 : GAP,
+                        transform:  isCenter ? "scale(1)" : "scale(0.88)",
+                        opacity:    isCenter ? 1 : 0.55,
+                        boxShadow:  isCenter ? "0 8px 40px rgba(0,0,0,0.22)" : "none",
+                      }}
+                      onClick={() => {
+                        if (!isCenter) goTo(realIdx);
+                        else handleClick(item);
+                      }}
+                    >
+                      <img src={item.image_url} alt="" className="hc-img" draggable={false}/>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Arrows */}
+            {!loading && ready && TOTAL > 1 && (
+              <>
+                <button
+                  className={`hc-arrow hc-arrow--left ${hovered ? "hc-arrow--visible" : ""}`}
+                  onClick={prev} aria-label="Previous"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                </button>
+                <button
+                  className={`hc-arrow hc-arrow--right ${hovered ? "hc-arrow--visible" : ""}`}
+                  onClick={next} aria-label="Next"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Dots */}
+          {!loading && ready && TOTAL > 1 && (
+            <div className="hc-dots">
+              {items.map((_, i) => (
+                <button
                   key={i}
-                  className="hc-skeleton"
-                  style={{
-                    width: i === 0 ? cw || sceneW * 0.7 : (cw || sceneW * 0.7) * 0.88,
-                    height: ch || Math.round((cw || sceneW * 0.7) / (16 / 6.5)),
-                    opacity: i === 0 ? 1 : 0.5,
-                  }}
+                  className={`hc-dot ${i === current ? "hc-dot--active" : ""}`}
+                  onClick={() => goTo(i)}
+                  aria-label={`Go to slide ${i + 1}`}
                 />
               ))}
             </div>
           )}
-
-          {/* Real track */}
-          {!loading && TOTAL > 0 && (
-            <div
-              ref={trackRef}
-              className="hc-track"
-              style={{ opacity: ready ? 1 : 0, transition: "opacity 0.3s" }}
-            >
-              {extendedItems.map((item, i) => {
-                const isCenter = i === tIdx;
-                const realIdx  = ((i - 1) % TOTAL + TOTAL) % TOTAL;
-                return (
-                  <div
-                    key={`${i}-${item.id}`}
-                    className="hc-slide"
-                    style={{
-                      width:      cw,
-                      height:     ch,
-                      marginLeft: i === 0 ? 0 : GAP,
-                      transform:  isCenter ? "scale(1)" : "scale(0.88)",
-                      opacity:    isCenter ? 1 : 0.55,
-                      boxShadow:  isCenter ? "0 8px 40px rgba(0,0,0,0.22)" : "none",
-                    }}
-                    onClick={() => {
-                      if (!isCenter) goTo(realIdx);
-                      else handleClick(item);
-                    }}
-                  >
-                    <img src={item.image_url} alt="" className="hc-img" draggable={false}/>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Arrows */}
-          {!loading && ready && TOTAL > 1 && (
-            <>
-              <button
-                className={`hc-arrow hc-arrow--left ${hovered ? "hc-arrow--visible" : ""}`}
-                onClick={prev} aria-label="Previous"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="15 18 9 12 15 6"/>
-                </svg>
-              </button>
-              <button
-                className={`hc-arrow hc-arrow--right ${hovered ? "hc-arrow--visible" : ""}`}
-                onClick={next} aria-label="Next"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="9 18 15 12 9 6"/>
-                </svg>
-              </button>
-            </>
-          )}
         </div>
-
-        {/* Dots */}
-        {!loading && ready && TOTAL > 1 && (
-          <div className="hc-dots">
-            {items.map((_, i) => (
-              <button
-                key={i}
-                className={`hc-dot ${i === current ? "hc-dot--active" : ""}`}
-                onClick={() => goTo(i)}
-                aria-label={`Go to slide ${i + 1}`}
-              />
-            ))}
-          </div>
-        )}
       </div>
     </>
   );
 }
 
 const css = `
+  /*
+   * hc-wrapper mirrors the banner's .wrapper padding + max-width logic.
+   * hc-outer is the inner container (was previously the outermost element).
+   * This way the carousel content aligns perfectly with the banner grid.
+   */
+
+  /* ── Banner-matching outer shell ── */
+  .hc-wrapper {
+    width: 100%;
+    padding: 0 24px;           /* matches banner .wrapper padding: 24px */
+    box-sizing: border-box;
+    background: #f5f5f5;
+  }
+
+  /* ── Inner container: constrained like banner's .parent ── */
   .hc-outer {
     width: 100%;
+    max-width: 1200px;         /* matches banner .parent max-width: 1200px */
+    margin: 0 auto;            /* matches banner .parent margin: 0 auto */
     padding: 20px 0 18px;
-    background: #f5f5f5;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 14px;
     overflow: hidden;
   }
+
   .hc-scene {
     position: relative;
     width: 100%;
@@ -385,15 +399,26 @@ const css = `
   }
   .hc-dot--active { background: #ff3e5e; width: 26px; }
 
-  /* ── Mobile ── */
+  /* ── Tablet (matches banner @media 768px) ── */
   @media (max-width: 768px) {
-    .hc-outer { padding: 14px 0 12px; gap: 10px; }
+    .hc-wrapper {
+      padding: 0 14px;         /* matches banner .wrapper mobile padding: 14px */
+    }
+    .hc-outer {
+      padding: 14px 0 12px;
+      gap: 10px;
+    }
     .hc-arrow--left  { left: 6px; }
     .hc-arrow--right { right: 6px; }
     .hc-arrow { width: 32px; height: 32px; }
     .hc-slide { border-radius: 10px; }
   }
-  @media (max-width: 480px) {
+
+  /* ── Mobile: single column (matches banner @media 520px) ── */
+  @media (max-width: 520px) {
+    .hc-wrapper {
+      padding: 0 14px;         /* same 14px padding, single column */
+    }
     .hc-arrow--visible { opacity: 1; pointer-events: auto; }
   }
 `;

@@ -7,7 +7,7 @@ import type { User } from "@supabase/supabase-js";
 import type { Session, AuthChangeEvent } from "@supabase/supabase-js";
 import Navbar from "@/components/navbar";
 import { useCart } from "@/components/CartContext";
-import { getSupabaseBrowser } from "@/lib/supabase";
+import { getSupabaseBrowser } from '@/lib/supabase-browser';
 
 type ProductResponse = { product: Product };
 type ReviewsResponse = { results: Review[] };

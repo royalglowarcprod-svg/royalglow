@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getSupabaseBrowser } from "@/lib/supabase";
+import { getSupabaseBrowser } from '@/lib/supabase-browser';
 import type { Session, AuthChangeEvent } from "@supabase/supabase-js";
 import style from "../styles/hamburgerMenu.module.css";
 
