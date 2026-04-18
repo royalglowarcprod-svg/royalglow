@@ -18,20 +18,25 @@ export default function CategoryCircles() {
       .then(d => setCategories(d.results || []));
   }, []);
 
-  // Infinite scroll animation
   useEffect(() => {
     if (categories.length === 0) return;
     const track = trackRef.current;
     if (!track) return;
 
-    const SPEED = 0.5; 
-    const ITEM_WIDTH = 100; 
+    const SPEED = 0.5;
+    const ITEM_WIDTH = 100; // cc-item width (80px ring + 4px padding each side)
     const GAP = 20;
-    const UNIT = (ITEM_WIDTH + GAP) * categories.length; 
+    // UNIT = width of ONE full set of categories.
+    // We render 3 copies; reset after scrolling exactly 1 copy so
+    // copy 2 seamlessly becomes the new copy 1 — no gap, ever.
+    const UNIT = (ITEM_WIDTH + GAP) * categories.length;
 
+    // Make sure the track is wide enough before starting
+    // (3 copies means we always have 2 full copies ahead)
     const animate = () => {
       if (!pausedRef.current) {
         offsetRef.current += SPEED;
+        // When we've scrolled exactly one full set, snap back silently
         if (offsetRef.current >= UNIT) {
           offsetRef.current -= UNIT;
         }
@@ -50,7 +55,17 @@ export default function CategoryCircles() {
 
   if (categories.length === 0) return null;
 
-  const repeated = [...categories, ...categories, ...categories];
+  // Repeat enough times so the track is always wider than the viewport.
+  // We need at least: viewport_width / (ITEM_WIDTH + GAP) extra items.
+  // 6 copies is safe for any screen up to ~1440px with small categories.
+  const repeated = [
+    ...categories,
+    ...categories,
+    ...categories,
+    ...categories,
+    ...categories,
+    ...categories,
+  ];
 
   return (
     <>
@@ -116,7 +131,7 @@ const css = `
     display: flex;
     gap: 20px;
     width: max-content;
-    padding: 8px 0 8px;
+    padding: 20px 0 8px;
     will-change: transform;
   }
 
@@ -129,7 +144,10 @@ const css = `
     border: none;
     cursor: pointer;
     flex-shrink: 0;
+    /* Explicit width so UNIT calc stays accurate */
+    width: 100px;
     padding: 4px;
+    box-sizing: border-box;
     transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .cc-item:hover {
@@ -190,7 +208,7 @@ const css = `
     font-weight: 700;
     color: #111;
     text-align: center;
-    max-width: 80px;
+    width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -207,13 +225,15 @@ const css = `
       padding: 14px 0 12px;
       margin-top: 120px;
     }
+    .cc-item {
+      width: 82px;
+    }
     .cc-ring {
       width: 68px;
       height: 68px;
     }
     .cc-label {
       font-size: 0.65rem;
-      max-width: 68px;
     }
     .cc-track {
       gap: 14px;

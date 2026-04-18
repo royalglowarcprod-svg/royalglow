@@ -412,7 +412,7 @@ const css = `
   }
   @media (max-width: 600px) {
     .or-page { padding: 70px 14px 80px; }
-    .or-solo { padding: 32px 20px; margin-top: 28px; }
+    .or-solo { padding: 32px 20px; margin-top: 95px; }
     .or-card-header { padding: 16px 18px; }
     .or-body-inner { padding: 16px 18px 18px; }
     .or-progress { padding: 12px 18px 16px; }

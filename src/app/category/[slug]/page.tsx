@@ -222,14 +222,20 @@ const css = `
     cursor: pointer; box-shadow: 2px 2px 0 #111; transition: all 0.15s;
   }
   .cat-btn-details:hover { transform: translateY(-1px); box-shadow: 2px 3px 0 #111; }
-
+@media (max-width: 1024px) {
+ .cat-header {
+     flex-direction: column;
+      align-items: flex-start;
+       margin-top:83px;
+       }
+}
   @media (max-width: 600px) {
     .cat-page { padding: 80px 14px 80px; }
     .cat-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .cat-header {
      flex-direction: column;
       align-items: flex-start;
-       margin-top:46px;
+       margin-top:89px;
        }
   }
 `;

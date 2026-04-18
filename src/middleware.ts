@@ -10,6 +10,8 @@ const PUBLIC_ROUTES = [
   /^\/products/,
   /^\/api\/products/,
   /^\/api\/categories/,
+   /^\/category/,
+    /^\/products/,
   /^\/api\/banners/,
   /^\/api\/reviews/,
   /^\/api\/carousel/,

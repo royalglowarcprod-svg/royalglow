@@ -447,6 +447,7 @@ export default function ProductDetailPage() {
         }
 
         @media (max-width: 768px) {
+          .pd-wrap {margin: 128px auto;}
           .pd-grid { flex-direction: column; gap: 0; }
           .pd-img-col { position: relative; top: 0; flex: none; width: 100%; }
           .pd-info-col { flex: none; width: 100%; }
@@ -455,7 +456,7 @@ export default function ProductDetailPage() {
           .pd-info-inner { padding-top: 20px; }
         }
         @media (max-width: 480px) {
-          .pd-wrap { padding: 16px 14px 80px; }
+          .pd-wrap { padding: 147px 14px 80px}
           .pd-main-img { border-left: none; border-right: none; border-radius: 0; }
         }
       `}</style>

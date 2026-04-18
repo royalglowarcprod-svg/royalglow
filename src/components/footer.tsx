@@ -89,7 +89,7 @@ fetch("/api/settings")
                   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                 </svg>
               </span>
-              <span className="ft-logo__text">CrashCosmetic</span>
+              <span className="ft-logo__text">RehanCosmetics</span>
             </button>
 
             <nav className="ft-nav">
@@ -131,7 +131,7 @@ fetch("/api/settings")
 
           {/* Bottom copyright */}
           <div className="ft-bottom">
-            <span className="ft-copy">© {new Date().getFullYear()} CrashCosmetic. All rights reserved.</span>
+            <span className="ft-copy">© {new Date().getFullYear()} RehanCosmetics. All rights reserved.</span>
             <span className="ft-made">Made with ♥ in Pakistan</span>
           </div>
 
